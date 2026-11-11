@@ -1,0 +1,82 @@
+@if (product(); as p) {
+  <div class="pd container">
+    <nav class="pd__crumbs" aria-label="Putanja">
+      <a routerLink="/" class="link-underline">Početna</a>
+      <span aria-hidden="true">/</span>
+      <a routerLink="/katalog" class="link-underline">Katalog</a>
+      <span aria-hidden="true">/</span>
+      <a routerLink="/katalog" [queryParams]="{ kategorija: p.category }" class="link-underline">{{ category() }}</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{ p.name }}</span>
+    </nav>
+
+    <div class="pd__layout">
+      <!-- LEFT: product presentation -->
+      <div class="pd__product">
+        <header class="pd__head">
+          <p class="eyebrow">{{ category() }}</p>
+          <h1 class="display display--xl pd__name">{{ p.name }}</h1>
+          <p class="lead">{{ p.shortDescription }}</p>
+        </header>
+
+        <app-product-gallery [product]="p" />
+
+        <div class="pd__desc">
+          @for (para of p.description; track $index) {
+            <p>{{ para }}</p>
+          }
+        </div>
+
+        @if (p.features.length) {
+          <div class="pd__features">
+            <h2 class="pd__subtitle">Detalji modela</h2>
+            <ul>
+              @for (f of p.features; track f) {
+                <li>{{ f }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        <div class="pd__custom">
+          <p>
+            Svaki detalj se može prilagoditi — džepovi, kopče, kragna, dužina. Napišite šta želite u formi za porudžbinu.
+          </p>
+          <div class="pd__actions">
+            <button type="button" class="btn btn--primary" (click)="toGuide()">Izmeri se <span class="btn__arrow"></span></button>
+            <button type="button" class="btn" (click)="toForm()">Zatraži prilagođavanje</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: universal measurement guide -->
+      <aside id="vodic" class="pd__guide" aria-label="Vodič za merenje">
+        <div class="pd__guide-sticky">
+          <app-measurement-guide [measurementIds]="p.measurementIds" (proceed)="toForm()" />
+        </div>
+      </aside>
+    </div>
+
+    <section id="porudzbina-forma" class="pd__form" aria-label="Forma za porudžbinu">
+      <app-order-form [presetSlug]="p.slug" [compact]="true" />
+    </section>
+
+    @if (others().length) {
+      <section class="pd__others" aria-labelledby="others-title">
+        <h2 id="others-title" class="display display--md" appReveal="up">Drugi modeli</h2>
+        <div class="pd__others-grid">
+          @for (o of others(); track o.slug; let i = $index) {
+            <app-product-card [product]="o" [index]="i" appReveal="up" />
+          }
+        </div>
+      </section>
+    }
+  </div>
+} @else {
+  <section class="pd-missing container">
+    <p class="eyebrow">Katalog</p>
+    <h1 class="display display--lg">Model nije pronađen</h1>
+    <p class="lead">Ovaj model ne postoji ili je uklonjen iz kataloga.</p>
+    <a routerLink="/katalog" class="btn btn--primary">Pogledaj katalog <span class="btn__arrow"></span></a>
+  </section>
+}

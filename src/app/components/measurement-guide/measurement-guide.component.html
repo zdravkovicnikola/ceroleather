@@ -1,0 +1,89 @@
+<section class="mg" aria-labelledby="mg-title">
+  <header class="mg__head">
+    <div>
+      <p class="eyebrow">Vodič za merenje</p>
+      <h2 id="mg-title" class="mg__title">Izmerite se <span class="text-red">korak po korak</span></h2>
+    </div>
+    <p class="mg__count" aria-live="polite">
+      <strong>{{ completedCount() }}</strong>/{{ definitions().length }} mere unete
+    </p>
+  </header>
+
+  <!-- step navigation: any step can be revisited -->
+  <nav class="mg__tabs" aria-label="Koraci merenja">
+    @for (d of definitions(); track d.id; let i = $index) {
+      <button
+        type="button"
+        class="mg__tab"
+        [class.is-active]="!showSummary() && i === index()"
+        [class.is-done]="completed()[i]"
+        [attr.aria-current]="!showSummary() && i === index() ? 'step' : null"
+        (click)="go(i)"
+      >
+        <span class="mg__tab-num">
+          @if (completed()[i]) {
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.5l2.5 2.5L10 3.5" /></svg>
+          } @else {
+            {{ i + 1 }}
+          }
+        </span>
+        <span class="mg__tab-label">{{ d.label }}</span>
+      </button>
+    }
+  </nav>
+
+  <div class="mg__viewer">
+    <app-measurement-viewer-3d
+      [definitions]="definitions()"
+      [activeId]="showSummary() ? null : active().id"
+      [activeValue]="activeValue()"
+    />
+  </div>
+
+  <div class="mg__panel">
+    @if (!showSummary()) {
+      <app-measurement-step
+        [definition]="active()"
+        [number]="index() + 1"
+        [total]="definitions().length"
+        [value]="activeValue()"
+        (valueChange)="setValue(active().id, $event)"
+      />
+    } @else {
+      <div class="mg__summary">
+        <h3 class="mg__summary-title">
+          @if (allDone()) {
+            Sve mere su unete
+          } @else {
+            Pregled mera
+          }
+        </h3>
+        <ul class="mg__summary-list">
+          @for (d of definitions(); track d.id; let i = $index) {
+            <li>
+              <span>{{ d.label }}</span>
+              <strong [class.text-red]="!completed()[i]">{{ valueOf(d.id) != null ? valueOf(d.id) + ' cm' : 'nije uneto' }}</strong>
+              <button type="button" class="mg__edit link-underline" (click)="go(i)">Izmeni</button>
+            </li>
+          }
+        </ul>
+        @if (!allDone()) {
+          <p class="mg__summary-note">Nedostaju neke mere — kliknite „Izmeni” da ih dopunite.</p>
+        }
+      </div>
+    }
+
+    <div class="mg__nav">
+      <button type="button" class="btn btn--sm" (click)="prev()" [disabled]="index() === 0 && !showSummary()">Nazad</button>
+      @if (!showSummary()) {
+        <button type="button" class="btn btn--sm btn--primary" (click)="next()">
+          {{ index() < definitions().length - 1 ? 'Sledeća mera' : 'Pregled mera' }} <span class="btn__arrow"></span>
+        </button>
+      } @else {
+        <button type="button" class="btn btn--sm btn--primary" (click)="proceed.emit()">
+          Nastavi na porudžbinu <span class="btn__arrow"></span>
+        </button>
+      }
+    </div>
+  </div>
+</section>

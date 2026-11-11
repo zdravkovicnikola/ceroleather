@@ -1,0 +1,274 @@
+:host {
+  display: block;
+}
+
+.hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  background: var(--bg);
+  isolation: isolate;
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.hero__glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 55% at 70% 60%, rgba(227, 33, 38, 0.14), transparent 70%),
+    radial-gradient(40% 40% at 25% 30%, rgba(185, 188, 193, 0.06), transparent 70%),
+    linear-gradient(180deg, #0b0b0b 0%, #111 55%, #0b0b0b 100%);
+}
+
+
+.hero__outro {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 17vw, 19rem);
+  text-transform: uppercase;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(245, 245, 245, 0.16);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero__fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center end;
+  padding: calc(var(--header-h) + 20px) var(--gutter) 40px;
+  img {
+    height: 100%;
+    max-height: 82vh;
+    width: auto;
+    object-fit: contain;
+    filter: contrast(1.08) brightness(0.9);
+    mask-image: radial-gradient(70% 70% at 50% 50%, #000 55%, transparent 100%);
+  }
+}
+
+.hero__vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.75) 100%),
+    linear-gradient(90deg, rgba(11, 11, 11, 0.75) 0%, transparent 45%);
+}
+
+.hero__content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.hero__intro {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: clamp(40px, 9vh, 110px);
+  max-width: 1100px;
+}
+.hero__title {
+  margin-bottom: 28px;
+  font-size: clamp(3rem, 7.6vw, 8.6rem);
+  @media (min-width: 761px) {
+    white-space: nowrap;
+  }
+  em {
+    font-style: normal;
+  }
+}
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.hero__chapters {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.hero__chapter {
+  position: absolute;
+  top: 50%;
+  left: var(--gutter);
+  width: min(520px, 42vw);
+  transform: translateY(-50%);
+  h2 {
+    margin: 0 0 20px;
+  }
+}
+.hero__chapter--right {
+  left: auto;
+  right: calc(var(--gutter) + 40px);
+  text-align: right;
+}
+.hero__chapter-index {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin: 0 0 20px;
+  span {
+    color: var(--red);
+  }
+}
+.hero__chapter-text {
+  margin: 0;
+  color: var(--text-2);
+  font-weight: 300;
+  font-size: 1.05rem;
+  max-width: 26em;
+  .hero__chapter--right & {
+    margin-left: auto;
+  }
+}
+
+/* chapters start hidden only when the scroll timeline will reveal them */
+.hero:not(.hero--static):not(.hero--fallback) .hero__chapter {
+  opacity: 0;
+}
+
+.hero__scroll {
+  position: absolute;
+  z-index: 3;
+  right: var(--gutter);
+  bottom: clamp(48px, 10vh, 120px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  writing-mode: vertical-rl;
+}
+.hero__scroll-line {
+  width: 1px;
+  height: 64px;
+  background: var(--line-strong);
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--red);
+    animation: scrollLine 2.2s var(--ease-in-out) infinite;
+  }
+}
+@keyframes scrollLine {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+.hero__progress {
+  position: absolute;
+  z-index: 3;
+  right: calc(var(--gutter) / 2);
+  top: 50%;
+  height: 28vh;
+  width: 1px;
+  transform: translateY(-50%);
+  background: var(--line);
+}
+.hero__progress-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--red);
+  transform-origin: top;
+  transform: scaleY(0);
+}
+
+.hero__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 0%, rgba(11, 11, 11, 0.6) 55%, var(--bg) 100%);
+  opacity: 0;
+}
+
+/* ---------- static (reduced motion) & photographic fallback ---------- */
+.hero--static,
+.hero--fallback {
+  .hero__progress,
+  .hero__scroll {
+    display: none;
+  }
+}
+.hero--static .hero__chapters,
+.hero--fallback .hero__chapters {
+  display: none;
+}
+
+/* ---------- portrait / mobile ---------- */
+@media (max-aspect-ratio: 1/1), (max-width: 760px) {
+  .hero__vignette {
+    background:
+      radial-gradient(120% 90% at 50% 40%, transparent 50%, rgba(0, 0, 0, 0.7) 100%),
+      linear-gradient(0deg, rgba(11, 11, 11, 0.95) 0%, rgba(11, 11, 11, 0.6) 35%, transparent 60%);
+  }
+  .hero__chapter,
+  .hero__chapter--right {
+    top: auto;
+    bottom: 56px;
+    left: var(--gutter);
+    right: var(--gutter);
+    width: auto;
+    transform: none;
+    text-align: left;
+    h2 {
+      font-size: clamp(2.2rem, 11vw, 3.4rem);
+    }
+  }
+  .hero__chapter--right .hero__chapter-text {
+    margin-left: 0;
+  }
+  .hero__fallback {
+    place-items: start center;
+    img {
+      max-height: 55vh;
+    }
+  }
+  .hero__scroll {
+    display: none;
+  }
+  .hero__intro {
+    bottom: 40px;
+  }
+}

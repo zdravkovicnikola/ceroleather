@@ -1,0 +1,126 @@
+:host {
+  display: block;
+}
+
+.pg__stage {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--bg-2);
+}
+.pg__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.06);
+  transition:
+    opacity 0.9s var(--ease),
+    transform 1.6s var(--ease);
+  &.is-active {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.pg__meta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 40px 20px 16px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.pg__count {
+  color: var(--text-2);
+}
+
+.pg__arrow {
+  position: absolute;
+  top: 50%;
+  width: 52px;
+  height: 52px;
+  margin-top: -26px;
+  display: grid;
+  place-items: center;
+  background: rgba(11, 11, 11, 0.6);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.4s,
+    background 0.3s;
+  span {
+    width: 10px;
+    height: 10px;
+    border-top: 1.5px solid #fff;
+    border-right: 1.5px solid #fff;
+  }
+  &:hover {
+    background: var(--red);
+  }
+  .pg__stage:hover &,
+  &:focus-visible {
+    opacity: 1;
+  }
+}
+.pg__arrow--prev {
+  left: 16px;
+  span {
+    transform: translateX(2px) rotate(-135deg);
+  }
+}
+.pg__arrow--next {
+  right: 16px;
+  span {
+    transform: translateX(-2px) rotate(45deg);
+  }
+}
+@media (hover: none) {
+  .pg__arrow {
+    opacity: 1;
+  }
+}
+
+.pg__thumbs {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.pg__thumb {
+  flex: 0 0 84px;
+  aspect-ratio: 4 / 5;
+  padding: 0;
+  border: 1px solid transparent;
+  background: var(--bg-2);
+  cursor: pointer;
+  scroll-snap-align: start;
+  opacity: 0.5;
+  transition:
+    opacity 0.3s,
+    border-color 0.3s;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  &:hover {
+    opacity: 0.85;
+  }
+  &.is-active {
+    opacity: 1;
+    border-color: var(--red);
+  }
+}

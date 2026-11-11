@@ -1,0 +1,144 @@
+import { Product, ProductImage, ProductImageKind } from '../models/product.model';
+
+/**
+ * CENTRAL PRODUCT DATA
+ * --------------------
+ * Add a new model by adding an object to PRODUCTS. No UI changes are needed.
+ *
+ *  1. Put images in /public/assets/images/products/  (WebP, ~1600px + ~760px "-sm" version)
+ *  2. Add an entry below. `slug` becomes the URL: /katalog/<slug>
+ *  3. `features` must contain only details that are real and confirmed.
+ *  4. `price` is optional and only shown when SITE_CONFIG.showPrices = true.
+ *
+ * Model names below are working names — replace them with the workshop's official names.
+ */
+
+const BASE = 'assets/images/products/';
+
+function img(file: string, kind: ProductImageKind, alt: string, caption?: string): ProductImage {
+  return { src: `${BASE}${file}.webp`, srcSm: `${BASE}${file}-sm.webp`, kind, alt, caption };
+}
+
+export const PRODUCTS: Product[] = [
+  {
+    slug: 'prsluk-strap',
+    name: 'Strap',
+    category: 'prsluci',
+    featured: true,
+    shortDescription:
+      'Crni kožni prsluk sa podesivim bočnim trakama i prošivenim ramenim panelom.',
+    description: [
+      'Prsluk od crne zrnaste kože sa prošivenim, rebrastim panelom na ramenima i kosim panelima napred koji prate liniju tela.',
+      'Sa strane su elastični umeci i po četiri kožne trake sa kopčama, pa se širina prsluka može podesiti na telu. Napred je vertikalni džep sa rajsferšlusom, a unutra, na postavi, još jedan džep sa rajsferšlusom.',
+    ],
+    features: [
+      'Podesive bočne kožne trake sa metalnim kopčama',
+      'Prošiven, rebrast panel na ramenima',
+      'Spoljni vertikalni džep sa rajsferšlusom',
+      'Unutrašnji džep sa rajsferšlusom',
+      'Postava i centralni rajsferšlus',
+      'Ivice opšivene kožom',
+    ],
+    images: [
+      img('strap-vest-side', 'side', 'Crni kožni prsluk Strap — bočna strana sa podesivim trakama'),
+      img('strap-vest-front-open', 'open', 'Prsluk Strap — otvoren, vidi se postava i unutrašnji džep'),
+      img('strap-vest-detail-straps', 'detail', 'Detalj bočnih kožnih traka sa kopčama', 'Bočne trake'),
+      img('strap-vest-detail-shoulder', 'detail', 'Detalj prošivenog ramenog panela', 'Rameni panel'),
+      img('strap-vest-detail-pocket', 'detail', 'Unutrašnji džep sa rajsferšlusom', 'Unutrašnji džep'),
+      img('strap-vest-detail-grain', 'detail', 'Tekstura zrnaste kože izbliza', 'Tekstura kože'),
+    ],
+  },
+  {
+    slug: 'prsluk-buckle',
+    name: 'Buckle',
+    category: 'prsluci',
+    featured: true,
+    shortDescription: 'Kožni prsluk sa kopčama na ramenima i bočnim kaiševima sa kopčama.',
+    description: [
+      'Prsluk sa okruglim izrezom oko vrata, centralnim rajsferšlusom i po dve kožne trake sa metalnim kopčama na svakom ramenu.',
+      'Sa strane, na leđima, po tri kaiša sa kopčama omogućavaju podešavanje širine. Napred su dva kosa džepa sa rajsferšlusom.',
+    ],
+    features: [
+      'Kožne trake sa kopčama na ramenima',
+      'Po tri bočna kaiša sa kopčama',
+      'Dva kosa džepa sa rajsferšlusom',
+      'Centralni rajsferšlus i okrugli izrez',
+    ],
+    images: [
+      img('buckle-vest-front', 'front', 'Kožni prsluk Buckle — prednja strana'),
+      img('buckle-vest-back', 'back', 'Kožni prsluk Buckle — zadnja strana sa bočnim kaiševima'),
+    ],
+    note: 'Photos are cropped phone screenshots of a listing — replace with original high-res photos.',
+  },
+  {
+    slug: 'prsluk-classic-zip',
+    name: 'Classic Zip',
+    category: 'prsluci',
+    featured: true,
+    shortDescription: 'Čist, minimalistički prsluk sa okruglim izrezom i centralnim rajsferšlusom.',
+    description: [
+      'Jednostavan kroj bez suvišnih detalja: okrugli izrez, centralni rajsferšlus i poprečni šav na grudima.',
+      'Na leđima poprečni šav i dva vertikalna panela daju prsluku oblik. Sve ivice su opšivene kožom.',
+    ],
+    features: [
+      'Okrugli izrez oko vrata',
+      'Centralni rajsferšlus',
+      'Panelni kroj na leđima',
+      'Ivice opšivene kožom',
+    ],
+    images: [
+      img('zip-vest-front', 'front', 'Kožni prsluk Classic Zip — prednja strana'),
+      img('zip-vest-back', 'back', 'Kožni prsluk Classic Zip — zadnja strana'),
+    ],
+  },
+  {
+    slug: 'prsluk-rider',
+    name: 'Rider',
+    category: 'prsluci',
+    shortDescription: 'Prsluk sa kragnom na drikere, kosim rajsferšlusom i kosim džepovima.',
+    description: [
+      'Prsluk inspirisan klasičnom motociklističkom jaknom: kragna sa metalnim drikerima i rajsferšlus pomeren u stranu.',
+      'Dva kosa džepa sa metalnim rajsferšlusima, struk sa kožnim pojasom i postava.',
+    ],
+    features: [
+      'Kragna sa metalnim drikerima',
+      'Asimetričan rajsferšlus',
+      'Dva kosa džepa sa rajsferšlusom',
+      'Kožni pojas u struku',
+      'Postava',
+    ],
+    images: [
+      img('rider-vest-front-open', 'open', 'Kožni prsluk Rider — otvoren, vidi se postava'),
+      img('rider-vest-detail-collar', 'detail', 'Kragna sa metalnim drikerima', 'Kragna'),
+      img('rider-vest-detail-tag', 'detail', 'CeroLeather etiketa', 'Etiketa'),
+    ],
+  },
+  {
+    slug: 'prsluk-lace',
+    name: 'Lace Side',
+    category: 'custom',
+    featured: true,
+    shortDescription: 'Unikatan prsluk sa bočnim vezivanjem kožnom pertlom i revers kragnom.',
+    description: [
+      'Custom model sa bočnim vezivanjem: kožna pertla kroz metalne ringle omogućava podešavanje širine sa strane.',
+      'Revers kragna, rajsferšlus u boji mesinga i džep sa preklopom daju prsluku klasičan, old-school karakter.',
+    ],
+    features: [
+      'Bočno vezivanje kožnom pertlom kroz metalne ringle',
+      'Revers kragna',
+      'Rajsferšlus u boji mesinga',
+      'Džep sa preklopom',
+    ],
+    images: [
+      img('lace-vest-front', 'front', 'Kožni prsluk Lace Side sa bočnim vezivanjem'),
+      img('lace-vest-detail-lacing', 'detail', 'Detalj bočnog vezivanja kožnom pertlom', 'Bočno vezivanje'),
+      img('lace-vest-detail-tag', 'detail', 'CeroLeather etiketa', 'Etiketa'),
+    ],
+  },
+  // Kožne jakne: add jacket models here with category: 'jakne'.
+  // Until then the catalog shows a "jakna po meri" request card for this category.
+];
+
+export function findProduct(slug: string | null | undefined): Product | undefined {
+  return PRODUCTS.find((p) => p.slug === slug);
+}

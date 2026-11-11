@@ -1,0 +1,156 @@
+.pd {
+  padding-top: calc(var(--header-h) + 36px);
+  padding-bottom: clamp(100px, 12vw, 180px);
+}
+
+.pd__crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: clamp(32px, 4vw, 56px);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  a {
+    color: var(--text-2);
+  }
+  [aria-current] {
+    color: var(--text);
+  }
+}
+
+.pd__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 88px);
+  align-items: start;
+}
+
+.pd__head {
+  margin-bottom: 32px;
+  .eyebrow {
+    color: var(--red);
+  }
+}
+.pd__name {
+  margin-bottom: 20px;
+}
+
+.pd__desc {
+  margin-top: 44px;
+  p {
+    margin: 0 0 16px;
+    color: var(--text-2);
+    font-weight: 300;
+    font-size: 1.05rem;
+    max-width: 38em;
+  }
+}
+
+.pd__subtitle {
+  margin: 0 0 16px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.pd__features {
+  margin-top: 36px;
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  li {
+    position: relative;
+    padding: 14px 0 14px 28px;
+    border-bottom: 1px solid var(--line);
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 12px;
+      height: 1px;
+      background: var(--red);
+    }
+  }
+}
+
+.pd__custom {
+  margin-top: 44px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  background:
+    url('/assets/images/textures/leather-grain.webp') center / 300px,
+    var(--bg-2);
+  p {
+    margin: 0;
+    color: var(--text-2);
+  }
+}
+.pd__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+
+.pd__form {
+  margin-top: clamp(80px, 10vw, 150px);
+  padding-top: clamp(48px, 6vw, 80px);
+  border-top: 1px solid var(--line);
+  max-width: 980px;
+}
+
+.pd__others {
+  margin-top: clamp(100px, 12vw, 180px);
+  h2 {
+    margin-bottom: 48px;
+  }
+}
+.pd__others-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.pd-missing {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  padding-top: var(--header-h);
+  .btn {
+    align-self: flex-start;
+  }
+}
+
+/* Mobile/tablet: gallery first, then the measurement guide */
+@media (max-width: 1000px) {
+  .pd__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pd__guide-sticky {
+    position: static;
+  }
+  .pd__guide {
+    padding-top: 48px;
+    border-top: 1px solid var(--line);
+  }
+  .pd__others-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .pd__others-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

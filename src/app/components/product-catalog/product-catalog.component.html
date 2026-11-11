@@ -1,0 +1,57 @@
+<div class="catalog">
+  <nav class="catalog__filters" aria-label="Kategorije">
+    <a
+      class="filter"
+      routerLink="/katalog"
+      [class.is-active]="category() === null"
+      [attr.aria-current]="category() === null ? 'page' : null"
+    >
+      Svi modeli <sup>{{ total }}</sup>
+    </a>
+    @for (c of categories; track c.id) {
+      <a
+        class="filter"
+        routerLink="/katalog"
+        [queryParams]="{ kategorija: c.id }"
+        [class.is-active]="category() === c.id"
+        [attr.aria-current]="category() === c.id ? 'page' : null"
+      >
+        {{ c.label }} <sup>{{ counts()[c.id] || '' }}</sup>
+      </a>
+    }
+  </nav>
+
+  @if (activeCategory(); as c) {
+    <p class="catalog__intro lead">{{ c.intro }}</p>
+  }
+
+  <div class="catalog__grid">
+    @for (p of products(); track p.slug; let i = $index) {
+      <app-product-card
+        class="catalog__item"
+        [class.catalog__item--wide]="i % 5 === 0"
+        [product]="p"
+        [index]="i"
+        [size]="i % 5 === 0 ? 'large' : 'normal'"
+        appReveal="up"
+      />
+    }
+
+    @if (showJacketRequest()) {
+      <article class="request-card catalog__item" appReveal="up">
+        <p class="request-card__cat">Kožne jakne</p>
+        <h3 class="display display--md">Jakna<br />po vašoj meri</h3>
+        <p class="request-card__text">
+          Fotografije modela jakni uskoro. Do tada — opišite kakvu jaknu želite i pošaljite mere, a mi ćemo vam se javiti.
+        </p>
+        <a class="btn btn--primary" routerLink="/porudzbina" [queryParams]="{ kategorija: 'jakne' }"
+          >Pošalji upit za jaknu <span class="btn__arrow"></span
+        ></a>
+      </article>
+    }
+  </div>
+
+  @if (!products().length && !showJacketRequest()) {
+    <p class="catalog__empty">U ovoj kategoriji trenutno nema modela.</p>
+  }
+</div>

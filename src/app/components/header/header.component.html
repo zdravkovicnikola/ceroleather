@@ -1,0 +1,51 @@
+<header class="header" [class.is-scrolled]="scrolled()" [class.is-hidden]="hidden()" [class.is-open]="menuOpen()">
+  <div class="header__inner container">
+    <a routerLink="/" class="header__logo" aria-label="CeroLeather — početna">
+      <app-logo />
+    </a>
+
+    <nav class="header__nav" aria-label="Glavna navigacija">
+      @for (item of nav; track item.label) {
+        <a
+          class="header__link link-underline"
+          [routerLink]="item.link"
+          [fragment]="item.fragment"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+          >{{ item.label }}</a
+        >
+      }
+    </nav>
+
+    <a routerLink="/porudzbina" class="btn btn--primary btn--sm header__cta">Zatraži model</a>
+
+    <button
+      type="button"
+      class="header__burger"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="mobile-menu"
+      (click)="toggleMenu()"
+    >
+      <span class="visually-hidden">{{ menuOpen() ? 'Zatvori meni' : 'Otvori meni' }}</span>
+      <span class="header__burger-line"></span>
+      <span class="header__burger-line"></span>
+    </button>
+  </div>
+
+  <div id="mobile-menu" class="menu" [class.is-open]="menuOpen()" [attr.aria-hidden]="!menuOpen()">
+    <nav class="menu__nav container" aria-label="Mobilna navigacija">
+      @for (item of nav; track item.label; let i = $index) {
+        <a
+          class="menu__link"
+          [routerLink]="item.link"
+          [fragment]="item.fragment"
+          [style.transition-delay]="menuOpen() ? 0.1 + i * 0.06 + 's' : '0s'"
+          [attr.tabindex]="menuOpen() ? 0 : -1"
+          (click)="closeMenu()"
+        >
+          <span class="menu__index">0{{ i + 1 }}</span>{{ item.label }}
+        </a>
+      }
+    </nav>
+  </div>
+</header>

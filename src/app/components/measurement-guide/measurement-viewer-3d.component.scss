@@ -1,0 +1,108 @@
+:host {
+  display: block;
+}
+
+.mv {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 72vh;
+  overflow: hidden;
+  background:
+    radial-gradient(70% 60% at 50% 40%, rgba(245, 245, 245, 0.07), transparent 70%),
+    radial-gradient(50% 40% at 30% 90%, rgba(227, 33, 38, 0.1), transparent 70%),
+    var(--bg-2);
+  border: 1px solid var(--line);
+}
+
+.mv__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 1s var(--ease);
+  &:active {
+    cursor: grabbing;
+  }
+  &.is-ready {
+    opacity: 1;
+  }
+}
+
+.mv__svg {
+  position: absolute;
+  inset: 6% 10%;
+  width: auto;
+  height: auto;
+}
+
+.mv__loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.mv__label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  margin: -24px 0 0 14px;
+  background: rgba(11, 11, 11, 0.86);
+  border-left: 2px solid var(--red);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  will-change: transform;
+  &.is-visible {
+    opacity: 1;
+  }
+}
+.mv__label-name {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.mv__label-value {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--text);
+}
+
+.mv__hint {
+  position: absolute;
+  left: 16px;
+  bottom: 12px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  pointer-events: none;
+}
+.mv__hint-icon {
+  width: 22px;
+  height: 10px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}

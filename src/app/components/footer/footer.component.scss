@@ -1,0 +1,101 @@
+.footer {
+  position: relative;
+  border-top: 1px solid var(--line);
+  background: linear-gradient(to bottom, var(--bg), #070707);
+  padding-bottom: 32px;
+  overflow: hidden;
+}
+
+.footer__marquee {
+  border-bottom: 1px solid var(--line);
+  padding-block: 26px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.footer__marquee-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 40px;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 4rem);
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(245, 245, 245, 0.28);
+  animation: marquee 40s linear infinite;
+  .dot {
+    width: 12px;
+    height: 12px;
+    background: var(--red);
+    transform: rotate(45deg);
+  }
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.3fr;
+  gap: 48px;
+  padding-block: 80px 64px;
+}
+.footer__brand app-logo {
+  font-size: 40px;
+}
+.footer__statement {
+  margin: 28px 0 0;
+  max-width: 30em;
+  color: var(--text-2);
+  font-weight: 300;
+}
+.footer__col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.95rem;
+  color: var(--text-2);
+  a:hover {
+    color: var(--text);
+  }
+}
+.footer__title {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.68rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+@media (max-width: 900px) {
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .footer__brand {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 520px) {
+  .footer__grid {
+    grid-template-columns: 1fr;
+  }
+  .footer__bottom {
+    flex-direction: column;
+  }
+}
