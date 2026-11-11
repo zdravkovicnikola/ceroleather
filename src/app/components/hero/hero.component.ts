@@ -45,14 +45,14 @@ export class HeroComponent {
       index: '01',
       label: 'Detalji',
       title: 'Podesive bočne trake',
-      text: 'Četiri kožne trake sa metalnim kopčama sa svake strane — prsluk se podešava na telu.',
+      text: 'Po tri kožna kaiša sa kopčama sa svake strane — prsluk se podešava na telu.',
       side: 'left',
     },
     {
       index: '02',
       label: 'Koža',
       title: 'Svaki šav. Svaka linija.',
-      text: 'Zrnasta crna koža, prošiven rameni panel i ivice opšivene kožom.',
+      text: 'Crna koža, trake sa kopčama na ramenima i ivice opšivene kožom.',
       side: 'left',
     },
     {
@@ -139,7 +139,8 @@ export class HeroComponent {
     // ---- 0 → 2.5  intro out, turn to the side straps ------------------------
     tl.to('.hero__intro', { y: -80, opacity: 0, duration: 1.1, ease: 'power2.in' }, 0.3)
       .to('.hero__scroll', { opacity: 0, duration: 0.5 }, 0)
-      .to(s, { rotY: -1.32, camZ: 3.9, camY: 0.05, objX: x(0.62), rotX: 0, duration: 2.5 }, 0)
+      // camZ 4.5 (was 3.9): the real model is fuller in profile — keep the whole side in frame
+      .to(s, { rotY: -1.32, camZ: 4.5, camY: 0.05, objX: x(0.62), rotX: 0, duration: 2.5 }, 0)
       .to(s, { red: 0.6, duration: 2.5 }, 0)
       .fromTo(
         chapters[0],

@@ -113,29 +113,53 @@ kopira sve podatke jednim klikom i pošalje ih Instagram porukom ili emailom.
 Sajt nema sopstveni server, pa koristi postojeću EmailJS integraciju. U kodu je samo EmailJS **public key**, koji je
 javni po dizajnu; privatni ključ, Gmail/SMTP pristup i adresa primaoca su samo u EmailJS nalogu, nikad u kodu.
 
-1. Nalog na <https://www.emailjs.com> → **Email Services** → dodajte servis (npr. Gmail) → zapišite **Service ID**.
-2. **Email Templates** → novi template:
-   - **To Email**: `nzdravkovic2001@gmail.com` (privremena test adresa — kasnije zamenite poslovnom, samo u EmailJS-u)
-   - **Reply To**: `{{reply_to}}` · **Subject**: `{{subject}}`
-   - **Content** (najjednostavnije — sve u jednom, čitljivom bloku):
+| Fajl | Sadržaj |
+|---|---|
+| `docs/emailjs-template.html` | kompletan HTML template (nalepiti u EmailJS → Code Editor) |
+| `docs/emailjs-template-setup.md` | korak po korak: Subject, From Name, Reply To, To Email, test |
+| `docs/emailjs-field-mapping.md` | inventar svih polja forme → EmailJS parametar → oznaka u emailu |
+| `docs/emailjs-test-params.json` | primer vrednosti za svaki parametar (za *Test It* u EmailJS-u) |
+| `src/app/core/services/order-email-params.ts` | izvor istine: `ORDER_EMAIL_PARAMS` i `toTemplateParams()` |
 
-   ```
-   {{order_summary}}
+Ukratko: **Subject** `{{subject}}` · **From Name** `CeroLeather Website` · **Reply To** `{{reply_to}}` ·
+**To Email** ostaje postojeća adresa u EmailJS-u (trenutno test adresa `nzdravkovic2001@gmail.com`) · bez priloga.
+Ključeve (`serviceId`, `templateId`, `publicKey`) upišite u `src/environments/environment*.ts`; u
+**Account → Security** uključite *Allowed origins* (vaš domen).
 
-   Link ka modelu: {{product_url}}
-   ```
+Fotografija kupca se ne šalje kao prilog: sajt je otpremi na Cloudinary i EmailJS-u pošalje samo URL
+(`designImageUrl`; prazno = bez fotografije, pa se sekcija u emailu izostavlja).
 
-   Pojedinačne promenljive (ako želite svoj raspored): `first_name`, `last_name`, `from_name`, `phone`, `email`,
-   `address_street`, `address_postal_code`, `address_city`, `address_full`, `product_name`, `product_category`,
-   `product_url`, `vest_length_cm`, `waist_cm`, `abdomen_cm`, `height_cm`, `measurements_summary`, `customization`,
-   `message`, `advance_acknowledged`, `privacy_consent`, `submitted_at`.
-3. **Account → General** → **Public Key**.
-4. Upišite `serviceId`, `templateId`, `publicKey` u `src/environments/environment.ts` (produkcija) i
-   `environment.development.ts` (lokalno). Primaoc se **ne** podešava u kodu.
-5. **Account → Security**: uključite *Allowed origins* (vaš domen) i po želji CAPTCHA, da drugi ne bi koristili vaš nalog.
-6. Testirajte: pošaljite zahtev sa sajta i proverite da je email stigao na `nzdravkovic2001@gmail.com`.
+Posle svake izmene forme ili templatea: `npm run check:emailjs` proverava da se nazivi u kodu, templateu, test
+parametrima i dokumentaciji poklapaju (`npm run check:emailjs -- <folder>` pravi i HTML preglede emaila).
 
 Dok ključevi nisu upisani, forma jasno javlja da slanje nije podešeno (podaci se ne gube).
+
+## Cloudinary — fotografije koje kupci prilože
+
+Kupac može (opciono) da priloži **jednu** fotografiju ili skicu (JPG, JPEG, PNG, WEBP, najviše 5 MB). Tok:
+
+1. Fotografija se bira i prikazuje **lokalno** (ništa se ne šalje dok kupac ne klikne „Pošalji zahtev“).
+2. Na slanje: fotografija → Cloudinary (*unsigned upload*, `CloudinaryUploadService`) → dobija se `secure_url`.
+3. Zahtev + `designImageUrl` → EmailJS. Ako EmailJS ne uspe, URL se pamti (i u lokalnom nacrtu), pa ponovni pokušaj
+   **ne otprema** fotografiju ponovo. Zamenom ili uklanjanjem fotografije stari URL se poništava.
+4. Bez fotografije nema poziva ka Cloudinary-ju. Fotografije iz kataloga se nikad ne otpremaju.
+
+Podešavanje (`src/environments/environment*.ts` → `cloudinary`):
+
+| Vrednost | Trenutno | Napomena |
+|---|---|---|
+| `cloudName` | `hzbtilhe` | iz URL-a `https://api.cloudinary.com/v1_1/hzbtilhe/image/upload` |
+| `uploadPreset` | `ceroleather_custom_requests` | mora biti **Unsigned** preset |
+
+U Cloudinary dashboardu: **Settings → Upload → Upload presets → `ceroleather_custom_requests`**:
+- *Signing mode*: **Unsigned**
+- *Asset folder* (folder): npr. `ceroleather/custom-requests` — tu se slažu sve fotografije kupaca
+- *Allowed formats*: `jpg, jpeg, png, webp` · *Max file size*: 5 MB (dodatna zaštita, sajt to već proverava)
+- po želji *Unique filename* uključeno, *Overwrite* isključeno
+
+**API Secret se nigde ne koristi niti upisuje** — unsigned upload ga ne zahteva. Napomena: unsigned preset je javan
+(svako ko zna ime može da otpremi sliku u vaš nalog), zato ograničite formate i veličinu na presetu i povremeno
+pregledajte folder.
 
 ## Logo
 
@@ -167,6 +191,25 @@ crvenom tkanom etiketom), „Leather“ nepromenjeno u fontu Anton. Bez slike �
 4. Mannequin: mere se crtaju raycast-om po površini modela, pa rade i sa novim modelom. Meshevi čije ime sadrži
    `stand`/`base`/`pole` ignorišu se. Po potrebi podesite `heightRatio`/`fromRatio`/`toRatio` u measurements.data.ts.
 5. Ako GLB ne uspe da se učita, automatski se koristi placeholder; bez WebGL-a — fotografija / SVG.
+
+### Početna strana — pravi model prsluka
+
+| | |
+|---|---|
+| Izvor | `Desktop/CeroLeather slike/prsluk-3dmodel.glb` (original se ne menja) |
+| Desktop | `public/assets/models/prsluk-3dmodel.glb` — identična kopija (16 MB, teksture 4096²) |
+| Telefon / slabiji uređaji | `public/assets/models/prsluk-3dmodel-mobile.glb` — ista geometrija i materijal, teksture 2048² (5,5 MB) |
+| Model | 1 mesh, ~50k temena / 65k trouglova, PBR materijal (boja, roughness/metalness, normal mapa ugrađene), bez animacija |
+
+- Prednja strana (rajsferšlus) u fajlu gleda ka **+X**, pa se ispravlja rotacijom −90° oko Y na **roditeljskoj grupi**
+  (`rotationY` u configu). Sam model se ne menja.
+- Roughness mapa u fajlu je skoro nula (izgledalo bi kao lateks), pa se menja samo **faktor** (`roughnessFactor: 4.6`).
+  Teksture ostaju iste.
+- Hijerarhija: `pivot` (GSAP scroll: rotacija, pozicija, skala) → `tilt` (blago „disanje“) → `model-wrapper`
+  (centriranje i skala) → `model-orientation` (−90°) → GLB. Svaki nivo ima jednu ulogu, pa se rotacije ne sudaraju.
+- Ako se GLB ne učita, hero prikazuje fotografiju (nema više proceduralnog prsluka na početnoj).
+- Nova verzija modela: zamenite oba fajla. Mobilnu kopiju možete napraviti bilo kojim glTF alatom (npr. `gltf-transform
+  resize --width 2048 --height 2048`). Ako je orijentacija drugačija, podesite `rotationY`.
 
 ## Performanse i pristupačnost
 

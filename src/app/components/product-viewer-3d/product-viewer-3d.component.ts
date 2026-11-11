@@ -5,6 +5,7 @@ import {
   ElementRef,
   afterNextRender,
   inject,
+  computed,
   output,
   signal,
   viewChild,
@@ -32,8 +33,17 @@ import type { HeroScene } from '../../three/hero-scene';
     ></canvas>
     @if (state() === 'loading') {
       <div class="viewer__loader" role="status">
-        <span class="viewer__loader-bar"></span>
-        <span class="viewer__loader-text">Učitavanje 3D modela</span>
+        <span class="viewer__loader-bar" [class.has-progress]="progress() > 0">
+          @if (progress() > 0) {
+            <span
+              class="viewer__loader-fill"
+              [style.transform]="'scaleX(' + progress() + ')'"
+            ></span>
+          }
+        </span>
+        <span class="viewer__loader-text"
+          >Učitavanje 3D modela{{ progress() > 0 ? ' · ' + percent() + '%' : '' }}</span
+        >
       </div>
     }
   `,
@@ -77,6 +87,16 @@ import type { HeroScene } from '../../three/hero-scene';
       background: var(--red);
       animation: load 1.4s var(--ease-in-out) infinite;
     }
+    .viewer__loader-bar.has-progress::after {
+      display: none;
+    }
+    .viewer__loader-fill {
+      position: absolute;
+      inset: 0;
+      background: var(--red);
+      transform-origin: left center;
+      transition: transform 0.3s linear;
+    }
     .viewer__loader-text {
       font-family: var(--font-mono);
       font-size: 0.62rem;
@@ -98,6 +118,9 @@ export class ProductViewer3dComponent {
   readonly ready = output<HeroScene>();
   readonly failed = output<void>();
   readonly state = signal<'loading' | 'ready' | 'failed'>('loading');
+  /** GLB download progress 0–1 (0 = unknown → indeterminate bar) */
+  readonly progress = signal(0);
+  readonly percent = computed(() => Math.round(this.progress() * 100));
 
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   private readonly device = inject(DeviceCapabilityService);
@@ -124,8 +147,15 @@ export class ProductViewer3dComponent {
         quality: this.device.quality === 'high' ? 'high' : 'low',
         pixelRatio: this.device.pixelRatio,
         reducedMotion: this.device.reducedMotion(),
+        // phones / low tier: same mesh, 2048² textures (5.5 MB instead of 16 MB)
+        preferMobileModel: this.device.quality !== 'high' || window.innerWidth < 900,
       });
-      await scene.init();
+      try {
+        await scene.init((p) => this.progress.set(p));
+      } catch (err) {
+        scene.dispose();
+        throw err;
+      }
       if (this.destroyed) return scene.dispose();
       this.scene = scene;
       this.state.set('ready');

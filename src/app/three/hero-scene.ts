@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { THREE_ASSETS } from '../core/config/three-assets.config';
 import { loadModel } from './model-loader';
-import { createProceduralVest } from './procedural-vest';
 import { disposeObject, dotTexture, radialShadowTexture } from './three-utils';
 
 /**
@@ -45,6 +44,8 @@ export interface HeroSceneOptions {
   quality: 'high' | 'low';
   pixelRatio: number;
   reducedMotion: boolean;
+  /** load the lighter GLB copy (2048² textures) — phones / low-tier GPUs */
+  preferMobileModel?: boolean;
 }
 
 export class HeroScene {
@@ -86,7 +87,21 @@ export class HeroScene {
     this.renderer.setClearColor(0x000000, 0);
   }
 
-  async init(): Promise<'glb' | 'procedural'> {
+  /** URL of the GLB that was loaded (for diagnostics / tests) */
+  modelUrl = '';
+
+  /**
+   * Loads the real CeroLeather vest (GLB). Rejects if it cannot be loaded — the component then
+   * shows the photographic fallback; there is no procedural stand-in for the hero any more.
+   *
+   * Hierarchy (each level has ONE job, so rotations never fight):
+   *   pivot  ← GSAP scroll state: rotY / rotX / position / scale (+ subtle pointer parallax)
+   *   └ tilt ← idle "breathing" bob
+   *     └ model-wrapper ← centring + uniform scale to targetHeight (model-loader)
+   *       └ model-orientation ← fixed −90° Y: the file's front faces +X, the scene expects +Z
+   *         └ gltf.scene (untouched)
+   */
+  async init(onProgress?: (fraction: number) => void): Promise<'glb' | 'procedural'> {
     this.pmrem = new THREE.PMREMGenerator(this.renderer);
     this.envTex = this.pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     this.scene.environment = this.envTex;
@@ -94,16 +109,34 @@ export class HeroScene {
 
     this.setupLights();
 
-    const { object, source } = await loadModel(THREE_ASSETS.heroVest, () =>
-      createProceduralVest({ quality: this.opts.quality }),
+    const { object, source, url } = await loadModel(
+      THREE_ASSETS.heroVest,
+      () => {
+        throw new Error('hero uses no placeholder');
+      },
+      { preferMobile: this.opts.preferMobileModel, onProgress },
     );
+    this.modelUrl = url ?? '';
     this.tilt.add(object);
     this.pivot.add(this.tilt);
     this.scene.add(this.pivot);
+    // Upload the (large) textures now, before the canvas fades in, so the first scroll frames
+    // don't stutter while 4K maps are pushed to the GPU.
+    object.traverse((o) => {
+      const mat = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
+      if (!mat?.isMeshStandardMaterial) return;
+      for (const tex of [mat.map, mat.normalMap, mat.roughnessMap, mat.metalnessMap])
+        if (tex) this.renderer.initTexture(tex);
+    });
 
     const shadow = new THREE.Mesh(
       new THREE.PlaneGeometry(3.2, 1.4),
-      new THREE.MeshBasicMaterial({ map: radialShadowTexture(), transparent: true, depthWrite: false, opacity: 0.9 }),
+      new THREE.MeshBasicMaterial({
+        map: radialShadowTexture(),
+        transparent: true,
+        depthWrite: false,
+        opacity: 0.9,
+      }),
     );
     shadow.rotation.x = -Math.PI / 2;
     shadow.position.y = -THREE_ASSETS.heroVest.targetHeight / 2 - 0.18;
@@ -167,7 +200,10 @@ export class HeroScene {
   }
 
   private onPointer = (e: PointerEvent) => {
-    this.pointer.set((e.clientX / window.innerWidth) * 2 - 1, (e.clientY / window.innerHeight) * 2 - 1);
+    this.pointer.set(
+      (e.clientX / window.innerWidth) * 2 - 1,
+      (e.clientY / window.innerHeight) * 2 - 1,
+    );
   };
 
   private resize(): void {
