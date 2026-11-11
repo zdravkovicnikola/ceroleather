@@ -7,13 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import {
-  IsActiveMatchOptions,
-  NavigationEnd,
-  Router,
-  RouterLink,
-  RouterLinkActive,
-} from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { SITE_CONFIG } from '../../core/config/site.config';
 import { InstagramIconComponent } from '../../shared/components/instagram-icon.component';
 import { LogoComponent } from '../../shared/components/logo.component';
@@ -21,7 +15,6 @@ import { LogoComponent } from '../../shared/components/logo.component';
 interface NavItem {
   label: string;
   link: string;
-  fragment?: string;
   exact?: boolean;
 }
 
@@ -38,7 +31,6 @@ export class HeaderComponent {
     { label: 'Katalog', link: '/katalog' },
     { label: 'O nama', link: '/o-nama' },
     { label: 'Po meri', link: '/porudzbina' },
-    { label: 'Kontakt', link: '/', fragment: 'kontakt' },
   ];
 
   readonly instagramUrl = SITE_CONFIG.instagramUrl;
@@ -75,13 +67,6 @@ export class HeaderComponent {
       window.addEventListener('scroll', onScroll, { passive: true });
       destroyRef.onDestroy(() => window.removeEventListener('scroll', onScroll));
     });
-  }
-
-  /** Anchor links ("/#kontakt") are active only at that anchor — not on every page. */
-  activeOptions(item: NavItem): IsActiveMatchOptions | { exact: boolean } {
-    if (item.fragment)
-      return { paths: 'exact', fragment: 'exact', queryParams: 'ignored', matrixParams: 'ignored' };
-    return { exact: item.exact ?? false };
   }
 
   toggleMenu(): void {

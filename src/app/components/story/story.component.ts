@@ -11,10 +11,25 @@ import { RevealDirective } from '../../shared/directives/reveal.directive';
 })
 export class StoryComponent {
   readonly pillars = [
-    { title: 'Ručna izrada', text: 'Svaki komad se kroji i šije ručno, jedan po jedan. Bez serijske proizvodnje.' },
-    { title: 'Prava koža', text: 'Koža koja vremenom dobija karakter i nosi tragove vaših kilometara.' },
-    { title: 'Pažnja na detaljima', text: 'Šavovi, opšivene ivice, rajsferšlusi i kopče — svaki detalj ima svoju funkciju.' },
-    { title: 'Vaše mere', text: 'Prsluk se kroji prema vašim merama, a ne prema tabeli standardnih veličina.' },
-    { title: 'Individualni dizajn', text: 'Džepovi, kopče, vezivanje, kragna — zajedno biramo detalje koji vas opisuju.' },
+    {
+      title: 'Ručna izrada',
+      text: 'Svaki komad se kroji i šije ručno, jedan po jedan. Bez serijske proizvodnje.',
+    },
+    {
+      title: 'Prava koža',
+      text: 'Koža koja vremenom dobija karakter i nosi tragove vaših kilometara.',
+    },
+    {
+      title: 'Pažnja na detaljima',
+      text: 'Šavovi, opšivene ivice, rajsferšlusi i kopče — svaki detalj ima svoju funkciju.',
+    },
+    {
+      title: 'Vaše mere',
+      text: 'Prsluk se kroji prema vašim merama, a ne prema tabeli standardnih veličina.',
+    },
+    {
+      title: 'Individualni dizajn',
+      text: 'Džepovi, kopče, vezivanje, kragna — zajedno biramo detalje koji vas opisuju.',
+    },
   ];
 }

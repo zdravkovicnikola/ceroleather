@@ -173,7 +173,8 @@ export class ProductViewer360Component {
 
     inject(DestroyRef).onDestroy(() => {
       this.destroyed = true;
-      cancelAnimationFrame(this.raf);
+      // also runs during server prerendering, where there is no animation-frame API
+      if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(this.raf);
       this.cleanup.forEach((fn) => fn());
       // let the browser release the decoded bitmaps
       this.frames.forEach((img) => img.removeAttribute('src'));

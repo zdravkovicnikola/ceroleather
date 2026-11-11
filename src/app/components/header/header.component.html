@@ -14,9 +14,8 @@
         <a
           class="header__link link-underline"
           [routerLink]="item.link"
-          [fragment]="item.fragment"
           routerLinkActive="is-active"
-          [routerLinkActiveOptions]="activeOptions(item)"
+          [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
           >{{ item.label }}</a
         >
       }
@@ -43,7 +42,6 @@
         <a
           class="menu__link"
           [routerLink]="item.link"
-          [fragment]="item.fragment"
           [style.transition-delay]="menuOpen() ? 0.1 + i * 0.06 + 's' : '0s'"
           [attr.tabindex]="menuOpen() ? 0 : -1"
           (click)="closeMenu()"

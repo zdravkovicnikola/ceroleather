@@ -166,8 +166,148 @@ export const PRODUCTS: Product[] = [
       img('lace-vest-detail-tag', 'detail', 'CeroLeather etiketa', 'Etiketa'),
     ],
   },
-  // Kožne jakne: add jacket models here with category: 'jakne'.
-  // Until then the catalog shows a "jakna po meri" request card for this category.
+
+  // ── Models from the workshop photo folders ("CeroLeather slike/<MODEL>/") ──────────────
+  // Images: public/assets/images/products/<folder>/<view>.webp (+ <view>-sm.webp).
+  // Descriptions list only what is visible in the photos — confirm/extend with the workshop.
+  {
+    slug: 'prsluk-kosmaj',
+    name: 'Kosmaj',
+    category: 'prsluci',
+    shortDescription:
+      'Crni kožni prsluk sa prošivenim ramenima, bočnim trakama sa kopčama i postavom na kocke.',
+    description: [
+      'Prsluk od crne zrnaste kože sa okruglim izrezom, centralnim rajsferšlusom i romboidno prošivenim panelima na ramenima.',
+      'Sa strane su po četiri kožne trake sa metalnim kopčama, a napred dva vertikalna džepa sa rajsferšlusom. Kada se otvori, vidi se crno-bela postava na kocke.',
+    ],
+    features: [
+      'Romboidno prošiveni paneli na ramenima',
+      'Po četiri bočne kožne trake sa metalnim kopčama',
+      'Dva vertikalna džepa sa rajsferšlusom',
+      'Centralni rajsferšlus i okrugli izrez',
+      'Crno-bela postava na kocke',
+    ],
+    images: [
+      img('kosmaj/front', 'front', 'Crni kožni prsluk Kosmaj — prednja strana, zakopčan'),
+      img(
+        'kosmaj/open',
+        'open',
+        'Prsluk Kosmaj — otkopčan, vidi se crno-bela postava na kocke',
+        'Postava na kocke',
+      ),
+    ],
+  },
+  {
+    slug: 'prsluk-protect',
+    name: 'Protect',
+    category: 'prsluci',
+    shortDescription:
+      'Kožni prsluk sa horizontalno prošivenim grudnim panelom i podesivim bočnim trakama.',
+    description: [
+      'Prsluk od crne kože sa horizontalno prošivenim (rebrastim) panelom preko grudi i ramena i prošivenim panelima napred.',
+      'Centralni rajsferšlus, dva vertikalna džepa sa rajsferšlusom i po četiri kožne trake sa strane za podešavanje širine. Leđa su čista, sa vertikalnim šavom.',
+    ],
+    features: [
+      'Horizontalno prošiven panel na grudima i ramenima',
+      'Po četiri bočne kožne trake',
+      'Dva vertikalna džepa sa rajsferšlusom',
+      'Centralni rajsferšlus i okrugli izrez',
+    ],
+    images: [
+      img('protect/front', 'front', 'Kožni prsluk Protect — prednja strana sa prošivenim panelom'),
+      img('protect/back', 'back', 'Kožni prsluk Protect — zadnja strana sa bočnim trakama'),
+    ],
+  },
+  {
+    slug: 'prsluk-swat',
+    name: 'SWAT',
+    category: 'prsluci',
+    shortDescription:
+      'Taktički kožni prsluk sa brzim kopčama na ramenima i maskirnim (kamuflažnim) panelima.',
+    description: [
+      'Prsluk taktičkog izgleda od crne kože, sa podesivim trakama i brzim kopčama na ramenima.',
+      'Napred su paneli od maskirnog materijala u tamnim tonovima i džep sa preklopom, a sa strane trake sa kopčama. Leđa su od crne kože sa poprečnim šavom.',
+    ],
+    features: [
+      'Brze kopče na ramenim trakama',
+      'Paneli od tamnog maskirnog materijala',
+      'Džep sa preklopom napred',
+      'Bočne trake sa kopčama',
+    ],
+    images: [
+      img('swat/front', 'front', 'Kožni prsluk SWAT — prednja strana sa maskirnim panelima'),
+      img(
+        'swat/front-top',
+        'detail',
+        'Prsluk SWAT odozgo — brze kopče na ramenima',
+        'Kopče na ramenima',
+      ),
+      img('swat/back', 'back', 'Kožni prsluk SWAT — zadnja strana'),
+    ],
+  },
+  {
+    slug: 'jakna-cherry',
+    name: 'Cherry',
+    category: 'jakne',
+    shortDescription: 'Ženska kožna jakna u boji višnje, sjajne teksture, sa džepovima na preklop.',
+    description: [
+      'Ženski model kraćeg kroja od sjajne kože sa reljefnom teksturom, u tamnoj boji višnje.',
+      'Kragna, kopčanje na dugmad, džepovi sa preklopom na grudima i dva donja džepa. Na leđima su dekorativne aplikacije.',
+    ],
+    features: [
+      'Sjajna koža sa reljefnom teksturom, boja višnje',
+      'Kragna i kopčanje na dugmad',
+      'Džepovi sa preklopom na grudima',
+      'Dekorativne aplikacije na leđima',
+    ],
+    images: [
+      img('cherry/front', 'front', 'Ženska kožna jakna Cherry — prednja strana'),
+      img(
+        'cherry/front-detail',
+        'detail',
+        'Jakna Cherry — džepovi sa preklopom izbliza',
+        'Džepovi na preklop',
+      ),
+      img('cherry/three-quarter', 'side', 'Jakna Cherry — pogled sa strane, napred'),
+      img('cherry/side', 'side', 'Jakna Cherry — bočna strana'),
+      img(
+        'cherry/back',
+        'back',
+        'Jakna Cherry — leđa sa dekorativnim aplikacijama',
+        'Aplikacije na leđima',
+      ),
+    ],
+  },
+  {
+    // Source folder: "Second woman model" — display name chosen from the dusty-pink colour.
+    slug: 'jakna-blush',
+    name: 'Blush',
+    category: 'jakne',
+    shortDescription:
+      'Ženska moto jakna u pastelno roze tonu, sa metalik panelima i kopčama na rukavima.',
+    description: [
+      'Ženski model kraćeg, moto kroja sa kosim rajsferšlusom i širokom kragnom.',
+      'Prednji i zadnji paneli su od sjajne, metalik kože sa sitnom teksturom, a rukavi i bočni delovi u mat, pastelno roze tonu. Na rukavima su po tri trake sa metalnim kopčama i rajsferšlus, a napred džepovi sa rajsferšlusom.',
+    ],
+    features: [
+      'Kosi (moto) rajsferšlus i široka kragna',
+      'Metalik paneli sa sitnom teksturom',
+      'Tri trake sa metalnim kopčama na svakom rukavu',
+      'Rajsferšlus na rukavima',
+      'Džepovi sa rajsferšlusom',
+    ],
+    images: [
+      img('blush/front', 'front', 'Ženska kožna moto jakna Blush — prednja strana'),
+      img('blush/back', 'back', 'Jakna Blush — zadnja strana sa metalik panelom'),
+      img(
+        'blush/detail-sleeve',
+        'detail',
+        'Jakna Blush — rukav sa tri trake i metalnim kopčama',
+        'Kopče na rukavu',
+      ),
+    ],
+  },
+  // Add new models here — one object per product folder.
 ];
 
 export function findProduct(slug: string | null | undefined): Product | undefined {

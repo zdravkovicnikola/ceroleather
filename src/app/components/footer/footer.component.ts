@@ -32,7 +32,6 @@ import { LogoComponent } from '../../shared/components/logo.component';
           <a routerLink="/katalog" class="link-underline">Katalog</a>
           <a routerLink="/o-nama" class="link-underline">O nama</a>
           <a routerLink="/porudzbina" class="link-underline">Porudžbina po meri</a>
-          <a routerLink="/" fragment="kontakt" class="link-underline">Kontakt</a>
         </nav>
 
         <nav class="footer__col" aria-label="Kategorije">

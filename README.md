@@ -41,10 +41,13 @@ src/app/
   models/             TypeScript tipovi
   three/              čist Three.js: hero-scene, mannequin-scene, proceduralni modeli, loader
   components/         header, footer, hero, product-viewer-3d, product-viewer-360, story, product-card,
-                      product-catalog, product-gallery, measurement-guide, order-form, contact-section
+                      product-catalog, product-gallery, measurement-guide, order-form, process
   pages/              home, catalog, product-detail, about (O nama), order, not-found
   shared/             logo, instagram ikona, reveal i parallax direktive
-public/assets/        images/products/*.webp, images/360/<model>/NN.webp, images/textures/, models/ (GLB)
+public/assets/        images/products/*.webp, images/360/<model>/NN.webp, images/textures/, models/ (GLB),
+                      images/brand/logo-reference.webp (originalna tkana etiketa — „potpis radionice“ na početnoj)
+public/               favicon.ico (16/32/48), favicon-16x16/32x32.png, apple-touch-icon.png, icon-192/512.png,
+                      site.webmanifest — iz originalne etikete (logo-reference.jpg): belo pismo sa fotografije na crvenom kvadratu
 public/videos/        prsluk-360.mp4 (izvorni snimak za 360° frejmove)
 scripts/              generate-seo-files.mjs
 ```
@@ -53,7 +56,7 @@ Rute: `/`, `/katalog?kategorija=prsluci|jakne|custom`, `/katalog/:slug`, `/o-nam
 
 ## Dodavanje proizvoda
 
-1. Slike stavite u `public/assets/images/products/` — po dve WebP verzije: `ime.webp` (~1600px) i `ime-sm.webp` (~760px).
+1. Slike stavite u `public/assets/images/products/<model>/` (jedna fascikla po modelu, kao `kosmaj/`, `cherry/`) — po dve WebP verzije: `pogled.webp` (najduža strana ≤1600px) i `pogled-sm.webp` (širina 760px). U podacima: `img('kosmaj/front', 'front', 'opis slike')`. **Prva slika** u nizu je slika u katalogu; ostale su u galeriji. Galerija prikazuje celu fotografiju (bez sečenja), pa format snimka nije bitan.
 2. Dodajte objekat u `PRODUCTS` u `src/app/data/products.data.ts` (`slug`, `name`, `category`, opisi, `features`, `images`).
 3. `price` je opcion; cene se prikazuju tek kada je `SITE_CONFIG.showPrices = true`.
 4. `measurementIds` (opciono) ograničava koje mere vodič prikazuje za taj model.

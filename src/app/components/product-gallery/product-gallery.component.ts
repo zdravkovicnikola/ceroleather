@@ -15,7 +15,13 @@ const KIND_LABEL: Record<ProductImageKind, string> = {
   template: `
     @let imgs = product().images;
     <div class="pg" (keydown.arrowRight)="step(1)" (keydown.arrowLeft)="step(-1)">
-      <div class="pg__stage" role="group" aria-roledescription="galerija" [attr.aria-label]="'Fotografije: ' + product().name">
+      <div
+        class="pg__stage"
+        [style.--pg-backdrop]="'url(' + imgs[active()].srcSm + ')'"
+        role="group"
+        aria-roledescription="galerija"
+        [attr.aria-label]="'Fotografije: ' + product().name"
+      >
         @for (img of imgs; track img.src; let i = $index) {
           <img
             class="pg__img"
@@ -34,10 +40,20 @@ const KIND_LABEL: Record<ProductImageKind, string> = {
           <span class="pg__count">{{ active() + 1 }} / {{ imgs.length }}</span>
         </div>
         @if (imgs.length > 1) {
-          <button type="button" class="pg__arrow pg__arrow--prev" (click)="step(-1)" aria-label="Prethodna fotografija">
+          <button
+            type="button"
+            class="pg__arrow pg__arrow--prev"
+            (click)="step(-1)"
+            aria-label="Prethodna fotografija"
+          >
             <span></span>
           </button>
-          <button type="button" class="pg__arrow pg__arrow--next" (click)="step(1)" aria-label="Sledeća fotografija">
+          <button
+            type="button"
+            class="pg__arrow pg__arrow--next"
+            (click)="step(1)"
+            aria-label="Sledeća fotografija"
+          >
             <span></span>
           </button>
         }
