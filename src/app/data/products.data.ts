@@ -25,8 +25,7 @@ export const PRODUCTS: Product[] = [
     name: 'Strap',
     category: 'prsluci',
     featured: true,
-    shortDescription:
-      'Crni kožni prsluk sa podesivim bočnim trakama i prošivenim ramenim panelom.',
+    shortDescription: 'Crni kožni prsluk sa podesivim bočnim trakama i prošivenim ramenim panelom.',
     description: [
       'Prsluk od crne zrnaste kože sa prošivenim, rebrastim panelom na ramenima i kosim panelima napred koji prate liniju tela.',
       'Sa strane su elastični umeci i po četiri kožne trake sa kopčama, pa se širina prsluka može podesiti na telu. Napred je vertikalni džep sa rajsferšlusom, a unutra, na postavi, još jedan džep sa rajsferšlusom.',
@@ -41,10 +40,29 @@ export const PRODUCTS: Product[] = [
     ],
     images: [
       img('strap-vest-side', 'side', 'Crni kožni prsluk Strap — bočna strana sa podesivim trakama'),
-      img('strap-vest-front-open', 'open', 'Prsluk Strap — otvoren, vidi se postava i unutrašnji džep'),
-      img('strap-vest-detail-straps', 'detail', 'Detalj bočnih kožnih traka sa kopčama', 'Bočne trake'),
-      img('strap-vest-detail-shoulder', 'detail', 'Detalj prošivenog ramenog panela', 'Rameni panel'),
-      img('strap-vest-detail-pocket', 'detail', 'Unutrašnji džep sa rajsferšlusom', 'Unutrašnji džep'),
+      img(
+        'strap-vest-front-open',
+        'open',
+        'Prsluk Strap — otvoren, vidi se postava i unutrašnji džep',
+      ),
+      img(
+        'strap-vest-detail-straps',
+        'detail',
+        'Detalj bočnih kožnih traka sa kopčama',
+        'Bočne trake',
+      ),
+      img(
+        'strap-vest-detail-shoulder',
+        'detail',
+        'Detalj prošivenog ramenog panela',
+        'Rameni panel',
+      ),
+      img(
+        'strap-vest-detail-pocket',
+        'detail',
+        'Unutrašnji džep sa rajsferšlusom',
+        'Unutrašnji džep',
+      ),
       img('strap-vest-detail-grain', 'detail', 'Tekstura zrnaste kože izbliza', 'Tekstura kože'),
     ],
   },
@@ -68,6 +86,14 @@ export const PRODUCTS: Product[] = [
       img('buckle-vest-front', 'front', 'Kožni prsluk Buckle — prednja strana'),
       img('buckle-vest-back', 'back', 'Kožni prsluk Buckle — zadnja strana sa bočnim kaiševima'),
     ],
+    // 72 frames extracted from public/videos/prsluk-360.mp4 (watermark cropped out)
+    spin360: {
+      path: 'assets/images/360/prsluk-buckle',
+      frames: 72,
+      size: 720,
+      sizeSm: 420,
+      alt: 'Kožni prsluk Buckle — 360° prikaz, okretanje prevlačenjem',
+    },
     note: 'Photos are cropped phone screenshots of a listing — replace with original high-res photos.',
   },
   {
@@ -131,7 +157,12 @@ export const PRODUCTS: Product[] = [
     ],
     images: [
       img('lace-vest-front', 'front', 'Kožni prsluk Lace Side sa bočnim vezivanjem'),
-      img('lace-vest-detail-lacing', 'detail', 'Detalj bočnog vezivanja kožnom pertlom', 'Bočno vezivanje'),
+      img(
+        'lace-vest-detail-lacing',
+        'detail',
+        'Detalj bočnog vezivanja kožnom pertlom',
+        'Bočno vezivanje',
+      ),
       img('lace-vest-detail-tag', 'detail', 'CeroLeather etiketa', 'Etiketa'),
     ],
   },

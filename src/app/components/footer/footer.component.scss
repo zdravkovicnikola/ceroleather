@@ -99,3 +99,18 @@
     flex-direction: column;
   }
 }
+
+.footer__ig {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  transition: color 0.3s;
+  app-instagram-icon {
+    font-size: 1.25rem;
+    color: var(--red);
+  }
+  &:hover app-instagram-icon {
+    color: var(--text);
+  }
+}

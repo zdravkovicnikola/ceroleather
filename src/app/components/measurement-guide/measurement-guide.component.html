@@ -2,10 +2,13 @@
   <header class="mg__head">
     <div>
       <p class="eyebrow">Vodič za merenje</p>
-      <h2 id="mg-title" class="mg__title">Izmerite se <span class="text-red">korak po korak</span></h2>
+      <h2 id="mg-title" class="mg__title">
+        Izmerite se <span class="text-red">korak po korak</span>
+      </h2>
     </div>
     <p class="mg__count" aria-live="polite">
-      <strong>{{ completedCount() }}</strong>/{{ definitions().length }} mere unete
+      <strong>{{ completedCount() }}</strong
+      >/{{ requiredCount() }} obavezne mere unete
     </p>
   </header>
 
@@ -27,7 +30,12 @@
             {{ i + 1 }}
           }
         </span>
-        <span class="mg__tab-label">{{ d.label }}</span>
+        <span class="mg__tab-label"
+          >{{ d.label }}
+          @if (!d.required) {
+            <small class="mg__tab-opt"> · opciono</small>
+          }
+        </span>
       </button>
     }
   </nav>
@@ -62,22 +70,38 @@
           @for (d of definitions(); track d.id; let i = $index) {
             <li>
               <span>{{ d.label }}</span>
-              <strong [class.text-red]="!completed()[i]">{{ valueOf(d.id) != null ? valueOf(d.id) + ' cm' : 'nije uneto' }}</strong>
+              <strong [class.text-red]="d.required && !completed()[i]">{{
+                valueOf(d.id) != null
+                  ? valueOf(d.id) + ' cm'
+                  : d.required
+                    ? 'nije uneto'
+                    : 'opciono — nije uneto'
+              }}</strong>
               <button type="button" class="mg__edit link-underline" (click)="go(i)">Izmeni</button>
             </li>
           }
         </ul>
         @if (!allDone()) {
-          <p class="mg__summary-note">Nedostaju neke mere — kliknite „Izmeni” da ih dopunite.</p>
+          <p class="mg__summary-note">
+            Nedostaju neke obavezne mere — kliknite „Izmeni” da ih dopunite.
+          </p>
         }
       </div>
     }
 
     <div class="mg__nav">
-      <button type="button" class="btn btn--sm" (click)="prev()" [disabled]="index() === 0 && !showSummary()">Nazad</button>
+      <button
+        type="button"
+        class="btn btn--sm"
+        (click)="prev()"
+        [disabled]="index() === 0 && !showSummary()"
+      >
+        Nazad
+      </button>
       @if (!showSummary()) {
         <button type="button" class="btn btn--sm btn--primary" (click)="next()">
-          {{ index() < definitions().length - 1 ? 'Sledeća mera' : 'Pregled mera' }} <span class="btn__arrow"></span>
+          {{ index() < definitions().length - 1 ? 'Sledeća mera' : 'Pregled mera' }}
+          <span class="btn__arrow"></span>
         </button>
       } @else {
         <button type="button" class="btn btn--sm btn--primary" (click)="proceed.emit()">

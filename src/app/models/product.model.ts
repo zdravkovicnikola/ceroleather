@@ -27,6 +27,22 @@ export interface ProductPrice {
   prefix?: string;
 }
 
+/**
+ * Frame sequence for the interactive 360° viewer (NOT a 3D model — a series of
+ * images taken at evenly spaced angles around the product).
+ * Files: `${path}/00.webp … ${path}/NN.webp` (large) and `NN-sm.webp` (small, phones).
+ */
+export interface ProductSpin360 {
+  path: string;
+  frames: number;
+  /** Pixel size of the large / small square frames */
+  size: number;
+  sizeSm: number;
+  /** +1 if increasing frame index rotates the product to its left (clockwise seen from above) */
+  direction?: 1 | -1;
+  alt: string;
+}
+
 export interface Product {
   /** URL-safe unique id: /katalog/:slug */
   slug: string;
@@ -39,6 +55,8 @@ export interface Product {
   /** Only features that are actually visible / confirmed by the workshop */
   features: string[];
   images: ProductImage[];
+  /** Optional interactive 360° frame sequence */
+  spin360?: ProductSpin360;
   /** Optional — shown only when SITE_CONFIG.showPrices is true */
   price?: ProductPrice;
   /** Which measurement definitions apply. Omit = all default measurements. */

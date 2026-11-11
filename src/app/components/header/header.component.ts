@@ -1,5 +1,21 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { DOCUMENT } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  afterNextRender,
+  inject,
+  signal,
+} from '@angular/core';
+import {
+  IsActiveMatchOptions,
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
+import { SITE_CONFIG } from '../../core/config/site.config';
+import { InstagramIconComponent } from '../../shared/components/instagram-icon.component';
 import { LogoComponent } from '../../shared/components/logo.component';
 
 interface NavItem {
@@ -11,7 +27,7 @@ interface NavItem {
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, LogoComponent],
+  imports: [RouterLink, RouterLinkActive, LogoComponent, InstagramIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
@@ -20,40 +36,62 @@ export class HeaderComponent {
   readonly nav: NavItem[] = [
     { label: 'Početna', link: '/', exact: true },
     { label: 'Katalog', link: '/katalog' },
+    { label: 'O nama', link: '/o-nama' },
     { label: 'Po meri', link: '/porudzbina' },
     { label: 'Kontakt', link: '/', fragment: 'kontakt' },
   ];
+
+  readonly instagramUrl = SITE_CONFIG.instagramUrl;
+  readonly instagramHandle = SITE_CONFIG.instagramHandle;
 
   readonly scrolled = signal(false);
   readonly hidden = signal(false);
   readonly menuOpen = signal(false);
 
+  private readonly doc = inject(DOCUMENT);
+
   constructor() {
-    let last = 0;
-    const onScroll = () => {
-      const y = window.scrollY;
-      this.scrolled.set(y > 40);
-      this.hidden.set(!this.menuOpen() && y > 400 && y > last + 2);
-      if (y < last - 2) this.hidden.set(false);
-      last = y;
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
+    const destroyRef = inject(DestroyRef);
     const sub = inject(Router).events.subscribe((e) => {
       if (e instanceof NavigationEnd) this.closeMenu();
     });
-    inject(DestroyRef).onDestroy(() => {
-      window.removeEventListener('scroll', onScroll);
-      sub.unsubscribe();
+    destroyRef.onDestroy(() => sub.unsubscribe());
+
+    // Browser only (the page is also prerendered on the server).
+    afterNextRender(() => {
+      // Hide-on-scroll is a desktop nicety only. On phones/tablets the header must stay
+      // reachable at all times, otherwise the menu is lost far down the page.
+      const desktop = window.matchMedia('(min-width: 961px)');
+      let last = window.scrollY;
+      const onScroll = () => {
+        const y = window.scrollY;
+        this.scrolled.set(y > 40);
+        if (!desktop.matches || this.menuOpen() || y < 400) this.hidden.set(false);
+        else if (y > last + 2) this.hidden.set(true);
+        else if (y < last - 2) this.hidden.set(false);
+        last = y;
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      destroyRef.onDestroy(() => window.removeEventListener('scroll', onScroll));
     });
+  }
+
+  /** Anchor links ("/#kontakt") are active only at that anchor — not on every page. */
+  activeOptions(item: NavItem): IsActiveMatchOptions | { exact: boolean } {
+    if (item.fragment)
+      return { paths: 'exact', fragment: 'exact', queryParams: 'ignored', matrixParams: 'ignored' };
+    return { exact: item.exact ?? false };
   }
 
   toggleMenu(): void {
     this.menuOpen.update((v) => !v);
-    document.documentElement.style.overflow = this.menuOpen() ? 'hidden' : '';
+    this.doc.documentElement.style.overflow = this.menuOpen() ? 'hidden' : '';
+    if (this.menuOpen()) this.hidden.set(false);
   }
 
   closeMenu(): void {
     this.menuOpen.set(false);
-    document.documentElement.style.overflow = '';
+    this.doc.documentElement.style.overflow = '';
   }
 }

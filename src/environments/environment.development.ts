@@ -9,6 +9,7 @@ export const environment = {
     serviceId: '',
     templateId: '',
     publicKey: '',
-    toEmail: 'kontakt@ceroleather.com',
+    // The recipient is NOT configured here: set "To Email" in the EmailJS template
+    // (currently the test inbox nzdravkovic2001@gmail.com). See README → EmailJS.
   },
 };

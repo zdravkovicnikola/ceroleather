@@ -22,12 +22,27 @@ import { MeasurementFigureSvgComponent } from './measurement-figure-svg.componen
  */
 @Component({
   selector: 'app-measurement-viewer-3d',
+  // Browser-dependent output (WebGL, device tier, query params) — rendered on the client, not hydrated.
+  host: { ngSkipHydration: 'true' },
   imports: [MeasurementFigureSvgComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="mv" [class.mv--3d]="mode() === '3d'">
+      @if (activeDef(); as d) {
+        @if (!d.guide3d) {
+          <div class="mv__note" aria-hidden="true">
+            <span class="mv__note-label">{{ d.label }}{{ d.required ? '' : ' · opciono' }}</span>
+            <span class="mv__note-value">{{ valueText() }}</span>
+            <span class="mv__note-text">Ne meri se na lutki — unesite okvirnu vrednost.</span>
+          </div>
+        }
+      }
       @if (mode() === 'svg') {
-        <app-measurement-figure-svg class="mv__svg" [definitions]="definitions()" [activeId]="activeId()" />
+        <app-measurement-figure-svg
+          class="mv__svg"
+          [definitions]="definitions()"
+          [activeId]="activeId()"
+        />
       } @else {
         <canvas #canvas class="mv__canvas" [class.is-ready]="ready()" aria-hidden="true"></canvas>
         @if (!ready()) {
@@ -36,7 +51,7 @@ import { MeasurementFigureSvgComponent } from './measurement-figure-svg.componen
         <div
           #label
           class="mv__label"
-          [class.is-visible]="labelVisible()"
+          [class.is-visible]="labelVisible() && !!activeDef()?.guide3d"
           aria-hidden="true"
         >
           <span class="mv__label-name">{{ activeDef()?.label }}</span>

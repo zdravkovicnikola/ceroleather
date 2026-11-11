@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, afterNextRender, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  afterNextRender,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -23,6 +32,8 @@ interface Chapter {
  */
 @Component({
   selector: 'app-hero',
+  // Browser-dependent output (WebGL, device tier, query params) — rendered on the client, not hydrated.
+  host: { ngSkipHydration: 'true' },
   imports: [RouterLink, ProductViewer3dComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './hero.component.html',
@@ -130,22 +141,82 @@ export class HeroComponent {
       .to('.hero__scroll', { opacity: 0, duration: 0.5 }, 0)
       .to(s, { rotY: -1.32, camZ: 3.9, camY: 0.05, objX: x(0.62), rotX: 0, duration: 2.5 }, 0)
       .to(s, { red: 0.6, duration: 2.5 }, 0)
-      .fromTo(chapters[0], { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 1.7)
+      .fromTo(
+        chapters[0],
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
+        1.7,
+      )
       .to(chapters[0], { opacity: 0, y: -50, duration: 0.6, ease: 'power2.in' }, 3.3)
 
       // ---- 2.5 → 5  close-up: leather texture, shoulder yoke ------------------
-      .to(s, { rotY: -0.3, camZ: 2.45, camY: 0.55, lookY: 0.42, objX: x(0.32), key: 1.35, duration: 2.6 }, 2.7)
-      .fromTo(chapters[1], { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 4.3)
+      .to(
+        s,
+        {
+          rotY: -0.3,
+          camZ: 2.45,
+          camY: 0.55,
+          lookY: 0.42,
+          objX: x(0.32),
+          key: 1.35,
+          duration: 2.6,
+        },
+        2.7,
+      )
+      .fromTo(
+        chapters[1],
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
+        4.3,
+      )
       .to(chapters[1], { opacity: 0, y: -50, duration: 0.6, ease: 'power2.in' }, 5.7)
 
       // ---- 5 → 7.5  pull back, reveal the back under a red rim light ----------
-      .to(s, { rotY: -3.3, camZ: 4.7, camY: 0.1, lookY: 0, objX: x(-0.6), key: 0.85, red: 1.7, rim: 1.6, duration: 2.6 }, 5.4)
-      .fromTo(chapters[2], { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 6.8)
+      .to(
+        s,
+        {
+          rotY: -3.3,
+          camZ: 4.7,
+          camY: 0.1,
+          lookY: 0,
+          objX: x(-0.6),
+          key: 0.85,
+          red: 1.7,
+          rim: 1.6,
+          duration: 2.6,
+        },
+        5.4,
+      )
+      .fromTo(
+        chapters[2],
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
+        6.8,
+      )
       .to(chapters[2], { opacity: 0, y: -50, duration: 0.6, ease: 'power2.in' }, 8.2)
 
       // ---- 7.5 → 10  final turn to the front, hand over to the next section --
-      .to(s, { rotY: -6.55, camZ: 5.4, objX: 0, objY: 0.12, scale: 0.86, red: 0.5, rim: 1, key: 1, duration: 2.4 }, 8)
-      .fromTo('.hero__outro', { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 1.2, ease: 'power3.out' }, 8.7)
+      .to(
+        s,
+        {
+          rotY: -6.55,
+          camZ: 5.4,
+          objX: 0,
+          objY: 0.12,
+          scale: 0.86,
+          red: 0.5,
+          rim: 1,
+          key: 1,
+          duration: 2.4,
+        },
+        8,
+      )
+      .fromTo(
+        '.hero__outro',
+        { opacity: 0, scale: 0.92 },
+        { opacity: 1, scale: 1, duration: 1.2, ease: 'power3.out' },
+        8.7,
+      )
       .to(s, { exposure: 0.55, dust: 0, duration: 1 }, 9.6)
       .to('.hero__veil', { opacity: 1, duration: 1 }, 9.6);
   }

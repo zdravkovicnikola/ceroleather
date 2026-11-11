@@ -20,9 +20,16 @@ import type { HeroScene } from '../../three/hero-scene';
  */
 @Component({
   selector: 'app-product-viewer-3d',
+  // Browser-dependent output (WebGL, device tier, query params) — rendered on the client, not hydrated.
+  host: { ngSkipHydration: 'true' },
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <canvas #canvas class="viewer__canvas" [class.is-ready]="state() === 'ready'" aria-hidden="true"></canvas>
+    <canvas
+      #canvas
+      class="viewer__canvas"
+      [class.is-ready]="state() === 'ready'"
+      aria-hidden="true"
+    ></canvas>
     @if (state() === 'loading') {
       <div class="viewer__loader" role="status">
         <span class="viewer__loader-bar"></span>
@@ -122,7 +129,9 @@ export class ProductViewer3dComponent {
       if (this.destroyed) return scene.dispose();
       this.scene = scene;
       this.state.set('ready');
-      this.observer = new IntersectionObserver(([entry]) => (entry.isIntersecting ? scene.start() : scene.stop()));
+      this.observer = new IntersectionObserver(([entry]) =>
+        entry.isIntersecting ? scene.start() : scene.stop(),
+      );
       this.observer.observe(this.host);
       this.ready.emit(scene);
     } catch (err) {

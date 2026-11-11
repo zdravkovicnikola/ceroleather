@@ -86,6 +86,24 @@
   color: var(--text-2);
 }
 
+/* Tablet & desktop: a calm, uniform grid — equal frames, aligned rows, no staggered offsets. */
+@media (min-width: 601px) {
+  .catalog__grid {
+    align-items: stretch;
+  }
+  .catalog__item--wide {
+    grid-column: auto;
+  }
+  .catalog__item:nth-child(n),
+  .catalog__item:nth-child(3n + 2):not(.catalog__item--wide) {
+    margin-top: 0;
+  }
+  .request-card {
+    aspect-ratio: auto;
+    min-height: 100%;
+  }
+}
+
 @media (max-width: 1000px) {
   .catalog__grid {
     grid-template-columns: repeat(2, 1fr);

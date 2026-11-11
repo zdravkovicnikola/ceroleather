@@ -1,49 +1,75 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SITE_CONFIG } from '../../core/config/site.config';
+import { InstagramIconComponent } from '../../shared/components/instagram-icon.component';
 import { LogoComponent } from '../../shared/components/logo.component';
 import { ParallaxDirective } from '../../shared/directives/parallax.directive';
 import { RevealDirective } from '../../shared/directives/reveal.directive';
 
 @Component({
   selector: 'app-contact-section',
-  imports: [RouterLink, LogoComponent, RevealDirective, ParallaxDirective],
+  imports: [RouterLink, LogoComponent, RevealDirective, ParallaxDirective, InstagramIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section id="kontakt" class="contact" aria-labelledby="contact-title">
       <div class="contact__media" aria-hidden="true">
-        <img appParallax [parallaxAmount]="14" src="assets/images/products/rider-vest-front-open.webp" alt="" loading="lazy" />
+        <img
+          appParallax
+          [parallaxAmount]="14"
+          src="assets/images/products/rider-vest-front-open.webp"
+          alt=""
+          loading="lazy"
+        />
       </div>
       <div class="container contact__inner">
         <p class="eyebrow" appReveal="fade">Kontakt</p>
         <h2 id="contact-title" class="display display--xl contact__title" appReveal="lines">
           <span class="line"><span>Tvoja mera.</span></span>
           <span class="line"><span>Tvoj stil.</span></span>
-          <span class="line"><span>Tvoj <span class="text-red">Cero</span>Leather.</span></span>
+          <span class="line"
+            ><span>Tvoj <span class="text-red">Cero</span>Leather.</span></span
+          >
         </h2>
 
         <div class="contact__grid" appReveal="stagger">
           <div class="contact__cta">
-            <p class="lead">Imate ideju za prsluk ili jaknu? Pošaljite mere i želje — napravićemo komad samo za vas.</p>
-            <a routerLink="/porudzbina" class="btn btn--primary">Zatraži komad po meri <span class="btn__arrow"></span></a>
+            <p class="lead">
+              Imate ideju za prsluk ili jaknu? Pošaljite mere i želje — napravićemo komad samo za
+              vas.
+            </p>
+            <a routerLink="/porudzbina" class="btn btn--primary"
+              >Zatraži komad po meri <span class="btn__arrow"></span
+            ></a>
           </div>
           <dl class="contact__details">
             <div>
               <dt>Email</dt>
               <dd>
-                <a [href]="'mailto:' + site.contactEmail" class="link-underline">{{ site.contactEmail }}</a>
+                <a [href]="'mailto:' + site.contactEmail" class="link-underline">{{
+                  site.contactEmail
+                }}</a>
               </dd>
             </div>
             <div>
               <dt>Instagram</dt>
               <dd>
-                <a [href]="site.instagramUrl" target="_blank" rel="noopener" class="link-underline">{{ site.instagramHandle }}</a>
+                <a
+                  [href]="site.instagramUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="contact__ig"
+                  aria-label="CeroLeather na Instagramu (otvara se u novom prozoru)"
+                >
+                  <app-instagram-icon />
+                  <span class="link-underline">{{ site.instagramHandle }}</span>
+                </a>
               </dd>
             </div>
             <div>
               <dt>Navigacija</dt>
               <dd class="contact__nav">
                 <a routerLink="/katalog" class="link-underline">Katalog</a>
+                <a routerLink="/o-nama" class="link-underline">O nama</a>
                 <a routerLink="/porudzbina" class="link-underline">Po meri</a>
               </dd>
             </div>
@@ -61,6 +87,15 @@ import { RevealDirective } from '../../shared/directives/reveal.directive';
       overflow: hidden;
       padding-block: clamp(120px, 16vw, 240px) clamp(80px, 10vw, 140px);
       isolation: isolate;
+    }
+    .contact__ig {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .contact__ig app-instagram-icon {
+      color: var(--red);
+      font-size: 1.2em;
     }
     .contact__media {
       position: absolute;

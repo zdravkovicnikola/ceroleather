@@ -47,6 +47,8 @@ export class MannequinScene {
   private pmrem?: THREE.PMREMGenerator;
   private envTex?: THREE.Texture;
   private readonly indicators = new Map<string, Indicator>();
+  private readonly defs = new Map<string, MeasurementDefinition>();
+  private activeId: string | null = null;
   private active: Indicator | null = null;
   private progress = 1;
   private pulse!: THREE.Sprite;
@@ -87,7 +89,9 @@ export class MannequinScene {
     red.position.set(-2.5, 0.5, -1.5);
     this.scene.add(key, rim, red);
 
-    const { object } = await loadModel(THREE_ASSETS.mannequin, () => createProceduralMannequin(this.opts.quality));
+    const { object } = await loadModel(THREE_ASSETS.mannequin, () =>
+      createProceduralMannequin(this.opts.quality),
+    );
     this.scene.add(object);
     object.updateMatrixWorld(true);
 
@@ -95,7 +99,10 @@ export class MannequinScene {
     object.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh) return;
-      const flagged = object.name === 'ProceduralMannequin' ? mesh.userData['measurable'] : !/stand|base|pole/i.test(mesh.name);
+      const flagged =
+        object.name === 'ProceduralMannequin'
+          ? mesh.userData['measurable']
+          : !/stand|base|pole/i.test(mesh.name);
       if (flagged) measurable.push(mesh);
     });
     this.bounds = new THREE.Box3();
@@ -104,7 +111,12 @@ export class MannequinScene {
     const fullBounds = new THREE.Box3().setFromObject(object);
     const shadow = new THREE.Mesh(
       new THREE.PlaneGeometry(2.4, 2.4),
-      new THREE.MeshBasicMaterial({ map: radialShadowTexture(), transparent: true, depthWrite: false, opacity: 0.7 }),
+      new THREE.MeshBasicMaterial({
+        map: radialShadowTexture(),
+        transparent: true,
+        depthWrite: false,
+        opacity: 0.7,
+      }),
     );
     shadow.rotation.x = -Math.PI / 2;
     shadow.position.y = fullBounds.min.y + 0.002;
@@ -112,12 +124,19 @@ export class MannequinScene {
 
     this.tapeTexture = this.createTapeTexture();
     for (const def of defs) {
+      this.defs.set(def.id, def);
       const ind = this.buildIndicator(def, measurable);
       if (ind) this.indicators.set(def.id, ind);
     }
 
     this.pulse = new THREE.Sprite(
-      new THREE.SpriteMaterial({ map: dotTexture(), color: 0xff4d52, blending: THREE.AdditiveBlending, depthTest: false, transparent: true }),
+      new THREE.SpriteMaterial({
+        map: dotTexture(),
+        color: 0xff4d52,
+        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        transparent: true,
+      }),
     );
     this.pulse.scale.setScalar(0.12);
     this.pulse.visible = false;
@@ -177,7 +196,10 @@ export class MannequinScene {
     const hit = ray.intersectObjects(meshes, true)[0];
     if (!hit) return null;
     const n = hit.face
-      ? hit.face.normal.clone().applyNormalMatrix(new THREE.Matrix3().getNormalMatrix(hit.object.matrixWorld)).normalize()
+      ? hit.face.normal
+          .clone()
+          .applyNormalMatrix(new THREE.Matrix3().getNormalMatrix(hit.object.matrixWorld))
+          .normalize()
       : dir.clone();
     if (n.dot(dir) < 0) n.negate();
     return { p: hit.point.clone(), n };
@@ -188,6 +210,7 @@ export class MannequinScene {
     const points: THREE.Vector3[] = [];
     const normals: THREE.Vector3[] = [];
     const g = def.guide3d;
+    if (!g) return null;
 
     if (g.kind === 'ring') {
       const y = this.heightAt(g.heightRatio);
@@ -242,11 +265,20 @@ export class MannequinScene {
     const ghostGeo = buildRibbon(points, sides, normals, 0.012, 0.006).geometry;
     const ghost = new THREE.Mesh(
       ghostGeo,
-      new THREE.MeshBasicMaterial({ color: 0x5a5753, transparent: true, opacity: 0.55, side: THREE.DoubleSide }),
+      new THREE.MeshBasicMaterial({
+        color: 0x5a5753,
+        transparent: true,
+        opacity: 0.55,
+        side: THREE.DoubleSide,
+      }),
     );
 
     const markers: THREE.Object3D[] = [];
-    const markerMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: RED, emissiveIntensity: 0.6 });
+    const markerMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: RED,
+      emissiveIntensity: 0.6,
+    });
     const ends = g.kind === 'vertical' ? [0, points.length - 1] : [0];
     for (const i of ends) {
       const m = new THREE.Mesh(new THREE.SphereGeometry(0.028, 16, 12), markerMat);
@@ -260,7 +292,7 @@ export class MannequinScene {
     let ai = Math.floor(points.length / 2);
     if (g.kind === 'ring') {
       const theta = def.camera.azimuth + 0.75;
-      ai = Math.round((((theta / (Math.PI * 2)) % 1) + 1) % 1 * (points.length - 1));
+      ai = Math.round(((((theta / (Math.PI * 2)) % 1) + 1) % 1) * (points.length - 1));
     }
     this.scene.add(tape, ghost);
     void length;
@@ -280,14 +312,21 @@ export class MannequinScene {
 
   setActive(id: string): void {
     const ind = this.indicators.get(id) ?? null;
-    if (this.active === ind) return;
+    const def = this.defs.get(id);
+    if (this.active === ind && (ind || this.activeId === id)) return;
+    this.activeId = id;
     if (this.active) {
       this.active.tape.visible = false;
       this.active.ghost.visible = true;
       this.active.markers.forEach((m) => (m.visible = false));
     }
     this.active = ind;
-    if (!ind) return;
+    if (!ind) {
+      // nothing to draw on the torso (e.g. body height) — just reframe
+      this.onLabel?.({ x: 0, y: 0, visible: false });
+      if (def) this.moveCamera(def);
+      return;
+    }
     ind.ghost.visible = false;
     ind.tape.visible = true;
     this.progress = this.opts.reducedMotion ? 1 : 0;
@@ -297,7 +336,12 @@ export class MannequinScene {
 
   private orbitFor(def: MeasurementDefinition) {
     const c = def.camera;
-    return { az: c.azimuth, el: c.elevation, dist: this.baseDistance * c.distance, ty: this.heightAt(c.targetRatio) };
+    return {
+      az: c.azimuth,
+      el: c.elevation,
+      dist: this.baseDistance * c.distance,
+      ty: this.heightAt(c.targetRatio),
+    };
   }
 
   private moveCamera(def: MeasurementDefinition): void {
@@ -369,7 +413,8 @@ export class MannequinScene {
       this.spherical.phi += (Math.PI / 2 - t.el - this.spherical.phi) * k;
       this.spherical.radius += (t.dist - this.spherical.radius) * k;
       this.camera.position.setFromSpherical(this.spherical).add(this.controls.target);
-      if (Math.abs(dAz) < 0.002 && Math.abs(t.dist - this.spherical.radius) < 0.005) this.camTarget = null;
+      if (Math.abs(dAz) < 0.002 && Math.abs(t.dist - this.spherical.radius) < 0.005)
+        this.camTarget = null;
     }
     this.controls?.update();
 

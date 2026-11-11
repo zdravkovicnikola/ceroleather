@@ -1,4 +1,9 @@
-<header class="header" [class.is-scrolled]="scrolled()" [class.is-hidden]="hidden()" [class.is-open]="menuOpen()">
+<header
+  class="header"
+  [class.is-scrolled]="scrolled()"
+  [class.is-hidden]="hidden()"
+  [class.is-open]="menuOpen()"
+>
   <div class="header__inner container">
     <a routerLink="/" class="header__logo" aria-label="CeroLeather — početna">
       <app-logo />
@@ -11,7 +16,7 @@
           [routerLink]="item.link"
           [fragment]="item.fragment"
           routerLinkActive="is-active"
-          [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+          [routerLinkActiveOptions]="activeOptions(item)"
           >{{ item.label }}</a
         >
       }
@@ -43,9 +48,20 @@
           [attr.tabindex]="menuOpen() ? 0 : -1"
           (click)="closeMenu()"
         >
-          <span class="menu__index">0{{ i + 1 }}</span>{{ item.label }}
+          <span class="menu__index">0{{ i + 1 }}</span
+          >{{ item.label }}
         </a>
       }
+      <a
+        class="menu__social"
+        [href]="instagramUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        [attr.tabindex]="menuOpen() ? 0 : -1"
+        aria-label="CeroLeather na Instagramu (otvara se u novom prozoru)"
+      >
+        <app-instagram-icon /> {{ instagramHandle }}
+      </a>
     </nav>
   </div>
 </header>

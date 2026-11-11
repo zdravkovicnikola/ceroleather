@@ -5,7 +5,9 @@
       <span aria-hidden="true">/</span>
       <a routerLink="/katalog" class="link-underline">Katalog</a>
       <span aria-hidden="true">/</span>
-      <a routerLink="/katalog" [queryParams]="{ kategorija: p.category }" class="link-underline">{{ category() }}</a>
+      <a routerLink="/katalog" [queryParams]="{ kategorija: p.category }" class="link-underline">{{
+        category()
+      }}</a>
       <span aria-hidden="true">/</span>
       <span aria-current="page">{{ p.name }}</span>
     </nav>
@@ -19,7 +21,45 @@
           <p class="lead">{{ p.shortDescription }}</p>
         </header>
 
-        <app-product-gallery [product]="p" />
+        @if (p.spin360; as spin) {
+          <div class="pd__media-tabs" role="tablist" aria-label="Način prikaza">
+            <button
+              type="button"
+              role="tab"
+              class="pd__media-tab"
+              [class.is-active]="mediaView() === '360'"
+              [attr.aria-selected]="mediaView() === '360'"
+              aria-controls="pd-media"
+              (click)="mediaView.set('360')"
+            >
+              360° prikaz
+            </button>
+            <button
+              type="button"
+              role="tab"
+              class="pd__media-tab"
+              [class.is-active]="mediaView() === 'photos'"
+              [attr.aria-selected]="mediaView() === 'photos'"
+              aria-controls="pd-media"
+              (click)="mediaView.set('photos')"
+            >
+              Fotografije <sup>{{ p.images.length }}</sup>
+            </button>
+          </div>
+          <div id="pd-media" role="tabpanel">
+            @if (mediaView() === '360') {
+              <app-product-viewer-360
+                [spin]="spin"
+                [fallbackSrc]="p.images[0].src"
+                [fallbackAlt]="p.images[0].alt"
+              />
+            } @else {
+              <app-product-gallery [product]="p" />
+            }
+          </div>
+        } @else {
+          <app-product-gallery [product]="p" />
+        }
 
         <div class="pd__desc">
           @for (para of p.description; track $index) {
@@ -40,10 +80,13 @@
 
         <div class="pd__custom">
           <p>
-            Svaki detalj se može prilagoditi — džepovi, kopče, kragna, dužina. Napišite šta želite u formi za porudžbinu.
+            Svaki detalj se može prilagoditi — džepovi, kopče, kragna, dužina. Napišite šta želite u
+            formi za porudžbinu.
           </p>
           <div class="pd__actions">
-            <button type="button" class="btn btn--primary" (click)="toGuide()">Izmeri se <span class="btn__arrow"></span></button>
+            <button type="button" class="btn btn--primary" (click)="toGuide()">
+              Izmeri se <span class="btn__arrow"></span>
+            </button>
             <button type="button" class="btn" (click)="toForm()">Zatraži prilagođavanje</button>
           </div>
         </div>
@@ -77,6 +120,8 @@
     <p class="eyebrow">Katalog</p>
     <h1 class="display display--lg">Model nije pronađen</h1>
     <p class="lead">Ovaj model ne postoji ili je uklonjen iz kataloga.</p>
-    <a routerLink="/katalog" class="btn btn--primary">Pogledaj katalog <span class="btn__arrow"></span></a>
+    <a routerLink="/katalog" class="btn btn--primary"
+      >Pogledaj katalog <span class="btn__arrow"></span
+    ></a>
   </section>
 }

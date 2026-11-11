@@ -1,0 +1,240 @@
+:host {
+  display: block;
+}
+
+.v360 {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.v360__stage {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  /* matches the studio background of the frames, so edges dissolve */
+  background: radial-gradient(70% 70% at 50% 45%, #232323, #1b1b1b 70%, #151515);
+  border: 1px solid var(--line);
+  cursor: grab;
+  touch-action: pan-y; /* horizontal drag rotates, vertical swipe still scrolls the page */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline-offset: -2px;
+
+  .is-dragging & {
+    cursor: grabbing;
+  }
+  .is-failed & {
+    cursor: default;
+    background: var(--bg-2);
+  }
+}
+
+.v360__poster,
+.v360__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* soft vignette so the square frame never shows a hard edge */
+  mask-image: radial-gradient(75% 75% at 50% 50%, #000 62%, transparent 100%);
+}
+.v360__poster {
+  object-fit: contain;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease);
+  .is-ready & {
+    opacity: 0;
+  }
+  .is-failed & {
+    object-fit: cover;
+    mask-image: none;
+    opacity: 1;
+  }
+}
+.v360__canvas {
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+  .is-ready & {
+    opacity: 1;
+  }
+}
+
+.v360__loading {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: auto 44px;
+  align-items: center;
+  gap: 8px 14px;
+  min-width: min(260px, 80%);
+  padding: 14px 18px;
+  background: rgba(11, 11, 11, 0.72);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.v360__bar {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  height: 2px;
+  background: var(--line);
+  overflow: hidden;
+  span {
+    display: block;
+    height: 100%;
+    background: var(--red);
+    transform-origin: left;
+    transition: transform 0.2s linear;
+  }
+}
+.v360__pct {
+  text-align: right;
+  color: var(--text);
+}
+
+.v360__error {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  margin: 0;
+  padding: 10px 14px;
+  background: rgba(11, 11, 11, 0.8);
+  font-size: 0.85rem;
+  color: var(--text-2);
+}
+
+.v360__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(11, 11, 11, 0.62);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  transition:
+    opacity 0.6s var(--ease),
+    transform 0.6s var(--ease);
+  &.is-hidden {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}
+.v360__hint-icon {
+  position: relative;
+  width: 26px;
+  height: 2px;
+  background: var(--red);
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    width: 6px;
+    height: 6px;
+    border: solid var(--red);
+    border-width: 0 0 2px 2px;
+  }
+  &::before {
+    left: -1px;
+    transform: rotate(45deg);
+  }
+  &::after {
+    right: -1px;
+    transform: rotate(-135deg);
+  }
+}
+
+.v360__badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 6px 10px;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  color: var(--text);
+  .is-failed & {
+    display: none;
+  }
+}
+
+.v360__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+.v360__btn {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color 0.3s,
+    background 0.3s;
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+  }
+  &:hover:not(:disabled) {
+    border-color: var(--red);
+    background: rgba(227, 33, 38, 0.12);
+  }
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+}
+.v360__dial {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+.v360__dial-track {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+.v360__dial-dot {
+  fill: var(--red);
+}
+.v360__deg {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-2);
+}

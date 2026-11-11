@@ -10,18 +10,35 @@ import { Product } from '../../models/product.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let p = product();
-    <article class="card" [class.card--large]="size() === 'large'">
-      <a class="card__media" [routerLink]="['/katalog', p.slug]" [attr.aria-label]="'Detalji modela ' + p.name">
+    <article
+      class="card"
+      [class.card--large]="size() === 'large'"
+      [class.card--contain]="fit() === 'contain'"
+    >
+      <a
+        class="card__media"
+        [routerLink]="['/katalog', p.slug]"
+        [attr.aria-label]="'Detalji modela ' + p.name"
+        [style.--card-backdrop]="fit() === 'contain' ? 'url(' + p.images[0].srcSm + ')' : null"
+      >
         <img
           class="card__img card__img--primary"
           [src]="p.images[0].srcSm"
           [srcset]="p.images[0].srcSm + ' 760w, ' + p.images[0].src + ' 1600w'"
-          [sizes]="size() === 'large' ? '(max-width: 900px) 92vw, 58vw' : '(max-width: 900px) 92vw, 34vw'"
+          [sizes]="
+            size() === 'large' ? '(max-width: 900px) 92vw, 58vw' : '(max-width: 900px) 92vw, 34vw'
+          "
           [alt]="p.images[0].alt"
           loading="lazy"
         />
         @if (secondImage(); as img2) {
-          <img class="card__img card__img--secondary" [src]="img2.srcSm" alt="" loading="lazy" aria-hidden="true" />
+          <img
+            class="card__img card__img--secondary"
+            [src]="img2.srcSm"
+            alt=""
+            loading="lazy"
+            aria-hidden="true"
+          />
         }
         <span class="card__index">{{ indexLabel() }}</span>
         <span class="card__view">Pogledaj <span class="btn__arrow"></span></span>
@@ -40,7 +57,10 @@ import { Product } from '../../models/product.model';
         }
         <div class="card__actions">
           <a class="btn btn--sm" [routerLink]="['/katalog', p.slug]">Detalji</a>
-          <a class="btn btn--sm btn--primary" routerLink="/porudzbina" [queryParams]="{ proizvod: p.slug }"
+          <a
+            class="btn btn--sm btn--primary"
+            routerLink="/porudzbina"
+            [queryParams]="{ proizvod: p.slug }"
             >Zatraži prilagođavanje</a
           >
         </div>
@@ -53,6 +73,12 @@ export class ProductCardComponent {
   readonly product = input.required<Product>();
   readonly index = input(0);
   readonly size = input<'normal' | 'large'>('normal');
+  /**
+   * 'contain' = uniform grid mode used by the catalog on tablet/desktop: every card gets the same
+   * 4:5 frame and the whole garment stays visible (no cropping), over a soft blurred backdrop.
+   * On phones (≤600px) the card keeps its original full-bleed `cover` look.
+   */
+  readonly fit = input<'cover' | 'contain'>('cover');
 
   readonly currency = SITE_CONFIG.currency;
   readonly showPrice = () => SITE_CONFIG.showPrices;

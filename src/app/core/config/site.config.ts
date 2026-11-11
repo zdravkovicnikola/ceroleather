@@ -1,5 +1,3 @@
-import { environment } from '../../../environments/environment';
-
 /**
  * Central brand / site configuration.
  * Change contact details, social links and pricing behaviour here.
@@ -9,9 +7,10 @@ export const SITE_CONFIG = {
   tagline: 'Handmade. Custom. Built for the road.',
   statement:
     'Ručno izrađeni kožni prsluci i jakne. Kreirani po vašoj meri — za vožnju, za put, za vas.',
-  contactEmail: environment.emailjs.toEmail, // TODO: confirm public contact email
-  instagramUrl: 'https://www.instagram.com/', // TODO: real Instagram profile URL
-  instagramHandle: '@ceroleather', // TODO: confirm handle
+  /** Public contact address shown on the site. TODO: replace with the real business inbox. */
+  contactEmail: 'kontakt@ceroleather.com',
+  instagramUrl: 'https://www.instagram.com/ceroleather/',
+  instagramHandle: '@ceroleather',
 
   /** Prices are optional. Set to true and fill `price` on products to show them. */
   showPrices: false,

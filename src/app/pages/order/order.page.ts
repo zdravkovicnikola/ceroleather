@@ -16,7 +16,8 @@ import { RevealDirective } from '../../shared/directives/reveal.directive';
         <span class="line"><span class="text-red">počinje ovde.</span></span>
       </h1>
       <p class="lead" appReveal="up">
-        Izmerite se uz naš vodič, izaberite model ili opišite svoju ideju — i pošaljite upit direktno u radionicu.
+        Izmerite se uz naš vodič, izaberite model ili opišite svoju ideju i pošaljite zahtev.
+        Javljamo vam se telefonom radi dogovora o detaljima i obaveznom avansu.
       </p>
     </section>
 

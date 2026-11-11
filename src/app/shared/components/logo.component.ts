@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * CeroLeather wordmark — "Cero" in brand red, "Leather" in white.
- * Pure HTML/CSS so it stays crisp at any size; size via `font-size` on the host.
+ * CeroLeather wordmark — "Cero" in brand red script (Damion, inspired by the woven red
+ * label), "Leather" in white Anton capitals.
+ * Pure text (no image) so it stays crisp and scalable at any size; size via `font-size` on the host.
  */
 @Component({
   selector: 'app-logo',
@@ -39,20 +40,15 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     }
     .logo__cero {
       color: var(--red);
-      position: relative;
+      font-family: var(--font-script);
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      /* script x-height is smaller than Anton caps — scale up to keep the old visual balance */
+      font-size: 1.22em;
+      line-height: 0.8;
       padding-right: 0.06em;
-      font-style: italic;
-      transform: skewX(-6deg);
-      display: inline-block;
-    }
-    .logo__cero::after {
-      content: '';
-      position: absolute;
-      left: 0.04em;
-      right: 0.12em;
-      bottom: -0.14em;
-      height: 0.075em;
-      background: var(--red);
+      margin-bottom: -0.04em;
     }
     .logo__leather {
       color: var(--text);

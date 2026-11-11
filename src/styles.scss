@@ -18,6 +18,7 @@
 
   --font-display: 'Anton', 'Impact', 'Arial Narrow Bold', sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-script: 'Damion', 'Brush Script MT', cursive;
   --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 
   --gutter: clamp(20px, 5vw, 72px);
@@ -178,6 +179,9 @@ button {
   display: block;
   overflow: hidden;
   padding-bottom: 0.04em;
+  /* headroom for Serbian diacritics on capitals (Č Ć Š Ž) — the mask must not clip them */
+  padding-top: 0.14em;
+  margin-top: -0.14em;
   > span {
     display: block;
   }
@@ -364,7 +368,8 @@ textarea.input {
 select.input {
   appearance: none;
   background-image:
-    linear-gradient(45deg, transparent 50%, var(--text-2) 50%), linear-gradient(135deg, var(--text-2) 50%, transparent 50%);
+    linear-gradient(45deg, transparent 50%, var(--text-2) 50%),
+    linear-gradient(135deg, var(--text-2) 50%, transparent 50%);
   background-position:
     calc(100% - 22px) 50%,
     calc(100% - 16px) 50%;
@@ -380,6 +385,12 @@ select.input {
   font-size: 0.8rem;
   color: #ff6b6f;
   margin: 0;
+}
+.field-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--text-3);
 }
 
 /* ---------- reduced motion ---------- */

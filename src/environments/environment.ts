@@ -14,7 +14,7 @@ export const environment = {
     serviceId: '', // e.g. 'service_xxxxxxx'
     templateId: '', // e.g. 'template_xxxxxxx'
     publicKey: '', // e.g. 'AbCdEfGhIjKlMnOpQ'
-    /** Destination inbox. Used by the template's "To Email" field via {{to_email}}. */
-    toEmail: 'kontakt@ceroleather.com', // TODO: real workshop inbox
+    // The recipient is NOT configured here: set "To Email" in the EmailJS template
+    // (currently the test inbox nzdravkovic2001@gmail.com). See README → EmailJS.
   },
 };

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { OrderStateService } from '../../core/services/order-state.service';
 import { measurementsFor } from '../../data/measurements.data';
 import { MeasurementDefinition } from '../../models/measurement.model';
@@ -24,11 +32,15 @@ export class MeasurementGuideComponent {
 
   private readonly state = inject(OrderStateService);
 
-  readonly definitions = computed<MeasurementDefinition[]>(() => measurementsFor(this.measurementIds()));
+  readonly definitions = computed<MeasurementDefinition[]>(() =>
+    measurementsFor(this.measurementIds()),
+  );
   readonly index = signal(0);
   readonly showSummary = signal(false);
 
-  readonly active = computed(() => this.definitions()[Math.min(this.index(), this.definitions().length - 1)]);
+  readonly active = computed(
+    () => this.definitions()[Math.min(this.index(), this.definitions().length - 1)],
+  );
   readonly values = this.state.measurements;
   readonly activeValue = computed(() => this.values()[this.active().id] ?? null);
 
@@ -38,8 +50,12 @@ export class MeasurementGuideComponent {
       return v != null && !measurementError(d, v);
     }),
   );
-  readonly completedCount = computed(() => this.completed().filter(Boolean).length);
-  readonly allDone = computed(() => this.completedCount() === this.definitions().length);
+  /** Progress counts REQUIRED measurements only (optional ones, like height, never block). */
+  readonly requiredCount = computed(() => this.definitions().filter((d) => d.required).length);
+  readonly completedCount = computed(
+    () => this.definitions().filter((d, i) => d.required && this.completed()[i]).length,
+  );
+  readonly allDone = computed(() => this.completedCount() === this.requiredCount());
 
   go(i: number): void {
     this.showSummary.set(false);

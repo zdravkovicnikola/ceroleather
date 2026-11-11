@@ -47,6 +47,8 @@ export interface MeasurementDefinition {
   emailParam: string;
   unit: 'cm';
   required: boolean;
+  /** Value is only approximate (shown as "okvirno") */
+  approximate?: boolean;
   min: number;
   max: number;
   /** One-sentence explanation */
@@ -57,9 +59,13 @@ export interface MeasurementDefinition {
   tip?: string;
   /** Description of where the tape goes (shown with the visual example) */
   tapePlacement: string;
-  guide3d: Guide3D;
+  /** Short helper shown under the field in the order form */
+  formHint?: string;
+  /** Tape on the 3D mannequin. Omit for values that are not measured on the torso (e.g. body height). */
+  guide3d?: Guide3D;
   camera: GuideCamera;
-  svg: GuideSvg;
+  /** SVG fallback overlay. Omit together with `guide3d`. */
+  svg?: GuideSvg;
 }
 
 export type MeasurementValues = Record<string, number | null>;

@@ -2,10 +2,15 @@
   display: block;
 }
 
+:host {
+  height: 100%;
+}
+
 .card {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  height: 100%;
 }
 
 .card__media {
@@ -125,6 +130,46 @@
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 8px;
+}
+
+/* ---- Uniform catalog grid (tablet & desktop only — phones keep the full-bleed look) ---- */
+@media (min-width: 601px) {
+  .card--contain {
+    .card__media,
+    &.card--large .card__media {
+      aspect-ratio: 4 / 5;
+      isolation: isolate;
+    }
+    /* blurred, darkened copy of the photo fills the frame so letterboxing never looks empty */
+    .card__media::before {
+      content: '';
+      position: absolute;
+      inset: -40px;
+      z-index: -1;
+      background: var(--card-backdrop, none) center / cover;
+      filter: blur(28px) brightness(0.32) saturate(0.6);
+    }
+    .card__img {
+      object-fit: contain;
+      padding: 4%;
+    }
+    .card__img--secondary {
+      transform: scale(1.03);
+    }
+    .card__media:hover .card__img--primary {
+      transform: scale(1.03);
+    }
+    .card__body {
+      flex: 1;
+    }
+    .card__name {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+    }
+    .card__actions {
+      margin-top: auto;
+      padding-top: 8px;
+    }
+  }
 }
 
 @media (hover: none) {

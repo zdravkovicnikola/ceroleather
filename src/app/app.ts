@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, PLATFORM_ID, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { ScrollService } from './core/services/scroll.service';
+import { SeoService } from './core/seo/seo.service';
 
 @Component({
   selector: 'app-root',
@@ -45,16 +47,23 @@ export class App {
     this.scroll.init(destroyRef);
 
     const router = inject(Router);
-    const sub = router.events.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd)).subscribe(() => {
-      const fragment = router.parseUrl(router.url).fragment;
-      if (fragment) {
-        // wait for the routed view to render
-        setTimeout(() => this.scroll.scrollTo(`#${fragment}`), 120);
-      } else {
-        this.scroll.scrollToTop();
-      }
-      setTimeout(() => this.scroll.refresh(), 300);
-    });
+    const seo = inject(SeoService);
+    const isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+    const sub = router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(() => {
+        // Route-level title / description / canonical / Open Graph (pages may refine it, e.g. products)
+        seo.applyRouteData(router.routerState.snapshot.root, router.url);
+        if (!isBrowser) return;
+        const fragment = router.parseUrl(router.url).fragment;
+        if (fragment) {
+          // wait for the routed view to render
+          setTimeout(() => this.scroll.scrollTo(`#${fragment}`), 120);
+        } else {
+          this.scroll.scrollToTop();
+        }
+        setTimeout(() => this.scroll.refresh(), 300);
+      });
     destroyRef.onDestroy(() => sub.unsubscribe());
   }
 }

@@ -38,6 +38,40 @@
   margin-bottom: 20px;
 }
 
+.pd__media-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.pd__media-tab {
+  padding: 11px 18px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    color 0.3s,
+    border-color 0.3s,
+    background 0.3s;
+  sup {
+    color: var(--red);
+    font-size: 0.6rem;
+  }
+  &:hover {
+    color: var(--text);
+    border-color: var(--line-strong);
+  }
+  &.is-active {
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+  }
+}
+
 .pd__desc {
   margin-top: 44px;
   p {
@@ -100,7 +134,6 @@
   gap: 12px;
   margin-top: 22px;
 }
-
 
 .pd__form {
   margin-top: clamp(80px, 10vw, 150px);

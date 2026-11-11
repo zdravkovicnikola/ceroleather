@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { MeasurementDefinition } from '../../models/measurement.model';
 
 /**
@@ -9,7 +9,12 @@ import { MeasurementDefinition } from '../../models/measurement.model';
   selector: 'app-measurement-figure-svg',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <svg viewBox="0 0 300 400" class="fig" role="img" [attr.aria-label]="'Prikaz mere: ' + (activeLabel() ?? '')">
+    <svg
+      viewBox="0 0 300 400"
+      class="fig"
+      role="img"
+      [attr.aria-label]="'Prikaz mere: ' + (activeLabel() ?? '')"
+    >
       <defs>
         <linearGradient id="torsoFill" x1="0" x2="1">
           <stop offset="0" stop-color="#8d8983" />
@@ -32,45 +37,50 @@ import { MeasurementDefinition } from '../../models/measurement.model';
       />
       <path d="M150 62 L150 338" stroke="#9e978d" stroke-width="1" opacity="0.7" />
 
-      @for (m of definitions(); track m.id) {
+      @for (m of drawable(); track m.id) {
         @let active = m.id === activeId();
+        @let svg = m.svg!;
         <g class="fig__m" [class.is-active]="active">
-          @switch (m.svg.kind) {
+          @switch (svg.kind) {
             @case ('ring') {
-              @if (m.svg.kind === 'ring') {
+              @if (svg.kind === 'ring') {
                 <!-- back half (behind the body) -->
                 <path
                   class="fig__back"
-                  [attr.d]="arc(m.svg.cx, m.svg.cy, m.svg.rx, m.svg.ry, true)"
+                  [attr.d]="arc(svg.cx, svg.cy, svg.rx, svg.ry, true)"
                   pathLength="100"
                 />
                 <!-- front half -->
-                <path class="fig__tape" [attr.d]="arc(m.svg.cx, m.svg.cy, m.svg.rx, m.svg.ry, false)" pathLength="100" />
+                <path
+                  class="fig__tape"
+                  [attr.d]="arc(svg.cx, svg.cy, svg.rx, svg.ry, false)"
+                  pathLength="100"
+                />
                 @if (active) {
-                  <circle class="fig__dot" [attr.cx]="m.svg.cx - m.svg.rx" [attr.cy]="m.svg.cy" r="4" />
-                  <circle class="fig__dot" [attr.cx]="m.svg.cx + m.svg.rx" [attr.cy]="m.svg.cy" r="4" />
+                  <circle class="fig__dot" [attr.cx]="svg.cx - svg.rx" [attr.cy]="svg.cy" r="4" />
+                  <circle class="fig__dot" [attr.cx]="svg.cx + svg.rx" [attr.cy]="svg.cy" r="4" />
                 }
               }
             }
             @case ('vertical') {
-              @if (m.svg.kind === 'vertical') {
+              @if (svg.kind === 'vertical') {
                 <line
                   class="fig__tape"
-                  [attr.x1]="m.svg.x1"
-                  [attr.y1]="m.svg.y1"
-                  [attr.x2]="m.svg.x2"
-                  [attr.y2]="m.svg.y2"
+                  [attr.x1]="svg.x1"
+                  [attr.y1]="svg.y1"
+                  [attr.x2]="svg.x2"
+                  [attr.y2]="svg.y2"
                   pathLength="100"
                 />
                 @if (active) {
-                  <circle class="fig__dot" [attr.cx]="m.svg.x1" [attr.cy]="m.svg.y1" r="4" />
-                  <circle class="fig__dot" [attr.cx]="m.svg.x2" [attr.cy]="m.svg.y2" r="4" />
+                  <circle class="fig__dot" [attr.cx]="svg.x1" [attr.cy]="svg.y1" r="4" />
+                  <circle class="fig__dot" [attr.cx]="svg.x2" [attr.cy]="svg.y2" r="4" />
                   <line
                     class="fig__cap"
-                    [attr.x1]="m.svg.x2 - 12"
-                    [attr.y1]="m.svg.y2"
-                    [attr.x2]="m.svg.x2 + 12"
-                    [attr.y2]="m.svg.y2"
+                    [attr.x1]="svg.x2 - 12"
+                    [attr.y1]="svg.y2"
+                    [attr.x2]="svg.x2 + 12"
+                    [attr.y2]="svg.y2"
                   />
                 }
               }
@@ -144,6 +154,8 @@ import { MeasurementDefinition } from '../../models/measurement.model';
 export class MeasurementFigureSvgComponent {
   readonly definitions = input.required<MeasurementDefinition[]>();
   readonly activeId = input<string | null>(null);
+  /** Only definitions that have an SVG overlay (body height, for example, has none) */
+  readonly drawable = computed(() => this.definitions().filter((d) => !!d.svg));
 
   activeLabel(): string | undefined {
     return this.definitions().find((d) => d.id === this.activeId())?.label;

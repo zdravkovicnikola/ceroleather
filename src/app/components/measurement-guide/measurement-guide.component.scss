@@ -192,3 +192,28 @@
     align-items: flex-start;
   }
 }
+
+.mg__tab-opt {
+  display: block;
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+}
+
+/* 4 steps: two rows of two on phones so labels stay readable */
+@media (max-width: 600px) {
+  .mg__tabs {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mg__tab {
+    border-bottom: 1px solid var(--line);
+    &:nth-child(2n) {
+      border-right: 0;
+    }
+    &:nth-last-child(-n + 2):nth-child(odd),
+    &:nth-last-child(-n + 2):nth-child(odd) ~ .mg__tab {
+      border-bottom: 0;
+    }
+  }
+}
