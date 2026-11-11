@@ -3,10 +3,10 @@
     <span class="of__success-mark" aria-hidden="true">
       <svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
     </span>
-    <h3 class="display display--md">Hvala na interesovanju za CeroLeather!</h3>
+    <h3 class="display display--md">Vaš zahtev je uspešno poslat!</h3>
     <p class="lead">
-      Vaš zahtev je uspešno poslat. Nakon što pregledamo vaše podatke i mere, kontaktiraćemo vas
-      telefonom radi dogovora o detaljima porudžbine i uplati obaveznog avansa.
+      Hvala na interesovanju za CeroLeather. Nakon što pregledamo vaše podatke i mere,
+      kontaktiraćemo vas telefonom radi dogovora o detaljima porudžbine i uplati obaveznog avansa.
     </p>
     <p class="of__success-note">
       <strong>Vaša porudžbina biće potvrđena nakon dogovora i uplate avansa.</strong>
@@ -205,6 +205,13 @@
           </div>
         </div>
       }
+      @if (!compact() && selectedProduct(); as p) {
+        <p class="of__chosen" role="status">
+          <span class="of__chosen-label">Zahtev za model</span>
+          <strong class="of__chosen-name">{{ p.name }}</strong>
+          <span class="of__chosen-cat">{{ categoryLabelFor(p.category) }}</span>
+        </p>
+      }
       <div class="of__grid" [class.visually-hidden]="compact() && !!selectedProduct()">
         <div class="field">
           <label for="of-product">Izabrani model <span class="req">*</span></label>
@@ -312,6 +319,22 @@
           ></textarea>
         </div>
       </div>
+
+      <div class="of__design">
+        <p class="of__sub" id="of-design-image-title">Priložite fotografiju željenog modela</p>
+        <p class="of__hint" id="of-design-image-help">
+          Imate ideju za prsluk ili jaknu koju želite da izradimo? Pošaljite nam fotografiju ili
+          skicu koja će nam pomoći da razumemo vašu zamisao.
+        </p>
+        <app-design-upload
+          [(file)]="designFile"
+          [remoteUrl]="uploadedDesign()?.file === null ? (uploadedDesign()?.url ?? null) : null"
+          [remoteName]="uploadedDesign()?.name ?? ''"
+          [uploaded]="designIsUploaded()"
+          [disabled]="busy()"
+          (removed)="onDesignRemoved()"
+        />
+      </div>
     </fieldset>
 
     <!-- 05 — how the order is confirmed (advance payment) -->
@@ -389,6 +412,17 @@
         <p>
           <strong>{{ errorMessage() }}</strong>
         </p>
+        @if (failedStep() === 'upload') {
+          <p>
+            Fotografija je i dalje izabrana. Pokušajte ponovo — ili je uklonite i pošaljite zahtev
+            bez nje.
+          </p>
+        } @else if (designIsUploaded()) {
+          <p>
+            Fotografija je već sačuvana — pri novom pokušaju neće se ponovo slati, šalje se samo
+            zahtev.
+          </p>
+        }
         <p>
           Vaši podaci nisu izgubljeni — ostali su u formi i sačuvani su na ovom uređaju, pa možete
           pokušati ponovo. Ako problem potraje, kopirajte podatke i pošaljite nam ih porukom na
@@ -418,13 +452,34 @@
     }
 
     <div class="of__submit">
-      <button type="submit" class="btn btn--primary" [disabled]="submitState() === 'sending'">
-        @if (submitState() === 'sending') {
-          <span class="of__spinner" aria-hidden="true"></span> Slanje…
+      <button type="submit" class="btn btn--primary" [disabled]="busy()" [attr.aria-busy]="busy()">
+        @if (submitState() === 'uploading') {
+          <span class="of__spinner" aria-hidden="true"></span> Pripremamo fotografiju…
+        } @else if (submitState() === 'sending') {
+          <span class="of__spinner" aria-hidden="true"></span> Šaljemo vaš zahtev…
         } @else {
           Pošalji zahtev <span class="btn__arrow"></span>
         }
       </button>
+      <p class="visually-hidden" aria-live="polite">
+        @if (submitState() === 'uploading') {
+          Pripremamo fotografiju…
+        } @else if (submitState() === 'sending') {
+          Šaljemo vaš zahtev…
+        }
+      </p>
+      @if (submitState() === 'uploading') {
+        <div
+          class="of__progress"
+          role="progressbar"
+          aria-label="Otpremanje fotografije"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          [attr.aria-valuenow]="uploadPercent()"
+        >
+          <span [style.transform]="'scaleX(' + uploadProgress() + ')'"></span>
+        </div>
+      }
       <p class="of__note">
         Ovo nije plaćanje. Kontaktiraćemo vas telefonom radi dogovora o detaljima i avansu.
       </p>

@@ -23,6 +23,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { SITE_CONFIG } from '../../core/config/site.config';
 import {
+  CloudinaryConfigError,
+  CloudinaryUploadService,
+} from '../../core/services/cloudinary-upload.service';
+import {
   EmailConfigError,
   EmailService,
   orderSummaryText,
@@ -35,6 +39,14 @@ import { MeasurementDefinition, MeasurementValues } from '../../models/measureme
 import { OrderRequest, SubmitState } from '../../models/order-request.model';
 import { ProductCategoryId } from '../../models/product.model';
 import { InstagramIconComponent } from '../../shared/components/instagram-icon.component';
+import { DesignUploadComponent } from '../design-upload/design-upload.component';
+
+/** A photo already stored on Cloudinary, and the local file it came from (null after a reload). */
+interface UploadedDesign {
+  file: File | null;
+  url: string;
+  name: string;
+}
 
 /** Value used in the product select for a fully custom idea */
 export const CUSTOM_IDEA = 'sopstvena-ideja';
@@ -74,7 +86,7 @@ const toNumber = (raw: string | null | undefined): number | null => {
 
 @Component({
   selector: 'app-order-form',
-  imports: [ReactiveFormsModule, RouterLink, InstagramIconComponent],
+  imports: [ReactiveFormsModule, RouterLink, InstagramIconComponent, DesignUploadComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   // Values depend on query params, the guide and a locally saved draft → render on the client only.
   host: { ngSkipHydration: 'true' },
@@ -90,6 +102,7 @@ export class OrderFormComponent {
   readonly compact = input(false);
 
   private readonly email = inject(EmailService);
+  private readonly cloudinary = inject(CloudinaryUploadService);
   private readonly state = inject(OrderStateService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
@@ -110,6 +123,28 @@ export class OrderFormComponent {
   readonly copyState = signal<'idle' | 'copied' | 'failed'>('idle');
   /** Plain-text copy of the last attempted request (shown if sending fails) */
   readonly fallbackText = signal('');
+
+  // ── optional inspiration photo ────────────────────────────────────────────
+  /** File the visitor selected (not uploaded until the form is submitted) */
+  readonly designFile = signal<File | null>(null);
+  /**
+   * Result of a successful Cloudinary upload. Kept when EmailJS fails so a retry reuses the
+   * same URL instead of uploading the photo again; dropped when the photo is replaced/removed.
+   */
+  readonly uploadedDesign = signal<UploadedDesign | null>(null);
+  readonly uploadProgress = signal(0);
+  readonly uploadPercent = computed(() => Math.round(this.uploadProgress() * 100));
+  /** Which step failed last: the photo upload or the email */
+  readonly failedStep = signal<'upload' | 'email' | null>(null);
+  /** The photo currently shown in the picker is already on Cloudinary */
+  readonly designIsUploaded = computed(() => {
+    const up = this.uploadedDesign();
+    return !!up && up.file === this.designFile();
+  });
+  readonly busy = computed(() => {
+    const st = this.submitState();
+    return st === 'uploading' || st === 'sending';
+  });
 
   readonly measurementGroup = new FormGroup<Record<string, FormControl<string | null>>>(
     Object.fromEntries(
@@ -233,6 +268,15 @@ export class OrderFormComponent {
       mSub.unsubscribe();
     });
 
+    // Replacing the photo invalidates the URL of the previously uploaded one.
+    effect(() => {
+      const file = this.designFile();
+      untracked(() => {
+        const up = this.uploadedDesign();
+        if (up && up.file !== file) this.uploadedDesign.set(null);
+      });
+    });
+
     // Browser only: bring back data from an earlier attempt that could not be sent.
     afterNextRender(() => this.restoreDraft());
   }
@@ -262,9 +306,10 @@ export class OrderFormComponent {
   }
 
   async submit(): Promise<void> {
+    // One submission at a time (double clicks, Enter key while uploading…)
+    if (this.busy()) return;
     this.submitted.set(true);
     this.form.markAllAsTouched();
-    if (this.submitState() === 'sending') return;
 
     if (this.form.invalid) {
       this.focusFirstInvalid();
@@ -273,14 +318,42 @@ export class OrderFormComponent {
     // Bots fill the hidden field — pretend nothing happened, never send.
     if (this.form.controls.website.value) return;
 
-    const request = this.buildRequest();
-    this.fallbackText.set(orderSummaryText(request));
+    this.fallbackText.set(orderSummaryText(this.buildRequest(this.uploadedDesign()?.url ?? '')));
     // Keep a local copy until delivery is confirmed — a failed send must never lose the data.
     this.saveDraft();
-
-    this.submitState.set('sending');
     this.errorMessage.set('');
+    this.failedStep.set(null);
     this.copyState.set('idle');
+
+    // 1) Optional photo → Cloudinary (skipped when there is none, or it is already uploaded)
+    let designImageUrl = '';
+    const file = this.designFile();
+    const up = this.uploadedDesign();
+    if (up && up.file === file) {
+      designImageUrl = up.url;
+    } else if (file) {
+      this.submitState.set('uploading');
+      this.uploadProgress.set(0);
+      try {
+        const res = await this.cloudinary.upload(file, (p) => this.uploadProgress.set(p));
+        designImageUrl = res.secureUrl;
+        this.uploadedDesign.set({ file, url: res.secureUrl, name: file.name });
+        this.saveDraft(); // remember the URL too, in case the email step fails
+      } catch (err) {
+        this.fail(
+          'upload',
+          err instanceof CloudinaryConfigError
+            ? 'Slanje fotografija trenutno nije podešeno na ovom sajtu.'
+            : 'Fotografija nije otpremljena. Proverite internet konekciju i pokušajte ponovo.',
+        );
+        return;
+      }
+    }
+
+    // 2) Request (with the photo URL, never the file itself) → EmailJS
+    const request = this.buildRequest(designImageUrl);
+    this.fallbackText.set(orderSummaryText(request));
+    this.submitState.set('sending');
     try {
       await this.email.sendOrderRequest(request);
       // Only now — after EmailJS confirmed delivery — show success.
@@ -292,18 +365,34 @@ export class OrderFormComponent {
         el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 50);
     } catch (err) {
-      this.submitState.set('error');
-      this.errorMessage.set(
+      this.fail(
+        'email',
         err instanceof EmailConfigError
           ? 'Slanje zahteva trenutno nije podešeno na ovom sajtu.'
           : 'Zahtev nije poslat. Proverite internet konekciju i pokušajte ponovo.',
       );
-      setTimeout(() =>
-        this.host
-          .querySelector<HTMLElement>('.of__alert--error')
-          ?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
-      );
     }
+  }
+
+  /** Visitor removed the photo in the picker */
+  onDesignRemoved(): void {
+    this.uploadedDesign.set(null);
+    if (this.failedStep() === 'upload') {
+      this.failedStep.set(null);
+      this.submitState.set('idle');
+    }
+    this.saveDraft();
+  }
+
+  private fail(step: 'upload' | 'email', message: string): void {
+    this.failedStep.set(step);
+    this.submitState.set('error');
+    this.errorMessage.set(message);
+    setTimeout(() =>
+      this.host
+        .querySelector<HTMLElement>('.of__alert--error')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+    );
   }
 
   async copyFallback(): Promise<void> {
@@ -320,6 +409,10 @@ export class OrderFormComponent {
     this.submitted.set(false);
     this.submitState.set('idle');
     this.draftRestored.set(false);
+    this.designFile.set(null);
+    this.uploadedDesign.set(null);
+    this.uploadProgress.set(0);
+    this.failedStep.set(null);
     this.state.reset();
     const slug = this.presetSlug();
     if (slug) this.form.controls.productSlug.setValue(slug);
@@ -332,7 +425,7 @@ export class OrderFormComponent {
 
   // ---------------------------------------------------------------------------
 
-  private buildRequest(): OrderRequest {
+  private buildRequest(designImageUrl: string): OrderRequest {
     const raw = this.form.getRawValue();
     const product = findProduct(raw.productSlug);
     const measurements: MeasurementValues = Object.fromEntries(
@@ -356,6 +449,7 @@ export class OrderFormComponent {
       message: raw.message.trim(),
       advanceAcknowledged: raw.advanceAck,
       privacyConsent: raw.privacyConsent,
+      designImageUrl,
     };
   }
 
@@ -367,7 +461,10 @@ export class OrderFormComponent {
         privacyConsent: _c,
         ...data
       } = this.form.getRawValue();
-      localStorage.setItem(DRAFT_KEY, JSON.stringify({ savedAt: Date.now(), data }));
+      // the photo itself cannot be stored locally — only the URL of an already uploaded one
+      const up = this.uploadedDesign();
+      const design = up ? { url: up.url, name: up.name } : null;
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ savedAt: Date.now(), data, design }));
     } catch {
       /* storage unavailable (private mode) — the form itself still keeps the values */
     }
@@ -382,7 +479,11 @@ export class OrderFormComponent {
   }
 
   private restoreDraft(): void {
-    let draft: { savedAt: number; data: Record<string, unknown> } | null = null;
+    let draft: {
+      savedAt: number;
+      data: Record<string, unknown>;
+      design?: { url: string; name: string } | null;
+    } | null = null;
     try {
       const raw = localStorage.getItem(DRAFT_KEY);
       draft = raw ? JSON.parse(raw) : null;
@@ -402,6 +503,10 @@ export class OrderFormComponent {
     // push restored measurements to the guide as well
     for (const m of MEASUREMENTS)
       this.state.setMeasurement(m.id, toNumber(this.measurementGroup.controls[m.id].value));
+    // a photo uploaded before the failed send is reused, not uploaded again
+    const d = draft.design;
+    if (d?.url?.startsWith('https://res.cloudinary.com/'))
+      this.uploadedDesign.set({ file: null, url: d.url, name: d.name || '' });
     this.draftRestored.set(true);
   }
 

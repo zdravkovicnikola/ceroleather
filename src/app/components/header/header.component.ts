@@ -30,7 +30,6 @@ export class HeaderComponent {
     { label: 'Početna', link: '/', exact: true },
     { label: 'Katalog', link: '/katalog' },
     { label: 'O nama', link: '/o-nama' },
-    { label: 'Po meri', link: '/porudzbina' },
   ];
 
   readonly instagramUrl = SITE_CONFIG.instagramUrl;

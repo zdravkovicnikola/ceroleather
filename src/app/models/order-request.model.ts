@@ -27,6 +27,9 @@ export interface OrderRequest {
   advanceAcknowledged: boolean;
   /** Customer consented to the use of their data for processing the request */
   privacyConsent: boolean;
+  /** Cloudinary secure_url of the optional inspiration photo (empty when none was attached) */
+  designImageUrl: string;
 }
 
-export type SubmitState = 'idle' | 'sending' | 'success' | 'error';
+/** uploading = photo → Cloudinary, sending = request → EmailJS */
+export type SubmitState = 'idle' | 'uploading' | 'sending' | 'success' | 'error';

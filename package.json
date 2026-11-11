@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "postbuild": "node scripts/generate-seo-files.mjs"
+    "postbuild": "node scripts/generate-seo-files.mjs",
+    "check:emailjs": "node scripts/check-emailjs-template.mjs"
   },
   "private": true,
   "packageManager": "npm@11.20.0",

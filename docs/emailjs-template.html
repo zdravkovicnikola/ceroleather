@@ -1,0 +1,190 @@
+<!--
+  CeroLeather — EmailJS template "Zahtev za porudžbinu"
+  Paste EVERYTHING below this comment into: EmailJS → Email Templates → (template) → Content →
+  Edit Content → Code editor (<>). Variables are listed in docs/emailjs-field-mapping.md and are sent by
+  src/app/core/services/order-email-params.ts — keep the names identical.
+-->
+<div style="margin:0;padding:0;background-color:#0b0b0b;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0b0b0b" style="background-color:#0b0b0b;">
+    <tr>
+      <td align="center" style="padding:24px 12px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;width:100%;font-family:Arial,Helvetica,sans-serif;color:#f5f5f5;">
+
+          <!-- Header -->
+          <tr>
+            <td style="padding:8px 4px 20px 4px;border-bottom:2px solid #E32126;">
+              <span style="font-family:'Brush Script MT','Segoe Script',cursive;font-size:34px;line-height:1;color:#E32126;">Cero</span><span style="font-family:Impact,'Arial Narrow Bold','Arial Black',sans-serif;font-size:26px;line-height:1;letter-spacing:2px;color:#ffffff;">LEATHER</span>
+              <div style="margin-top:14px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#E32126;">{{request_type}}</div>
+              <h1 style="margin:6px 0 4px 0;font-size:24px;line-height:1.25;font-weight:bold;color:#ffffff;">Novi zahtev za porudžbinu</h1>
+              <div style="font-size:15px;line-height:1.5;color:#d6d6d6;">{{customer_name}} &middot; {{product_name}}</div>
+              <div style="margin-top:4px;font-size:12px;color:#9a9a9a;">Poslato: {{submitted_at}}</div>
+            </td>
+          </tr>
+
+          <!-- Status -->
+          <tr>
+            <td style="padding:16px 0 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#1c1112" style="background-color:#1c1112;border-left:3px solid #E32126;">
+                <tr>
+                  <td style="padding:12px 16px;font-size:14px;line-height:1.5;color:#f5f5f5;">
+                    <strong>Status: čeka potvrdu i dogovor o avansu — nije plaćeno.</strong><br>
+                    <span style="color:#c9c9c9;">Pozovite kupca telefonom, dogovorite detalje izrade, iznos i način uplate avansa.</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- 01 Kupac -->
+          <tr>
+            <td style="padding:24px 0 0 0;">
+              <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#E32126;padding:0 0 8px 2px;">01 &mdash; Podaci o kupcu</div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#151515" style="background-color:#151515;border:1px solid #262626;">
+                <tr>
+                  <td width="38%" style="padding:11px 16px;border-bottom:1px solid #262626;font-size:13px;color:#9a9a9a;vertical-align:top;">Ime</td>
+                  <td style="padding:11px 16px;border-bottom:1px solid #262626;font-size:15px;color:#ffffff;vertical-align:top;">{{first_name}}</td>
+                </tr>
+                <tr>
+                  <td width="38%" style="padding:11px 16px;border-bottom:1px solid #262626;font-size:13px;color:#9a9a9a;vertical-align:top;">Prezime</td>
+                  <td style="padding:11px 16px;border-bottom:1px solid #262626;font-size:15px;color:#ffffff;vertical-align:top;">{{last_name}}</td>
+                </tr>
+                <tr>
+                  <td width="38%" style="padding:11px 16px;border-bottom:1px solid #262626;font-size:13px;color:#9a9a9a;vertical-align:top;">Broj telefona</td>
+                  <td style="padding:11px 16px;border-bottom:1px solid #262626;font-size:15px;vertical-align:top;"><a href="tel:{{phone}}" style="color:#ffffff;text-decoration:none;font-weight:bold;">{{phone}}</a></td>
+                </tr>
+                <tr>
+                  <td width="38%" style="padding:11px 16px;border-bottom:1px solid #262626;font-size:13px;color:#9a9a9a;vertical-align:top;">Email</td>
+                  <td style="padding:11px 16px;border-bottom:1px solid #262626;font-size:15px;vertical-align:top;"><a href="mailto:{{email}}" style="color:#ffffff;text-decoration:underline;">{{email}}</a></td>
+                </tr>
+                <tr>
+                  <td width="38%" style="padding:11px 16px;font-size:13px;color:#9a9a9a;vertical-align:top;">Adresa za dostavu</td>
+                  <td style="padding:11px 16px;font-size:15px;line-height:1.5;color:#ffffff;vertical-align:top;">{{address_street}}<br>{{address_postal_code}} {{address_city}}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- 02 Model -->
+          <tr>
+            <td style="padding:24px 0 0 0;">
+              <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#E32126;padding:0 0 8px 2px;">02 &mdash; Model</div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#151515" style="background-color:#151515;border:1px solid #262626;">
+                <tr>
+                  <td width="38%" style="padding:11px 16px;border-bottom:1px solid #262626;font-size:13px;color:#9a9a9a;vertical-align:top;">Vrsta zahteva</td>
+                  <td style="padding:11px 16px;border-bottom:1px solid #262626;font-size:15px;color:#ffffff;vertical-align:top;">{{request_type}}</td>
+                </tr>
+                <tr>
+                  <td width="38%" style="padding:11px 16px;border-bottom:1px solid #262626;font-size:13px;color:#9a9a9a;vertical-align:top;">Izabrani model</td>
+                  <td style="padding:11px 16px;border-bottom:1px solid #262626;font-size:17px;font-weight:bold;color:#ffffff;vertical-align:top;">{{product_name}}</td>
+                </tr>
+                <tr>
+                  <td width="38%" style="padding:11px 16px;border-bottom:1px solid #262626;font-size:13px;color:#9a9a9a;vertical-align:top;">Kategorija</td>
+                  <td style="padding:11px 16px;border-bottom:1px solid #262626;font-size:15px;color:#ffffff;vertical-align:top;">{{product_category}}</td>
+                </tr>
+                <tr>
+                  <td width="38%" style="padding:11px 16px;font-size:13px;color:#9a9a9a;vertical-align:top;">Oznaka modela</td>
+                  <td style="padding:11px 16px;font-size:13px;color:#c9c9c9;vertical-align:top;">{{product_slug}}{{#product_url}}<br><a href="{{product_url}}" style="color:#E32126;font-size:14px;font-weight:bold;text-decoration:underline;">Pogledaj model na sajtu &rarr;</a>{{/product_url}}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- 03 Mere -->
+          <tr>
+            <td style="padding:24px 0 0 0;">
+              <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#E32126;padding:0 0 8px 2px;">03 &mdash; Mere</div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#151515" style="background-color:#151515;border:1px solid #262626;">
+                <tr>
+                  <td width="38%" style="padding:11px 16px;border-bottom:1px solid #262626;font-size:13px;color:#9a9a9a;vertical-align:top;">Dužina prsluka</td>
+                  <td style="padding:11px 16px;border-bottom:1px solid #262626;font-size:17px;font-weight:bold;color:#ffffff;vertical-align:top;">{{vest_length_cm}}</td>
+                </tr>
+                <tr>
+                  <td width="38%" style="padding:11px 16px;border-bottom:1px solid #262626;font-size:13px;color:#9a9a9a;vertical-align:top;">Obim struka</td>
+                  <td style="padding:11px 16px;border-bottom:1px solid #262626;font-size:17px;font-weight:bold;color:#ffffff;vertical-align:top;">{{waist_cm}}</td>
+                </tr>
+                <tr>
+                  <td width="38%" style="padding:11px 16px;border-bottom:1px solid #262626;font-size:13px;color:#9a9a9a;vertical-align:top;">Obim stomaka</td>
+                  <td style="padding:11px 16px;border-bottom:1px solid #262626;font-size:17px;font-weight:bold;color:#ffffff;vertical-align:top;">{{abdomen_cm}}</td>
+                </tr>
+                <tr>
+                  <td width="38%" style="padding:11px 16px;font-size:13px;color:#9a9a9a;vertical-align:top;">Visina osobe<br><span style="font-size:11px;color:#777777;">opciono, okvirno</span></td>
+                  <td style="padding:11px 16px;font-size:15px;color:#ffffff;vertical-align:top;">{{height_cm}}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- 04 Želje i poruka -->
+          <tr>
+            <td style="padding:24px 0 0 0;">
+              <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#E32126;padding:0 0 8px 2px;">04 &mdash; Želje kupca</div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#151515" style="background-color:#151515;border:1px solid #262626;">
+                <tr>
+                  <td style="padding:14px 16px 4px 16px;font-size:13px;color:#9a9a9a;">Dodatni zahtevi za prilagođavanje</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 16px 14px 16px;border-bottom:1px solid #262626;font-size:15px;line-height:1.6;color:#ffffff;white-space:pre-line;">{{customization}}</td>
+                </tr>
+                <tr>
+                  <td style="padding:14px 16px 4px 16px;font-size:13px;color:#9a9a9a;">Poruka kupca</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 16px 14px 16px;font-size:15px;line-height:1.6;color:#ffffff;white-space:pre-line;">{{message}}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          {{#designImageUrl}}
+          <!-- Referentna fotografija (only when the customer attached one) -->
+          <tr>
+            <td style="padding:24px 0 0 0;">
+              <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#E32126;padding:0 0 8px 2px;">Referentna fotografija kupca</div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#151515" style="background-color:#151515;border:1px solid #262626;">
+                <tr>
+                  <td align="center" style="padding:16px;">
+                    <a href="{{designImageUrl}}" style="text-decoration:none;">
+                      <img src="{{designImageUrl}}" alt="Referentna fotografija CeroLeather modela" width="400" style="display:block;width:100%;max-width:400px;height:auto;border:0;">
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding:0 16px 18px 16px;">
+                    <a href="{{designImageUrl}}" style="display:inline-block;padding:11px 20px;background-color:#E32126;color:#ffffff;font-size:13px;font-weight:bold;letter-spacing:1px;text-decoration:none;">Pogledaj originalnu fotografiju</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          {{/designImageUrl}}
+
+          <!-- 05 Potvrde -->
+          <tr>
+            <td style="padding:24px 0 0 0;">
+              <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#E32126;padding:0 0 8px 2px;">05 &mdash; Potvrde kupca</div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#151515" style="background-color:#151515;border:1px solid #262626;">
+                <tr>
+                  <td width="38%" style="padding:11px 16px;border-bottom:1px solid #262626;font-size:13px;color:#9a9a9a;vertical-align:top;">Avans</td>
+                  <td style="padding:11px 16px;border-bottom:1px solid #262626;font-size:14px;color:#ffffff;vertical-align:top;">{{advance_acknowledged}}</td>
+                </tr>
+                <tr>
+                  <td width="38%" style="padding:11px 16px;font-size:13px;color:#9a9a9a;vertical-align:top;">Obrada podataka</td>
+                  <td style="padding:11px 16px;font-size:14px;color:#ffffff;vertical-align:top;">{{privacy_consent}}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:24px 4px 8px 4px;font-size:12px;line-height:1.6;color:#8a8a8a;">
+              Odgovorom na ovaj email pišete direktno kupcu ({{email}}).<br>
+              Zahtev je poslat sa sajta CeroLeather — ovo nije potvrđena ni plaćena porudžbina.
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
