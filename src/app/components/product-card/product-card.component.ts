@@ -60,7 +60,7 @@ import { Product } from '../../models/product.model';
           <a
             class="btn btn--sm btn--primary"
             routerLink="/porudzbina"
-            [queryParams]="{ proizvod: p.slug }"
+            [queryParams]="{ zahtev: 'katalog', proizvod: p.slug }"
             [attr.aria-label]="'Zatraži model ' + p.name"
             >Zatraži model</a
           >

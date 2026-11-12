@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { MeasurementGuideComponent } from '../../components/measurement-guide/measurement-guide.component';
 import { OrderFormComponent } from '../../components/order-form/order-form.component';
 import { ScrollService } from '../../core/services/scroll.service';
+import { OrderMode } from '../../models/order-request.model';
 import { RevealDirective } from '../../shared/directives/reveal.directive';
 
 @Component({
@@ -28,7 +29,11 @@ import { RevealDirective } from '../../shared/directives/reveal.directive';
         </div>
       </aside>
       <section id="porudzbina-forma" class="op__form">
-        <app-order-form [presetSlug]="proizvod()" [presetCategory]="kategorija()" />
+        <app-order-form
+          [mode]="mode()"
+          [presetSlug]="mode() === 'catalog' ? proizvod() : null"
+          [presetCategory]="mode() === 'custom' ? kategorija() : null"
+        />
       </section>
     </div>
   `,
@@ -58,6 +63,13 @@ import { RevealDirective } from '../../shared/directives/reveal.directive';
   `,
 })
 export class OrderPage {
+  /**
+   * ?zahtev=katalog → request for an existing catalog model (with ?proizvod=<slug>)
+   * ?zahtev=custom (or no parameter) → entirely new custom design
+   * The mode is part of the URL, so it survives a page refresh and never leaks between visits.
+   */
+  readonly zahtev = input<string | undefined>();
+  readonly mode = computed<OrderMode>(() => (this.zahtev() === 'katalog' ? 'catalog' : 'custom'));
   /** ?proizvod=<slug> */
   readonly proizvod = input<string | undefined>();
   /** ?kategorija=<id> */

@@ -71,8 +71,9 @@ function measurementText(id: string, r: OrderRequest): string {
   return def?.approximate ? `${v} (okvirno)` : v;
 }
 
+/** From the explicit form mode — never guessed from the product field. */
 function requestType(r: OrderRequest): string {
-  return findProduct(r.productSlug) ? 'Model iz kataloga' : 'Sopstvena ideja (custom dizajn)';
+  return r.requestMode === 'catalog' ? 'Model iz kataloga' : 'Sopstvena ideja (custom dizajn)';
 }
 
 /**
@@ -113,7 +114,8 @@ export function orderSummaryText(r: OrderRequest, submittedAt = new Date()): str
 /** Maps a request to the EmailJS template variables (see ORDER_EMAIL_PARAMS). */
 export function toTemplateParams(r: OrderRequest, now = new Date()): OrderEmailParams {
   const fullName = `${r.firstName} ${r.lastName}`.trim();
-  const product = findProduct(r.productSlug);
+  // a catalog product only counts in catalog mode (custom requests never carry one)
+  const product = r.requestMode === 'catalog' ? findProduct(r.productSlug) : undefined;
 
   const measurementParams = Object.fromEntries(
     MEASUREMENTS.map((m) => [m.emailParam, measurementText(m.id, r)]),

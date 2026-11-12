@@ -21,7 +21,12 @@
       }
     </nav>
 
-    <a routerLink="/porudzbina" class="btn btn--primary btn--sm header__cta">Zatraži model</a>
+    <a
+      routerLink="/porudzbina"
+      [queryParams]="{ zahtev: 'custom' }"
+      class="btn btn--primary btn--sm header__cta"
+      >Zatraži model</a
+    >
 
     <button
       type="button"

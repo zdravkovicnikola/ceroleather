@@ -93,7 +93,14 @@ i formi, ali se ne crta na lutki. Nova mera = novi objekat — vodič, forma i e
 
 ## Tok porudžbine i avans
 
-Forma šalje **zahtev za porudžbinu**, ne kupovinu:
+Forma šalje **zahtev za porudžbinu**, ne kupovinu. Postoje dva toka, određena linkom (`?zahtev=`):
+
+- **Custom dizajn**: `/porudzbina?zahtev=custom` (dugme „Zatraži model“ u zaglavlju; i podrazumevano kada parametra
+  nema). Nema sekcije „Model“; kupac opisuje ideju i može da priloži fotografiju (Cloudinary).
+- **Model iz kataloga**: `/porudzbina?zahtev=katalog&proizvod=<slug>` (kartice u katalogu) i forma na stranici
+  proizvoda. Sekcija „Model“ je popunjena, a otpremanja fotografije nema.
+
+Koraci:
 
 1. Kupac unosi mere i lične podatke (ime, prezime, adresa: ulica i broj, poštanski broj, mesto; telefon, email).
 2. Pre slanja vidi objašnjenje procesa i potvrđuje (obavezni checkbox-ovi) da razume da je **avans obavezan**

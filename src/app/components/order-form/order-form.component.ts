@@ -24,10 +24,12 @@ import { RouterLink } from '@angular/router';
 import { SITE_CONFIG } from '../../core/config/site.config';
 import {
   CloudinaryConfigError,
+  CloudinaryUploadError,
   CloudinaryUploadService,
 } from '../../core/services/cloudinary-upload.service';
 import {
   EmailConfigError,
+  EmailDeliveryError,
   EmailService,
   orderSummaryText,
 } from '../../core/services/email.service';
@@ -36,7 +38,7 @@ import { CATEGORIES, categoryLabel } from '../../data/categories.data';
 import { MEASUREMENTS } from '../../data/measurements.data';
 import { PRODUCTS, findProduct } from '../../data/products.data';
 import { MeasurementDefinition, MeasurementValues } from '../../models/measurement.model';
-import { OrderRequest, SubmitState } from '../../models/order-request.model';
+import { OrderMode, OrderRequest, SubmitState } from '../../models/order-request.model';
 import { ProductCategoryId } from '../../models/product.model';
 import { InstagramIconComponent } from '../../shared/components/instagram-icon.component';
 import { DesignUploadComponent } from '../design-upload/design-upload.component';
@@ -84,6 +86,42 @@ const toNumber = (raw: string | null | undefined): number | null => {
   return Number.isNaN(n) ? null : n;
 };
 
+/** Friendly Serbian text for an EmailJS failure (details go to the console in dev mode). */
+function emailErrorText(err: unknown): string {
+  if (err instanceof EmailConfigError)
+    return 'Slanje zahteva trenutno nije podešeno na ovom sajtu.';
+  if (err instanceof EmailDeliveryError)
+    switch (err.kind) {
+      case 'network':
+        return 'Zahtev nije poslat — nema internet konekcije ili server nije dostupan. Proverite konekciju i pokušajte ponovo.';
+      case 'rate-limit':
+        return 'Zahtev nije poslat jer je slanje pokušano prebrzo. Sačekajte nekoliko sekundi i pokušajte ponovo.';
+      case 'rejected':
+        return 'Zahtev nije poslat zbog greške u podešavanju slanja na sajtu. Pokušajte kasnije ili nam se javite direktno.';
+      default:
+        return 'Servis za slanje je trenutno nedostupan. Pokušajte ponovo za nekoliko minuta.';
+    }
+  return 'Zahtev nije poslat. Pokušajte ponovo.';
+}
+
+/** Friendly Serbian text for a Cloudinary failure. */
+function uploadErrorText(err: unknown): string {
+  if (err instanceof CloudinaryConfigError)
+    return 'Slanje fotografija trenutno nije podešeno na ovom sajtu.';
+  if (err instanceof CloudinaryUploadError)
+    switch (err.kind) {
+      case 'network':
+        return 'Fotografija nije otpremljena — nema internet konekcije ili je veza prespora. Pokušajte ponovo.';
+      case 'invalid':
+        return 'Fotografija nije prihvaćena (JPG, JPEG, PNG ili WEBP, najviše 5 MB).';
+      case 'rejected':
+        return 'Fotografija nije otpremljena zbog greške u podešavanju sajta. Uklonite je i pošaljite zahtev bez nje, ili pokušajte kasnije.';
+      default:
+        return 'Servis za fotografije je trenutno nedostupan. Pokušajte ponovo ili pošaljite zahtev bez fotografije.';
+    }
+  return 'Fotografija nije otpremljena. Pokušajte ponovo.';
+}
+
 @Component({
   selector: 'app-order-form',
   imports: [ReactiveFormsModule, RouterLink, InstagramIconComponent, DesignUploadComponent],
@@ -94,9 +132,15 @@ const toNumber = (raw: string | null | undefined): number | null => {
   styleUrl: './order-form.component.scss',
 })
 export class OrderFormComponent {
-  /** Pre-selected product slug (from the product page or ?proizvod=) */
+  /**
+   * EXPLICIT inquiry flow, decided by the hosting page (?zahtev=custom|katalog, product page):
+   *  - 'custom'  → new design: "Model" section hidden, inspiration photo upload shown
+   *  - 'catalog' → existing model: "Model" section shown (pre-filled), no photo upload
+   */
+  readonly mode = input<OrderMode>('custom');
+  /** Catalog flow: pre-selected product slug (?proizvod= or the product page) */
   readonly presetSlug = input<string | null | undefined>(null);
-  /** Pre-selected category (from ?kategorija=) when no product is given */
+  /** Custom flow: optional category hint (?kategorija=jakne from the jacket request card) */
   readonly presetCategory = input<string | null | undefined>(null);
   /** Hide the product picker when the form sits on a product page */
   readonly compact = input(false);
@@ -109,7 +153,6 @@ export class OrderFormComponent {
   readonly products = PRODUCTS;
   readonly categories = CATEGORIES;
   readonly measurements = MEASUREMENTS;
-  readonly customIdea = CUSTOM_IDEA;
   readonly contactEmail = SITE_CONFIG.contactEmail;
   readonly instagramUrl = SITE_CONFIG.instagramUrl;
   readonly instagramHandle = SITE_CONFIG.instagramHandle;
@@ -213,22 +256,31 @@ export class OrderFormComponent {
   private readonly productSlug = toSignal(this.form.controls.productSlug.valueChanges, {
     initialValue: '',
   });
-  readonly selectedProduct = computed(() => findProduct(this.productSlug()));
+  readonly selectedProduct = computed(() =>
+    this.mode() === 'catalog' ? findProduct(this.productSlug()) : undefined,
+  );
+  readonly isCustom = computed(() => this.mode() === 'custom');
+  /** Section numbers — the custom flow has no "Model" section, so the others move up. */
+  readonly sectionNo = computed(() => {
+    const keys = this.isCustom()
+      ? ['customer', 'measurements', 'wishes', 'confirm']
+      : ['customer', 'model', 'measurements', 'wishes', 'confirm'];
+    return Object.fromEntries(keys.map((k, i) => [k, String(i + 1).padStart(2, '0')])) as Record<
+      string,
+      string
+    >;
+  });
 
   constructor() {
     const destroyRef = inject(DestroyRef);
 
-    // Preset product / category
+    // Mode + presets → the model fields. Re-runs when the visitor follows another link to
+    // the same page (the component is reused), so nothing from the previous flow survives.
     effect(() => {
+      const mode = this.mode();
       const slug = this.presetSlug();
       const cat = this.presetCategory();
-      untracked(() => {
-        if (slug && findProduct(slug)) this.form.controls.productSlug.setValue(slug);
-        else if (cat && CATEGORIES.some((c) => c.id === cat)) {
-          this.form.controls.productSlug.setValue(CUSTOM_IDEA);
-          this.form.controls.category.setValue(cat as ProductCategoryId);
-        }
-      });
+      untracked(() => this.applyMode(mode, slug, cat));
     });
 
     // Category follows the product automatically (editable only for a custom idea)
@@ -325,11 +377,12 @@ export class OrderFormComponent {
     this.failedStep.set(null);
     this.copyState.set('idle');
 
-    // 1) Optional photo → Cloudinary (skipped when there is none, or it is already uploaded)
+    // 1) Optional photo → Cloudinary — custom flow only (skipped when there is none, or it is
+    //    already uploaded). Catalog requests never upload anything.
     let designImageUrl = '';
-    const file = this.designFile();
+    const file = this.isCustom() ? this.designFile() : null;
     const up = this.uploadedDesign();
-    if (up && up.file === file) {
+    if (this.isCustom() && up && up.file === file) {
       designImageUrl = up.url;
     } else if (file) {
       this.submitState.set('uploading');
@@ -340,12 +393,7 @@ export class OrderFormComponent {
         this.uploadedDesign.set({ file, url: res.secureUrl, name: file.name });
         this.saveDraft(); // remember the URL too, in case the email step fails
       } catch (err) {
-        this.fail(
-          'upload',
-          err instanceof CloudinaryConfigError
-            ? 'Slanje fotografija trenutno nije podešeno na ovom sajtu.'
-            : 'Fotografija nije otpremljena. Proverite internet konekciju i pokušajte ponovo.',
-        );
+        this.fail('upload', uploadErrorText(err));
         return;
       }
     }
@@ -365,12 +413,7 @@ export class OrderFormComponent {
         el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 50);
     } catch (err) {
-      this.fail(
-        'email',
-        err instanceof EmailConfigError
-          ? 'Slanje zahteva trenutno nije podešeno na ovom sajtu.'
-          : 'Zahtev nije poslat. Proverite internet konekciju i pokušajte ponovo.',
-      );
+      this.fail('email', emailErrorText(err));
     }
   }
 
@@ -414,8 +457,7 @@ export class OrderFormComponent {
     this.uploadProgress.set(0);
     this.failedStep.set(null);
     this.state.reset();
-    const slug = this.presetSlug();
-    if (slug) this.form.controls.productSlug.setValue(slug);
+    this.applyMode(this.mode(), this.presetSlug(), this.presetCategory());
   }
 
   discardDraft(): void {
@@ -425,13 +467,43 @@ export class OrderFormComponent {
 
   // ---------------------------------------------------------------------------
 
+  /** Puts the model fields (and the photo) into the state the flow requires. */
+  private applyMode(
+    mode: OrderMode,
+    slug: string | null | undefined,
+    cat: string | null | undefined,
+  ): void {
+    const product = this.form.controls.productSlug;
+    const category = this.form.controls.category;
+    if (mode === 'catalog') {
+      // catalog: a real product (pre-filled when the link carries one), never "custom idea"
+      product.setValue(slug && findProduct(slug) ? slug : '');
+      if (!product.value) {
+        category.enable({ emitEvent: false });
+        category.setValue('');
+      }
+      // a photo picked in the custom flow must not travel into a catalog request
+      this.designFile.set(null);
+      this.uploadedDesign.set(null);
+    } else {
+      product.setValue(CUSTOM_IDEA);
+      category.enable({ emitEvent: false });
+      category.setValue(
+        cat && CATEGORIES.some((c) => c.id === cat) ? (cat as ProductCategoryId) : 'custom',
+      );
+      this.state.selectedProductSlug.set(null);
+    }
+  }
+
   private buildRequest(designImageUrl: string): OrderRequest {
     const raw = this.form.getRawValue();
-    const product = findProduct(raw.productSlug);
+    const mode = this.mode();
+    const product = mode === 'catalog' ? findProduct(raw.productSlug) : undefined;
     const measurements: MeasurementValues = Object.fromEntries(
       MEASUREMENTS.map((m) => [m.id, toNumber(raw.measurements[m.id])]),
     );
     return {
+      requestMode: mode,
       firstName: raw.firstName.trim(),
       lastName: raw.lastName.trim(),
       email: raw.email.trim(),
@@ -441,7 +513,7 @@ export class OrderFormComponent {
         city: raw.city.trim(),
         postalCode: raw.postalCode.trim(),
       },
-      productSlug: raw.productSlug,
+      productSlug: product ? product.slug : CUSTOM_IDEA,
       productName: product?.name ?? 'Sopstvena ideja (custom)',
       categoryLabel: raw.category ? categoryLabel(raw.category) : '—',
       measurements,
@@ -449,7 +521,7 @@ export class OrderFormComponent {
       message: raw.message.trim(),
       advanceAcknowledged: raw.advanceAck,
       privacyConsent: raw.privacyConsent,
-      designImageUrl,
+      designImageUrl: mode === 'custom' ? designImageUrl : '',
     };
   }
 
@@ -493,19 +565,25 @@ export class OrderFormComponent {
     if (!draft?.data) return;
     if (Date.now() - draft.savedAt > DRAFT_MAX_AGE_MS) return this.clearDraft();
 
-    const keepProduct = this.presetSlug() || this.presetCategory();
+    // The flow (link) decides the model fields — a draft from another flow must not leak in.
+    // Only a catalog visit without a product in the link may restore the product chosen earlier.
     const patch: Record<string, unknown> = { ...draft.data };
-    if (keepProduct) {
-      delete patch['productSlug'];
-      delete patch['category'];
-    }
+    const draftSlug = String(patch['productSlug'] ?? '');
+    delete patch['productSlug'];
+    delete patch['category'];
     this.form.patchValue(patch);
+    if (
+      this.mode() === 'catalog' &&
+      !this.form.controls.productSlug.value &&
+      findProduct(draftSlug)
+    )
+      this.form.controls.productSlug.setValue(draftSlug);
     // push restored measurements to the guide as well
     for (const m of MEASUREMENTS)
       this.state.setMeasurement(m.id, toNumber(this.measurementGroup.controls[m.id].value));
     // a photo uploaded before the failed send is reused, not uploaded again
     const d = draft.design;
-    if (d?.url?.startsWith('https://res.cloudinary.com/'))
+    if (this.isCustom() && d?.url?.startsWith('https://res.cloudinary.com/'))
       this.uploadedDesign.set({ file: null, url: d.url, name: d.name || '' });
     this.draftRestored.set(true);
   }

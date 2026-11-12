@@ -21,12 +21,17 @@
 } @else {
   <form class="of" [formGroup]="form" (ngSubmit)="submit()" novalidate aria-labelledby="of-title">
     <header class="of__head">
-      <p class="eyebrow">Porudžbina po meri</p>
-      <h2 id="of-title" class="display display--md">Zahtev za porudžbinu</h2>
+      <p class="eyebrow">{{ isCustom() ? 'Custom dizajn po meri' : 'Model iz kataloga' }}</p>
+      <h2 id="of-title" class="display display--md">
+        {{ isCustom() ? 'Zahtev za vaš dizajn' : 'Zahtev za porudžbinu' }}
+      </h2>
       <p class="of__intro">
         Polja označena <span class="req">*</span> su obavezna. Slanjem forme šaljete
         <strong>zahtev</strong> — ništa se ne plaća online. Za svaki komad po meri potreban je
         <strong>avans</strong>, o kome se dogovaramo telefonom.
+        @if (isCustom()) {
+          Opišite svoju ideju u odeljku „Vaše želje“ i, ako imate, priložite fotografiju ili skicu.
+        }
       </p>
     </header>
 
@@ -44,7 +49,9 @@
 
     <!-- 01 — customer -->
     <fieldset class="of__group">
-      <legend class="of__legend"><span>01</span> Vaši podaci</legend>
+      <legend class="of__legend">
+        <span>{{ sectionNo()['customer'] }}</span> Vaši podaci
+      </legend>
       <div class="of__grid">
         <div class="field">
           <label for="of-first-name">Ime <span class="req">*</span></label>
@@ -193,69 +200,74 @@
       </div>
     </fieldset>
 
-    <!-- 02 — product -->
-    <fieldset class="of__group">
-      <legend class="of__legend"><span>02</span> Model</legend>
-      @if (compact() && selectedProduct(); as p) {
-        <div class="of__selected">
-          <img [src]="p.images[0].srcSm" [alt]="p.images[0].alt" />
-          <div>
-            <p class="of__selected-cat">{{ categoryLabelFor(p.category) }}</p>
-            <p class="of__selected-name">{{ p.name }}</p>
+    <!-- Model — catalog flow only (a custom design has no catalog product) -->
+    @if (!isCustom()) {
+      <fieldset class="of__group">
+        <legend class="of__legend">
+          <span>{{ sectionNo()['model'] }}</span> Model
+        </legend>
+        @if (compact() && selectedProduct(); as p) {
+          <div class="of__selected">
+            <img [src]="p.images[0].srcSm" [alt]="p.images[0].alt" />
+            <div>
+              <p class="of__selected-cat">{{ categoryLabelFor(p.category) }}</p>
+              <p class="of__selected-name">{{ p.name }}</p>
+            </div>
+          </div>
+        }
+        @if (!compact() && selectedProduct(); as p) {
+          <p class="of__chosen" role="status">
+            <span class="of__chosen-label">Zahtev za model</span>
+            <strong class="of__chosen-name">{{ p.name }}</strong>
+            <span class="of__chosen-cat">{{ categoryLabelFor(p.category) }}</span>
+          </p>
+        }
+        <div class="of__grid" [class.visually-hidden]="compact() && !!selectedProduct()">
+          <div class="field">
+            <label for="of-product">Izabrani model <span class="req">*</span></label>
+            <select
+              id="of-product"
+              class="input"
+              formControlName="productSlug"
+              [class.is-invalid]="showError(form.controls.productSlug)"
+              [attr.aria-invalid]="showError(form.controls.productSlug)"
+            >
+              <option value="" disabled>Izaberite model…</option>
+              @for (p of products; track p.slug) {
+                <option [value]="p.slug">{{ p.name }}</option>
+              }
+            </select>
+            @if (showError(form.controls.productSlug)) {
+              <p class="field-error">Izaberite model ili „Sopstvena ideja”.</p>
+            }
+          </div>
+          <div class="field">
+            <label for="of-category">Kategorija <span class="req">*</span></label>
+            <select
+              id="of-category"
+              class="input"
+              formControlName="category"
+              [class.is-invalid]="showError(form.controls.category)"
+              [attr.aria-invalid]="showError(form.controls.category)"
+            >
+              <option value="" disabled>Izaberite kategoriju…</option>
+              @for (c of categories; track c.id) {
+                <option [value]="c.id">{{ c.label }}</option>
+              }
+            </select>
+            @if (showError(form.controls.category)) {
+              <p class="field-error">Izaberite kategoriju.</p>
+            }
           </div>
         </div>
-      }
-      @if (!compact() && selectedProduct(); as p) {
-        <p class="of__chosen" role="status">
-          <span class="of__chosen-label">Zahtev za model</span>
-          <strong class="of__chosen-name">{{ p.name }}</strong>
-          <span class="of__chosen-cat">{{ categoryLabelFor(p.category) }}</span>
-        </p>
-      }
-      <div class="of__grid" [class.visually-hidden]="compact() && !!selectedProduct()">
-        <div class="field">
-          <label for="of-product">Izabrani model <span class="req">*</span></label>
-          <select
-            id="of-product"
-            class="input"
-            formControlName="productSlug"
-            [class.is-invalid]="showError(form.controls.productSlug)"
-            [attr.aria-invalid]="showError(form.controls.productSlug)"
-          >
-            <option value="" disabled>Izaberite model…</option>
-            @for (p of products; track p.slug) {
-              <option [value]="p.slug">{{ p.name }}</option>
-            }
-            <option [value]="customIdea">Sopstvena ideja (custom)</option>
-          </select>
-          @if (showError(form.controls.productSlug)) {
-            <p class="field-error">Izaberite model ili „Sopstvena ideja”.</p>
-          }
-        </div>
-        <div class="field">
-          <label for="of-category">Kategorija <span class="req">*</span></label>
-          <select
-            id="of-category"
-            class="input"
-            formControlName="category"
-            [class.is-invalid]="showError(form.controls.category)"
-            [attr.aria-invalid]="showError(form.controls.category)"
-          >
-            <option value="" disabled>Izaberite kategoriju…</option>
-            @for (c of categories; track c.id) {
-              <option [value]="c.id">{{ c.label }}</option>
-            }
-          </select>
-          @if (showError(form.controls.category)) {
-            <p class="field-error">Izaberite kategoriju.</p>
-          }
-        </div>
-      </div>
-    </fieldset>
+      </fieldset>
+    }
 
-    <!-- 03 — measurements -->
+    <!-- measurements -->
     <fieldset class="of__group" formGroupName="measurements">
-      <legend class="of__legend"><span>03</span> Mere</legend>
+      <legend class="of__legend">
+        <span>{{ sectionNo()['measurements'] }}</span> Mere
+      </legend>
       <p class="of__hint">
         Sve mere unosite u <strong>centimetrima</strong>, kao ceo broj ili sa decimalom (npr.
         <strong>98</strong> ili <strong>98,5</strong>). Mere se automatski popunjavaju iz vodiča za
@@ -296,12 +308,16 @@
       </div>
     </fieldset>
 
-    <!-- 04 — customization -->
+    <!-- wishes (+ inspiration photo in the custom flow) -->
     <fieldset class="of__group">
-      <legend class="of__legend"><span>04</span> Vaše želje</legend>
+      <legend class="of__legend">
+        <span>{{ sectionNo()['wishes'] }}</span> Vaše želje
+      </legend>
       <div class="of__grid">
         <div class="field of__full">
-          <label for="of-custom">Dodatni zahtevi za prilagođavanje</label>
+          <label for="of-custom">{{
+            isCustom() ? 'Opis vašeg dizajna' : 'Dodatni zahtevi za prilagođavanje'
+          }}</label>
           <textarea
             id="of-custom"
             class="input"
@@ -320,26 +336,30 @@
         </div>
       </div>
 
-      <div class="of__design">
-        <p class="of__sub" id="of-design-image-title">Priložite fotografiju željenog modela</p>
-        <p class="of__hint" id="of-design-image-help">
-          Imate ideju za prsluk ili jaknu koju želite da izradimo? Pošaljite nam fotografiju ili
-          skicu koja će nam pomoći da razumemo vašu zamisao.
-        </p>
-        <app-design-upload
-          [(file)]="designFile"
-          [remoteUrl]="uploadedDesign()?.file === null ? (uploadedDesign()?.url ?? null) : null"
-          [remoteName]="uploadedDesign()?.name ?? ''"
-          [uploaded]="designIsUploaded()"
-          [disabled]="busy()"
-          (removed)="onDesignRemoved()"
-        />
-      </div>
+      @if (isCustom()) {
+        <div class="of__design">
+          <p class="of__sub" id="of-design-image-title">Priložite fotografiju željenog modela</p>
+          <p class="of__hint" id="of-design-image-help">
+            Imate ideju za prsluk ili jaknu koju želite da izradimo? Pošaljite nam fotografiju ili
+            skicu koja će nam pomoći da razumemo vašu zamisao.
+          </p>
+          <app-design-upload
+            [(file)]="designFile"
+            [remoteUrl]="uploadedDesign()?.file === null ? (uploadedDesign()?.url ?? null) : null"
+            [remoteName]="uploadedDesign()?.name ?? ''"
+            [uploaded]="designIsUploaded()"
+            [disabled]="busy()"
+            (removed)="onDesignRemoved()"
+          />
+        </div>
+      }
     </fieldset>
 
-    <!-- 05 — how the order is confirmed (advance payment) -->
+    <!-- how the order is confirmed (advance payment) -->
     <fieldset class="of__group">
-      <legend class="of__legend"><span>05</span> Potvrda porudžbine i avans</legend>
+      <legend class="of__legend">
+        <span>{{ sectionNo()['confirm'] }}</span> Potvrda porudžbine i avans
+      </legend>
       <div class="of__process">
         <p class="of__process-title">Kako se potvrđuje porudžbina</p>
         <ol class="of__steps">

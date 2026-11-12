@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { environment } from '../../../environments/environment';
 
 /** Formats the visitor may upload (checked by MIME type and by file extension). */
@@ -30,9 +30,19 @@ export class CloudinaryConfigError extends Error {
   }
 }
 
+/**
+ *  - network  → no connection / timeout
+ *  - rejected → Cloudinary refused it (4xx: preset missing or not "Unsigned", format/size not
+ *               allowed by the preset)
+ *  - invalid  → the file failed the local type/size check (should not happen — the picker checks)
+ *  - unavailable → Cloudinary error (5xx / unexpected answer)
+ */
+export type UploadFailureKind = 'network' | 'rejected' | 'invalid' | 'unavailable';
+
 export class CloudinaryUploadError extends Error {
   constructor(
     message: string,
+    readonly kind: UploadFailureKind,
     readonly status?: number,
   ) {
     super(message);
@@ -75,12 +85,16 @@ export class CloudinaryUploadService {
    * `onProgress` receives 0–1 while the file is being sent.
    */
   upload(file: File, onProgress?: (fraction: number) => void): Promise<CloudinaryUploadResult> {
-    if (!this.isConfigured) return Promise.reject(new CloudinaryConfigError());
+    if (!this.isConfigured) {
+      this.debug('konfiguracija', 'prazno: environment.cloudinary.cloudName / uploadPreset');
+      return Promise.reject(new CloudinaryConfigError());
+    }
     const problem = validateDesignImage(file);
     if (problem)
       return Promise.reject(
         new CloudinaryUploadError(
           problem === 'size' ? 'Fajl je veći od 5 MB.' : 'Nepodržan format.',
+          'invalid',
         ),
       );
 
@@ -113,17 +127,27 @@ export class CloudinaryUploadService {
             format: res.format ?? '',
           });
         } else {
-          reject(
-            new CloudinaryUploadError(
-              res.error?.message || `Neočekivan odgovor servera (${xhr.status}).`,
-              xhr.status,
-            ),
-          );
+          const kind = xhr.status >= 400 && xhr.status < 500 ? 'rejected' : 'unavailable';
+          const msg = res.error?.message || `Neočekivan odgovor servera (${xhr.status}).`;
+          this.debug(`Cloudinary (${kind})`, `status ${xhr.status}: ${msg}`);
+          reject(new CloudinaryUploadError(msg, kind, xhr.status));
         }
       };
-      xhr.onerror = () => reject(new CloudinaryUploadError('Mrežna greška pri otpremanju.'));
-      xhr.ontimeout = () => reject(new CloudinaryUploadError('Otpremanje je trajalo predugo.'));
+      xhr.onerror = () => {
+        this.debug('mreža', 'zahtev ka api.cloudinary.com nije stigao do servera');
+        reject(new CloudinaryUploadError('Mrežna greška pri otpremanju.', 'network'));
+      };
+      xhr.ontimeout = () => {
+        this.debug('mreža', 'otpremanje je prekoračilo 90 s');
+        reject(new CloudinaryUploadError('Otpremanje je trajalo predugo.', 'network'));
+      };
       xhr.send(body);
     });
+  }
+
+  /** Development-only console diagnostics. */
+  private debug(scope: string, detail: string): void {
+    if (isDevMode())
+      console.error(`[CeroLeather] Otpremanje fotografije nije uspelo — ${scope}: ${detail}`);
   }
 }

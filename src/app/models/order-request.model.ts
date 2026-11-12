@@ -1,5 +1,13 @@
 import { MeasurementValues } from './measurement.model';
 
+/**
+ * How the visitor reached the form — set EXPLICITLY by the link (?zahtev=custom|katalog) or by
+ * the page hosting the form, never guessed from whether a product happens to be selected.
+ *  - 'custom'  → entirely new design: no "Model" section, optional inspiration photo
+ *  - 'catalog' → existing catalog model: "Model" section, no photo upload
+ */
+export type OrderMode = 'custom' | 'catalog';
+
 /** Customer delivery address (Serbia). */
 export interface OrderAddress {
   street: string;
@@ -12,6 +20,7 @@ export interface OrderAddress {
  * agrees the details and the mandatory advance payment; only then is the order confirmed.
  */
 export interface OrderRequest {
+  requestMode: OrderMode;
   firstName: string;
   lastName: string;
   email: string;

@@ -43,6 +43,11 @@ Forma nema radio dugmad ni polja sa višestrukim izborom. Ima 2 padajuće liste 
 | 18 | 05 Potvrda porudžbine i avans | `privacyConsent` | checkbox | da | mora biti označen |
 | — | (skriveno) | `website` | honeypot | — | zamka za botove; ako je popunjeno, ništa se ne šalje. **Namerno se ne šalje u email.** |
 
+**Dva toka forme:** u **custom** toku sekcija „Model“ (`productSlug`, `category`) se ne prikazuje:
+`product_name` = „Sopstvena ideja (custom)“, `product_slug` = `sopstvena-ideja`, `product_url` prazno, a
+`product_category` je „Custom modeli“ (ili „Kožne jakne“ sa kartice „jakna po meri“). U **katalog** toku nema
+otpremanja fotografije, pa je `designImageUrl` uvek prazan. Sve ostale vrednosti se šalju u oba toka.
+
 ## 2. Mapiranje: polje → EmailJS parametar → oznaka u emailu
 
 Sve vrednosti su gotov tekst na srpskom (sa jedinicama), pa prazna opciona polja nikad ne ostavljaju prazno mesto.
@@ -62,7 +67,7 @@ Sve vrednosti su gotov tekst na srpskom (sa jedinicama), pa prazna opciona polja
 | `productSlug` | `product_name` | Izabrani model / zaglavlje | da | „Sopstvena ideja (custom)“ |
 | `productSlug` | `product_slug` | Oznaka modela | da | `sopstvena-ideja` za custom |
 | `productSlug` | `product_url` | link „Pogledaj model na sajtu“ | ne | **prazno** za custom ideju → link se ne prikazuje |
-| `productSlug` | `request_type` | Vrsta zahteva / zaglavlje | da | „Model iz kataloga“ ili „Sopstvena ideja (custom dizajn)“ |
+| tok forme (`mode`: `?zahtev=custom` / `katalog`) | `request_type` | Vrsta zahteva / zaglavlje | da | „Model iz kataloga“ ili „Sopstvena ideja (custom dizajn)“; iz toka, nikad iz polja proizvoda |
 | `category` | `product_category` | Kategorija | da | — |
 | `measurements.vestLength` | `vest_length_cm` | Dužina prsluka | da | „62 cm“ |
 | `measurements.waist` | `waist_cm` | Obim struka | da | „92,5 cm“ |

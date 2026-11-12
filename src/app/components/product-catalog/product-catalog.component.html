@@ -47,7 +47,10 @@
           Fotografije modela jakni uskoro. Do tada — opišite kakvu jaknu želite i pošaljite mere, a
           mi ćemo vam se javiti.
         </p>
-        <a class="btn btn--primary" routerLink="/porudzbina" [queryParams]="{ kategorija: 'jakne' }"
+        <a
+          class="btn btn--primary"
+          routerLink="/porudzbina"
+          [queryParams]="{ zahtev: 'custom', kategorija: 'jakne' }"
           >Pošalji upit za jaknu <span class="btn__arrow"></span
         ></a>
       </article>

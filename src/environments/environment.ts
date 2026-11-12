@@ -10,12 +10,20 @@
 export const environment = {
   production: true,
   siteUrl: 'https://www.ceroleather.com', // TODO: real production domain
+  /**
+   * EmailJS — REQUIRED for the order form to send anything. While any of these is empty the form
+   * shows "Slanje zahteva trenutno nije podešeno…" (and, in dev, logs which one is missing).
+   * Copy them from https://dashboard.emailjs.com (they are public by design — not secrets):
+   *  - serviceId  → Email Services → your connected service (e.g. Gmail) → "Service ID"
+   *  - templateId → Email Templates → the CeroLeather template → Settings → "Template ID"
+   *  - publicKey  → Account → General → "Public Key"
+   * The RECIPIENT (nzdravkovic2001@gmail.com) is NOT set here but in the template's "To Email";
+   * the customer's address arrives as {{reply_to}}. See docs/emailjs-template-setup.md.
+   */
   emailjs: {
-    serviceId: '', // e.g. 'service_xxxxxxx'
-    templateId: '', // e.g. 'template_xxxxxxx'
-    publicKey: '', // e.g. 'AbCdEfGhIjKlMnOpQ'
-    // The recipient is NOT configured here: set "To Email" in the EmailJS template
-    // (currently the test inbox nzdravkovic2001@gmail.com). See README → EmailJS.
+    serviceId: 'service_3ssqlmt', // service_xxxxxxx
+    templateId: 'template_36qtqx9', // template_xxxxxxx
+    publicKey: 'P058lFA9wWAO1fOhe', // e.g. AbCdEfGhIjKlMnOpQ
   },
   /**
    * Cloudinary — customer inspiration photos (unsigned upload, no API secret anywhere).
