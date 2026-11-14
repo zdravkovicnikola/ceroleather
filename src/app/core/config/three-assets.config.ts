@@ -44,12 +44,16 @@ export interface ModelAssetConfig {
 export const THREE_ASSETS = {
   /**
    * Homepage hero — the real CeroLeather vest (Desktop/CeroLeather slike/prsluk-3dmodel.glb).
-   * Mobile copy = same mesh/material, textures 2048² instead of 4096² (16 MB → 5.5 MB).
+   * Served as optimized copies (*.webp.glb): textures WebP via EXT_texture_webp — base colour
+   * lossy q95, roughness/metalness + normal map lossless — and 16-bit indices. Same geometry,
+   * UVs, materials and resolution; render diff vs. the original ≤ 5/255 (not visible).
+   *   desktop 4096²: 15.3 MB → 5.4 MB · mobile 2048²: 5.5 MB → 3.4 MB
+   * The original PNG-textured files stay next to them — to revert, drop ".webp" from both URLs.
    * The file's front (zip) faces +X, so it is turned -90° around Y on a parent group.
    */
   heroVest: {
-    glbUrl: 'assets/models/prsluk-3dmodel.glb',
-    glbUrlMobile: 'assets/models/prsluk-3dmodel-mobile.glb',
+    glbUrl: 'assets/models/prsluk-3dmodel.webp.glb',
+    glbUrlMobile: 'assets/models/prsluk-3dmodel-mobile.webp.glb',
     rotationY: -Math.PI / 2,
     fallback: 'none',
     targetHeight: 2.0,
