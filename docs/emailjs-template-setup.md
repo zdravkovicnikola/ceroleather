@@ -90,3 +90,15 @@ Forma ima dva toka, određena linkom (`?zahtev=`), nikad pogađanjem:
 - Neki email programi (npr. Gmail u svetloj temi) mogu malo da izmene tamnu pozadinu. Sadržaj ostaje čitljiv jer
   su sve boje teksta i pozadine zadate direktno na elementima.
 - Posle svake izmene polja forme pokrenite `npm run check:emailjs` (vidi `docs/emailjs-field-mapping.md`, odeljak 3).
+
+## Automatska potvrda kupcu (Auto-Reply)
+
+| Template | ID | Šalje se na |
+|---|---|---|
+| Zahtev za radionicu | `template_36qtqx9` | `nzdravkovic2001@gmail.com` (To Email) |
+| Potvrda kupcu | `template_kezk5e3` | `{{email}}`, adresa koju je kupac upisao |
+
+Sadržaj potvrde je u `docs/emailjs-customer-confirmation.html`. Povezuje se samo u EmailJS-u:
+**Email Templates → template_36qtqx9 → Auto-Reply → izaberite template_kezk5e3 → Save**. Sajt šalje jedan zahtev, a
+EmailJS posle uspešnog slanja sam šalje potvrdu kupcu. Zato se `template_kezk5e3` ne upisuje u `environment*.ts`.
+Svaki zahtev troši 2 emaila iz mesečne EmailJS kvote.
