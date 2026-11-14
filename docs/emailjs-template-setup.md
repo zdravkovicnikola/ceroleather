@@ -95,10 +95,10 @@ Forma ima dva toka, određena linkom (`?zahtev=`), nikad pogađanjem:
 
 | Template | ID | Šalje se na |
 |---|---|---|
-| Zahtev za radionicu | `template_36qtqx9` | `nzdravkovic2001@gmail.com` (To Email) |
-| Potvrda kupcu | `template_kezk5e3` | `{{email}}`, adresa koju je kupac upisao |
+| Zahtev za radionicu | `template_5fr6gcn` | `nzdravkovic2001@gmail.com` (To Email) |
+| Potvrda kupcu | `template_8ctgh1q` | `{{email}}`, adresa koju je kupac upisao |
 
 Sadržaj potvrde je u `docs/emailjs-customer-confirmation.html`. Povezuje se samo u EmailJS-u:
-**Email Templates → template_36qtqx9 → Auto-Reply → izaberite template_kezk5e3 → Save**. Sajt šalje jedan zahtev, a
-EmailJS posle uspešnog slanja sam šalje potvrdu kupcu. Zato se `template_kezk5e3` ne upisuje u `environment*.ts`.
+**Email Templates → template_5fr6gcn → Auto-Reply → izaberite template_8ctgh1q → Save**. Sajt šalje jedan zahtev, a
+EmailJS posle uspešnog slanja sam šalje potvrdu kupcu. Zato se `template_8ctgh1q` ne upisuje u `environment*.ts`.
 Svaki zahtev troši 2 emaila iz mesečne EmailJS kvote.

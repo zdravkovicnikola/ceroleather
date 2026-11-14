@@ -16,9 +16,9 @@ export const environment = {
    * the customer's address arrives as {{reply_to}}. See docs/emailjs-template-setup.md.
    */
   emailjs: {
-    serviceId: 'service_3ssqlmt', // service_xxxxxxx
-    templateId: 'template_36qtqx9', // template_xxxxxxx
-    publicKey: 'P058lFA9wWAO1fOhe', // e.g. AbCdEfGhIjKlMnOpQ
+    serviceId: 'service_1qmjfck', // service_xxxxxxx
+    templateId: 'template_5fr6gcn', // template_xxxxxxx
+    publicKey: 'DJNOylVmohloyqXxW', // e.g. AbCdEfGhIjKlMnOpQ
   },
   /**
    * Cloudinary — customer inspiration photos (unsigned upload, no API secret anywhere).
