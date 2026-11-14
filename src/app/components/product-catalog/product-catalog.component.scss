@@ -39,17 +39,118 @@
   margin: 0 0 56px;
 }
 
-.catalog__grid {
+/* ---- Horizontal carousel ------------------------------------------------------------------
+   Native horizontal scrolling with scroll-snap: swipe on touch screens, trackpad / Shift+wheel on
+   desktop, arrows below. Vertical page scrolling is untouched (the browser decides per gesture).
+   Only the track scrolls sideways, never the page. */
+.catalog__track {
+  --per-view: 3;
+  --gap: clamp(20px, 2.5vw, 36px);
+  display: flex;
+  gap: var(--gap);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* room for the card hover lift / focus ring so overflow doesn't clip them */
+  padding-block: 6px 10px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 6px;
+  }
+}
+.catalog__item {
+  flex: 0 0 calc((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view));
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.catalog__controls {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 32px);
+  margin-top: clamp(28px, 3vw, 44px);
+  &.is-static {
+    display: none;
+  }
+}
+.catalog__count {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--text-2);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.catalog__count-now {
+  color: var(--text);
+}
+.catalog__count-total {
+  color: var(--text-3);
+}
+.catalog__progress {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: var(--line-strong);
+  overflow: hidden;
+  span {
+    position: absolute;
+    inset: 0;
+    background: var(--red);
+    transform-origin: left center;
+    transition: transform 0.25s linear;
+  }
+}
+.catalog__arrows {
+  display: flex;
+  gap: 10px;
+}
+/* same look as the product-gallery arrows */
+.catalog__arrow {
+  width: 52px;
+  height: 52px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(48px, 5vw, 80px) clamp(20px, 2.5vw, 36px);
-  align-items: start;
-}
-.catalog__item--wide {
-  grid-column: span 2;
-}
-.catalog__item:nth-child(3n + 2):not(.catalog__item--wide) {
-  margin-top: 6vw;
+  place-items: center;
+  background: rgba(11, 11, 11, 0.6);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color 0.3s,
+    background 0.3s,
+    opacity 0.3s;
+  span {
+    width: 12px;
+    height: 12px;
+    border-top: 1.5px solid currentColor;
+    border-right: 1.5px solid currentColor;
+  }
+  &--prev span {
+    transform: translateX(2px) rotate(-135deg);
+  }
+  &--next span {
+    transform: translateX(-2px) rotate(45deg);
+  }
+  &:hover:not(:disabled) {
+    border-color: var(--red);
+    background: var(--red);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+  }
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
 }
 
 .request-card {
@@ -86,41 +187,34 @@
   color: var(--text-2);
 }
 
-/* Tablet & desktop: a calm, uniform grid — equal frames, aligned rows, no staggered offsets. */
 @media (min-width: 601px) {
-  .catalog__grid {
-    align-items: stretch;
-  }
-  .catalog__item--wide {
-    grid-column: auto;
-  }
-  .catalog__item:nth-child(n),
-  .catalog__item:nth-child(3n + 2):not(.catalog__item--wide) {
-    margin-top: 0;
-  }
   .request-card {
     aspect-ratio: auto;
     min-height: 100%;
   }
 }
-
 @media (max-width: 1000px) {
-  .catalog__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .catalog__item:nth-child(n) {
-    margin-top: 0;
+  .catalog__track {
+    --per-view: 2;
   }
 }
+/* phones: one card plus a peek of the next, so the swipe is obvious */
 @media (max-width: 600px) {
-  .catalog__grid {
-    grid-template-columns: 1fr;
+  .catalog__track {
+    --per-view: 1.18;
+    --gap: 14px;
   }
-  .catalog__item--wide {
-    grid-column: auto;
+  .catalog__arrow {
+    width: 44px;
+    height: 44px;
   }
   .request-card {
     aspect-ratio: auto;
     min-height: 380px;
   }
+}
+
+/* equal card heights in the row: the card's own `height: 100%` would block flex stretching */
+.catalog__track > .catalog__item {
+  height: auto;
 }
