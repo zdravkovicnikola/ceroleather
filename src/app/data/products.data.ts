@@ -85,15 +85,19 @@ export const PRODUCTS: Product[] = [
     images: [
       img('buckle-vest-front', 'front', 'Kožni prsluk Buckle — prednja strana'),
       img('buckle-vest-back', 'back', 'Kožni prsluk Buckle — zadnja strana sa bočnim kaiševima'),
+      img(
+        'buckle-vest-detail-shoulders',
+        'detail',
+        'Kožne trake sa metalnim kopčama na ramenima prsluka Buckle',
+        'Kopče na ramenima',
+      ),
+      img(
+        'buckle-vest-detail-side-buckles',
+        'detail',
+        'Bočni kaiševi sa kopčama na leđima prsluka Buckle',
+        'Bočni kaiševi',
+      ),
     ],
-    // 72 frames extracted from public/videos/prsluk-360.mp4 (watermark cropped out)
-    spin360: {
-      path: 'assets/images/360/prsluk-buckle',
-      frames: 72,
-      size: 720,
-      sizeSm: 420,
-      alt: 'Kožni prsluk Buckle — 360° prikaz, okretanje prevlačenjem',
-    },
     note: 'Photos are cropped phone screenshots of a listing — replace with original high-res photos.',
   },
   {
@@ -115,6 +119,18 @@ export const PRODUCTS: Product[] = [
     images: [
       img('zip-vest-front', 'front', 'Kožni prsluk Classic Zip — prednja strana'),
       img('zip-vest-back', 'back', 'Kožni prsluk Classic Zip — zadnja strana'),
+      img(
+        'zip-vest-detail-collar',
+        'detail',
+        'Okrugli izrez i centralni rajsferšlus prsluka Classic Zip',
+        'Izrez i rajsferšlus',
+      ),
+      img(
+        'zip-vest-detail-back-seams',
+        'detail',
+        'Panelni kroj na leđima prsluka Classic Zip',
+        'Kroj leđa',
+      ),
     ],
   },
   {
@@ -137,6 +153,7 @@ export const PRODUCTS: Product[] = [
       img('rider-vest-front-open', 'open', 'Kožni prsluk Rider — otvoren, vidi se postava'),
       img('rider-vest-detail-collar', 'detail', 'Kragna sa metalnim drikerima', 'Kragna'),
       img('rider-vest-detail-tag', 'detail', 'CeroLeather etiketa', 'Etiketa'),
+      img('rider-vest-detail-pocket', 'detail', 'Kosi džep sa metalnim rajsferšlusom', 'Kosi džep'),
     ],
   },
   {
@@ -164,6 +181,7 @@ export const PRODUCTS: Product[] = [
         'Bočno vezivanje',
       ),
       img('lace-vest-detail-tag', 'detail', 'CeroLeather etiketa', 'Etiketa'),
+      img('lace-vest-detail-collar', 'detail', 'Revers kragna prsluka Lace Side', 'Revers kragna'),
     ],
   },
 
@@ -195,6 +213,19 @@ export const PRODUCTS: Product[] = [
         'Prsluk Kosmaj — otkopčan, vidi se crno-bela postava na kocke',
         'Postava na kocke',
       ),
+      img(
+        'kosmaj/detail-side-straps',
+        'detail',
+        'Bočne kožne trake sa metalnim kopčama',
+        'Bočne trake',
+      ),
+      img('kosmaj/detail-shoulder', 'detail', 'Romboidno prošiven rameni panel', 'Rameni panel'),
+      img(
+        'kosmaj/detail-lining',
+        'detail',
+        'Crno-bela postava na kocke i džep sa rajsferšlusom',
+        'Postava izbliza',
+      ),
     ],
   },
   {
@@ -216,6 +247,24 @@ export const PRODUCTS: Product[] = [
     images: [
       img('protect/front', 'front', 'Kožni prsluk Protect — prednja strana sa prošivenim panelom'),
       img('protect/back', 'back', 'Kožni prsluk Protect — zadnja strana sa bočnim trakama'),
+      img(
+        'protect/detail-chest',
+        'detail',
+        'Horizontalno prošiven panel na grudima',
+        'Prošiven grudni panel',
+      ),
+      img(
+        'protect/detail-side-straps',
+        'detail',
+        'Bočne kožne trake za podešavanje širine',
+        'Bočne trake',
+      ),
+      img(
+        'protect/detail-back-panels',
+        'detail',
+        'Prošiveni paneli na donjem delu leđa',
+        'Paneli na leđima',
+      ),
     ],
   },
   {
@@ -243,6 +292,13 @@ export const PRODUCTS: Product[] = [
         'Kopče na ramenima',
       ),
       img('swat/back', 'back', 'Kožni prsluk SWAT — zadnja strana'),
+      img('swat/detail-buckle', 'detail', 'Brza kopča na ramenoj traci', 'Brza kopča'),
+      img(
+        'swat/detail-flap-pocket',
+        'detail',
+        'Džep sa preklopom od maskirnog materijala',
+        'Džep sa preklopom',
+      ),
     ],
   },
   {
@@ -276,6 +332,18 @@ export const PRODUCTS: Product[] = [
         'Jakna Cherry — leđa sa dekorativnim aplikacijama',
         'Aplikacije na leđima',
       ),
+      img(
+        'cherry/detail-pocket',
+        'detail',
+        'Džep sa preklopom i reljefna tekstura sjajne kože',
+        'Tekstura i džep',
+      ),
+      img(
+        'cherry/detail-patches',
+        'detail',
+        'Dekorativne aplikacije na leđima izbliza',
+        'Aplikacije izbliza',
+      ),
     ],
   },
   {
@@ -305,6 +373,20 @@ export const PRODUCTS: Product[] = [
         'Jakna Blush — rukav sa tri trake i metalnim kopčama',
         'Kopče na rukavu',
       ),
+      img('blush/detail-lapel', 'detail', 'Široka kragna i kosi rajsferšlus', 'Kragna'),
+      img(
+        'blush/detail-texture',
+        'detail',
+        'Metalik koža sa sitnom teksturom i šavom na leđima',
+        'Tekstura kože',
+      ),
+      img(
+        'blush/detail-cuff',
+        'detail',
+        'Tri trake sa metalnim kopčama i ringlama na rukavu',
+        'Kopče izbliza',
+      ),
+      img('blush/detail-pocket', 'detail', 'Džep sa rajsferšlusom', 'Džep'),
     ],
   },
   // Add new models here — one object per product folder.
