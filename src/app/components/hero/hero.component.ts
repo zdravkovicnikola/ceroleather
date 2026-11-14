@@ -3,11 +3,13 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  PLATFORM_ID,
   afterNextRender,
   inject,
   signal,
   viewChild,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -64,7 +66,12 @@ export class HeroComponent {
     },
   ];
 
-  readonly mode = signal<'3d' | 'fallback'>('3d');
+  /**
+   * 'pending' while prerendering on the server: the static HTML then contains neither the 3D
+   * canvas nor the fallback photo, so browsers don't download a high-priority image that the
+   * 3D scene replaces a moment later. The browser decides between '3d' and 'fallback'.
+   */
+  readonly mode = signal<'pending' | '3d' | 'fallback'>('pending');
   readonly animated: boolean;
 
   private readonly root = viewChild.required<ElementRef<HTMLElement>>('root');
@@ -73,7 +80,8 @@ export class HeroComponent {
 
   constructor() {
     this.animated = !this.device.reducedMotion();
-    if (this.device.quality === 'none') this.mode.set('fallback');
+    if (isPlatformBrowser(inject(PLATFORM_ID)))
+      this.mode.set(this.device.quality === 'none' ? 'fallback' : '3d');
 
     afterNextRender(() => this.introAnimation());
     inject(DestroyRef).onDestroy(() => this.ctx?.revert());

@@ -1,0 +1,5 @@
+# CeroLeather — CLIENT PREVIEW: do not index.
+# Upload instead of the generated dist/ceroleather/browser/robots.txt while the site is in review.
+# For the final launch use the generated robots.txt again (it lists sitemap.xml).
+User-agent: *
+Disallow: /

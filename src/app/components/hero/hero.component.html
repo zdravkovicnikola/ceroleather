@@ -8,7 +8,7 @@
   <div class="hero__stage">
     @if (mode() === '3d') {
       <app-product-viewer-3d (ready)="onSceneReady($event)" (failed)="onSceneFailed()" />
-    } @else {
+    } @else if (mode() === 'fallback') {
       <!-- Photographic fallback when WebGL is unavailable or 3D fails to load -->
       <div class="hero__fallback">
         <img
