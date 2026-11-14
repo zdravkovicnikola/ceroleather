@@ -9,7 +9,7 @@
  */
 export const environment = {
   production: true,
-  siteUrl: 'https://www.ceroleather.com', // TODO: real production domain
+  siteUrl: 'https://ceroleather.rs', // official domain (canonical, sitemap, OG, email links)
   /**
    * EmailJS — REQUIRED for the order form to send anything. While any of these is empty the form
    * shows "Slanje zahteva trenutno nije podešeno…" (and, in dev, logs which one is missing).
