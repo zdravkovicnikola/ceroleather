@@ -183,7 +183,7 @@ crvenom tkanom etiketom), „Leather“ nepromenjeno u fontu Anton. Bez slike �
 | Fotografije jakni | — | Ne postoje; dodati modele kategorije `jakne` |
 | 3D prsluk i lutka | `three-assets.config.ts` | Proceduralni placeholderi → pravi GLB |
 | Tekst „O nama“ | `src/app/data/about.data.ts` | Lorem ipsum placeholder |
-| Javni kontakt email | `site.config.ts` → `contactEmail` | Trenutno `kontakt@ceroleather.com` (placeholder) |
+| Javni kontakt email | `site.config.ts` → `contactEmail` | `porudzbine@ceroleather.rs` |
 | Primalac zahteva | EmailJS template → To Email | Trenutno test adresa `nzdravkovic2001@gmail.com` |
 | Domen | `environment.ts` → `siteUrl` | Za canonical, sitemap, OG slike i link u emailu: `https://ceroleather.rs` |
 | Politika privatnosti | — | Ne postoji — potreban pravni tekst |

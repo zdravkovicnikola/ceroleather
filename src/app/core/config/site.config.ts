@@ -8,7 +8,7 @@ export const SITE_CONFIG = {
   statement:
     'Ručno izrađeni kožni prsluci i jakne. Kreirani po vašoj meri — za vožnju, za put, za vas.',
   /** Public contact address shown on the site. TODO: replace with the real business inbox. */
-  contactEmail: 'kontakt@ceroleather.com',
+  contactEmail: 'porudzbine@ceroleather.rs',
   instagramUrl: 'https://www.instagram.com/ceroleather/',
   instagramHandle: '@ceroleather',
 
