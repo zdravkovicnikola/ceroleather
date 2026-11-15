@@ -46,22 +46,22 @@ export class HeroComponent {
     {
       index: '01',
       label: 'Detalji',
-      title: 'Podesive bočne trake',
-      text: 'Po tri kožna kaiša sa kopčama sa svake strane — prsluk se podešava na telu.',
+      title: 'Podesivi kaiševi na čičak',
+      text: 'Rastegljivi render za bolje prijanjanje, mogućnost nošenja preko moto jakne!',
       side: 'left',
     },
     {
       index: '02',
       label: 'Koža',
-      title: 'Svaki šav. Svaka linija.',
-      text: 'Crna koža, trake sa kopčama na ramenima i ivice opšivene kožom.',
+      title: 'Premium teleća koža',
+      text: 'Pažljivo birana teleća koža prirodne teksture, prijatna na dodir — kvalitet koji se oseća pri svakom nošenju.',
       side: 'left',
     },
     {
       index: '03',
       label: 'Po meri',
-      title: 'Krojeno samo za vas',
-      text: 'Vi pošaljete mere, mi krojimo komad koji pripada samo jednom vozaču.',
+      title: 'Šiveno po vašoj meri',
+      text: 'Rađeni isključivo po porudžbini i Vašim merama!',
       side: 'right',
     },
   ];
@@ -110,6 +110,7 @@ export class HeroComponent {
   }
 
   onSceneReady(scene: HeroScene): void {
+    this.initialComposition(scene);
     if (!this.animated) {
       // Reduced motion: a single, calm composition — no pinning, no scrubbing.
       Object.assign(scene.state, { rotY: -0.7, camZ: 5.2 });
@@ -117,6 +118,19 @@ export class HeroComponent {
     }
     const el = this.root().nativeElement;
     this.ctx = gsap.context(() => this.buildTimeline(el, scene), el);
+  }
+
+  /**
+   * Starting position of the vest, clear of the top-left heading. Only the first frame changes:
+   * the first scroll tween animates objX / objY from here to its usual targets.
+   *  - landscape: shift right by ~18 % of the visible width (0.6 × aspect, scene units)
+   *  - portrait: too narrow to shift sideways → start lower, below the heading (more on phones)
+   */
+  private initialComposition(scene: HeroScene): void {
+    const el = this.root().nativeElement;
+    const aspect = el.clientWidth / Math.max(1, el.clientHeight);
+    if (scene.isPortrait) scene.state.objY = -(0.9 + (1 - aspect) * 1.3); // phone ≈ -1.6, tablet ≈ -1.3
+    else scene.state.objX = Math.min(1.2, 0.6 * aspect);
   }
 
   onSceneFailed(): void {
@@ -148,7 +162,8 @@ export class HeroComponent {
     tl.to('.hero__intro', { y: -80, opacity: 0, duration: 1.1, ease: 'power2.in' }, 0.3)
       .to('.hero__scroll', { opacity: 0, duration: 0.5 }, 0)
       // camZ 4.5 (was 3.9): the real model is fuller in profile — keep the whole side in frame
-      .to(s, { rotY: -1.32, camZ: 4.5, camY: 0.05, objX: x(0.62), rotX: 0, duration: 2.5 }, 0)
+      // objY: 0 returns the portrait start position (see initialComposition); no-op on landscape
+      .to(s, { rotY: -1.32, camZ: 4.5, camY: 0.05, objX: x(0.62), objY: 0, rotX: 0, duration: 2.5 }, 0)
       .to(s, { red: 0.6, duration: 2.5 }, 0)
       .fromTo(
         chapters[0],

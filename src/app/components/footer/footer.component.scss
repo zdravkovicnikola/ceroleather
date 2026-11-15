@@ -106,11 +106,13 @@
   gap: 10px;
   color: var(--text);
   transition: color 0.3s;
-  app-instagram-icon {
+  app-instagram-icon,
+  app-facebook-icon {
     font-size: 1.25rem;
     color: var(--red);
   }
-  &:hover app-instagram-icon {
+  &:hover app-instagram-icon,
+  &:hover app-facebook-icon {
     color: var(--text);
   }
 }

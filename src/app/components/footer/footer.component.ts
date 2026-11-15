@@ -2,12 +2,14 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SITE_CONFIG } from '../../core/config/site.config';
 import { CATEGORIES } from '../../data/categories.data';
+import { BrandLabelComponent } from '../../shared/components/brand-label.component';
+import { FacebookIconComponent } from '../../shared/components/facebook-icon.component';
 import { InstagramIconComponent } from '../../shared/components/instagram-icon.component';
 import { LogoComponent } from '../../shared/components/logo.component';
 
 @Component({
   selector: 'app-footer',
-  imports: [RouterLink, LogoComponent, InstagramIconComponent],
+  imports: [RouterLink, LogoComponent, InstagramIconComponent, FacebookIconComponent, BrandLabelComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <footer class="footer">
@@ -15,7 +17,8 @@ import { LogoComponent } from '../../shared/components/logo.component';
         <div class="footer__marquee-track">
           @for (i of [1, 2, 3, 4]; track i) {
             <span>Handmade</span><span class="dot"></span><span>Custom</span
-            ><span class="dot"></span><span>Built for the road</span><span class="dot"></span>
+            ><span class="dot"></span><span>Built for the road</span><span class="dot"></span
+            ><app-brand-label />
           }
         </div>
       </div>
@@ -58,6 +61,16 @@ import { LogoComponent } from '../../shared/components/logo.component';
             <app-instagram-icon />
             <span class="link-underline">{{ site.instagramHandle }}</span>
           </a>
+          <a
+            [href]="site.facebookUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer__ig"
+            aria-label="CeroLeather na Facebooku (otvara se u novom prozoru)"
+          >
+            <app-facebook-icon />
+            <span class="link-underline">Facebook</span>
+          </a>
         </div>
       </div>
 
@@ -71,6 +84,7 @@ import { LogoComponent } from '../../shared/components/logo.component';
 })
 export class FooterComponent {
   readonly site = SITE_CONFIG;
-  readonly categories = CATEGORIES;
+  /** CeroLeather sells vests only — the jackets category is not advertised in the footer. */
+  readonly categories = CATEGORIES.filter((c) => c.id !== 'jakne');
   readonly year = new Date().getFullYear();
 }

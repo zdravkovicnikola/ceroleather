@@ -81,21 +81,24 @@
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  > * {
+  /* Only the intro (with the two buttons) is interactive. The chapter layer covers the whole
+     hero and must never catch clicks — it used to sit on top of the buttons and swallow them. */
+  > .hero__intro {
     pointer-events: auto;
   }
 }
 
+/* Top-left, right under the header, so the 3D vest below stays in view */
 .hero__intro {
   position: absolute;
   left: var(--gutter);
   right: var(--gutter);
-  bottom: clamp(40px, 9vh, 110px);
+  top: calc(var(--header-h) + clamp(12px, 3.5vh, 44px));
   max-width: 1100px;
 }
 .hero__title {
-  margin-bottom: 28px;
-  font-size: clamp(3rem, 7.6vw, 8.6rem);
+  margin-bottom: 20px;
+  font-size: clamp(2.5rem, 5.6vw, 6.4rem);
   @media (min-width: 761px) {
     white-space: nowrap;
   }
@@ -107,7 +110,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-  margin-top: 36px;
+  margin-top: 28px;
 }
 
 .hero__chapters {
@@ -241,6 +244,8 @@
   .hero__vignette {
     background:
       radial-gradient(120% 90% at 50% 40%, transparent 50%, rgba(0, 0, 0, 0.7) 100%),
+      /* top shade: the intro text now sits at the top on portrait screens */
+      linear-gradient(180deg, rgba(11, 11, 11, 0.85) 0%, rgba(11, 11, 11, 0.5) 32%, transparent 52%),
       linear-gradient(0deg, rgba(11, 11, 11, 0.95) 0%, rgba(11, 11, 11, 0.6) 35%, transparent 60%);
   }
   .hero__chapter,
@@ -253,7 +258,7 @@
     transform: none;
     text-align: left;
     h2 {
-      font-size: clamp(2.2rem, 11vw, 3.4rem);
+      font-size: clamp(1.95rem, 9.7vw, 3rem);
     }
   }
   .hero__chapter--right .hero__chapter-text {
@@ -267,8 +272,5 @@
   }
   .hero__scroll {
     display: none;
-  }
-  .hero__intro {
-    bottom: 40px;
   }
 }
