@@ -77,7 +77,7 @@ import { RevealDirective } from '../../shared/directives/reveal.directive';
       font-family: var(--font-display);
       font-weight: 400;
       text-transform: uppercase;
-      font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+      font-size: clamp(1.35rem, 2.1vw, 1.85rem);
       line-height: 1;
     }
     .step__text {

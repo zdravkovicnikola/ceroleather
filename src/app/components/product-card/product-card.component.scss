@@ -108,10 +108,10 @@
   font-family: var(--font-display);
   font-weight: 400;
   text-transform: uppercase;
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-size: clamp(1.6rem, 2.6vw, 2.3rem);
   line-height: 1;
   .card--large & {
-    font-size: clamp(2.2rem, 4.2vw, 3.6rem);
+    font-size: clamp(1.95rem, 3.7vw, 3.2rem);
   }
 }
 .card__desc {
@@ -163,7 +163,7 @@
       flex: 1;
     }
     .card__name {
-      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-size: clamp(1.6rem, 2.6vw, 2.3rem);
     }
     .card__actions {
       margin-top: auto;
