@@ -147,42 +147,59 @@
     transform: none;
   }
 }
-/* Mobile "Zatraži model": the desktop CTA (.btn--primary) at full width, under the links */
-.menu__cta {
-  justify-content: center;
-  width: 100%;
+/* Mobile: compact "Zatraži model" + Instagram + Facebook in one row, under the links */
+.menu__actions {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
   margin-top: 32px;
-  min-height: 58px;
   opacity: 0;
   transform: translateY(30px);
   transition:
     opacity 0.6s var(--ease),
-    transform 0.6s var(--ease),
-    background 0.3s,
-    border-color 0.3s,
-    color 0.3s;
+    transform 0.6s var(--ease);
   .is-open & {
     opacity: 1;
     transform: none;
   }
 }
+.menu__cta {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 52px;
+  padding: 0 16px;
+  gap: 10px;
+  white-space: nowrap;
+}
 .menu__social {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 32px;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.18em;
-  color: var(--text-2);
-  opacity: 0;
-  transition: opacity 0.6s var(--ease) 0.4s;
-  app-instagram-icon {
-    font-size: 1.4rem;
-    color: var(--red);
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--line-strong);
+  color: var(--red);
+  transition:
+    color 0.3s,
+    border-color 0.3s;
+  app-instagram-icon,
+  app-facebook-icon {
+    font-size: 1.35rem;
   }
-  .is-open & {
-    opacity: 1;
+  &:hover,
+  &:focus-visible {
+    color: var(--text);
+    border-color: var(--text);
+  }
+}
+/* very narrow phones: drop the arrow and tighten the letter-spacing so the label never wraps */
+@media (max-width: 359px) {
+  .menu__cta {
+    padding: 0 10px;
+    letter-spacing: 0.12em;
+    .btn__arrow {
+      display: none;
+    }
   }
 }
 .menu__index {

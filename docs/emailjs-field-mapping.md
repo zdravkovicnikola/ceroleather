@@ -31,10 +31,10 @@ Forma nema radio dugmad ni polja sa višestrukim izborom. Ima 2 padajuće liste 
 | 6 | 01 → Adresa za dostavu | `postalCode` | text | da | tačno 5 cifara |
 | 7 | 01 → Adresa za dostavu | `city` | text | da | 2–60 znakova |
 | 8 | 02 Model | `productSlug` | select | da | model iz kataloga ili „Sopstvena ideja (custom)“ (`sopstvena-ideja`) |
-| 9 | 02 Model | `category` | select | da | Kožni prsluci / Kožne jakne / Custom modeli; za model iz kataloga se popunjava sama |
+| 9 | 02 Model | `category` | select | da | Muški prsluci / Ženski prsluci / Custom modeli; za model iz kataloga se popunjava sama |
 | 10 | 03 Mere | `measurements.vestLength` | broj (cm) | da | 35–100 cm |
-| 11 | 03 Mere | `measurements.waist` | broj (cm) | da | 55–170 cm |
-| 12 | 03 Mere | `measurements.abdomen` | broj (cm) | da | 60–170 cm |
+| 11 | 03 Mere | `measurements.chest` | broj (cm) | da | 60–180 cm |
+| 12 | 03 Mere | `measurements.waist` | broj (cm) | da | 55–170 cm |
 | 13 | 03 Mere | `measurements.height` | broj (cm) | ne (okvirno) | 140–220 cm |
 | 14 | 04 Vaše želje | `customization` | textarea | ne | do 2000 znakova |
 | 15 | 04 Vaše želje | `message` | textarea | ne | do 2000 znakova |
@@ -45,7 +45,7 @@ Forma nema radio dugmad ni polja sa višestrukim izborom. Ima 2 padajuće liste 
 
 **Dva toka forme:** u **custom** toku sekcija „Model“ (`productSlug`, `category`) se ne prikazuje:
 `product_name` = „Sopstvena ideja (custom)“, `product_slug` = `sopstvena-ideja`, `product_url` prazno, a
-`product_category` je „Custom modeli“ (ili „Kožne jakne“ sa kartice „jakna po meri“). U **katalog** toku nema
+`product_category` je „Custom modeli“ (ili kategorija iz `?kategorija=` u linku). U **katalog** toku nema
 otpremanja fotografije, pa je `designImageUrl` uvek prazan. Sve ostale vrednosti se šalju u oba toka.
 
 ## 2. Mapiranje: polje → EmailJS parametar → oznaka u emailu
@@ -70,8 +70,8 @@ Sve vrednosti su gotov tekst na srpskom (sa jedinicama), pa prazna opciona polja
 | tok forme (`mode`: `?zahtev=custom` / `katalog`) | `request_type` | Vrsta zahteva / zaglavlje | da | „Model iz kataloga“ ili „Sopstvena ideja (custom dizajn)“; iz toka, nikad iz polja proizvoda |
 | `category` | `product_category` | Kategorija | da | — |
 | `measurements.vestLength` | `vest_length_cm` | Dužina prsluka | da | „62 cm“ |
+| `measurements.chest` | `chest_cm` | Obim grudi | da | „104 cm“ |
 | `measurements.waist` | `waist_cm` | Obim struka | da | „92,5 cm“ |
-| `measurements.abdomen` | `abdomen_cm` | Obim stomaka | da | „98 cm“ |
 | `measurements.height` | `height_cm` | Visina osobe (opciono, okvirno) | ne | „182 cm (okvirno)“ ili „Nije uneto (opciono)“ |
 | sve mere | `measurements_summary` | (samo tekstualna verzija) | — | sve 4 mere, jedna po redu |
 | `customization` | `customization` | Dodatni zahtevi za prilagođavanje | ne | „Nema dodatnih zahteva“ |

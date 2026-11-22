@@ -85,7 +85,7 @@ Novi 360° prikaz:
 
 ## Mere (vodič za merenje)
 
-Sve u `src/app/data/measurements.data.ts`: obavezne **Dužina prsluka**, **Obim struka**, **Obim stomaka** i opciona
+Sve u `src/app/data/measurements.data.ts`: obavezne **Dužina prsluka**, **Obim grudi** (`chest_cm`), **Obim struka** i opciona
 **Visina osobe (okvirno)**. Tekstovi, koraci, savet, min/max, položaj 3D trake (`guide3d`), kadar kamere (`camera`),
 SVG fallback (`svg`) i kratak opis u formi (`formHint`). Mera bez `guide3d`/`svg` (npr. visina) prikazuje se u vodiču
 i formi, ali se ne crta na lutki. Nova mera = novi objekat — vodič, forma i email se generišu sami.

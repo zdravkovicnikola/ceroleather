@@ -3,7 +3,7 @@ import { buildSurfaceGeometry, sampleKeyframes, spow, SurfaceFn } from './three-
 
 /**
  * PROCEDURAL PLACEHOLDER MANNEQUIN
- * A neutral tailor's dress form (upper body: hips → shoulders → neck) on a metal stand.
+ * A neutral tailor's dress form (upper body: hips → shoulders → neck) with simple arms, on a metal stand.
  * Meshes that measurements can be taken on are flagged with `userData.measurable = true`.
  * Replace with a GLB via THREE_ASSETS.mannequin.glbUrl.
  */
@@ -50,6 +50,42 @@ function capAt(v: number, mat: THREE.Material, thickness: number, segments: numb
   return m;
 }
 
+/** Tapered cylinder between two points (a limb segment). */
+function segment(from: THREE.Vector3, to: THREE.Vector3, r0: number, r1: number, mat: THREE.Material, radial: number): THREE.Mesh {
+  const dir = to.clone().sub(from);
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r1, r0, dir.length(), radial, 1, true), mat);
+  m.position.copy(from).addScaledVector(dir, 0.5);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
+  return m;
+}
+
+function joint(at: THREE.Vector3, r: number, mat: THREE.Material, radial: number): THREE.Mesh {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(r, radial, Math.max(8, radial / 2)), mat);
+  m.position.copy(at);
+  return m;
+}
+
+/**
+ * One arm hanging slightly away from the body: shoulder → elbow → wrist, ending at hip level.
+ * side = +1 (wearer's left, +X) or -1. Only primitives — no textures, a few hundred triangles.
+ */
+function createArm(side: number, mat: THREE.Material, high: boolean): THREE.Group {
+  const radial = high ? 24 : 14;
+  const arm = new THREE.Group();
+  arm.name = side > 0 ? 'arm-left' : 'arm-right';
+  const shoulder = new THREE.Vector3(0.88 * side, 0.4, -0.02);
+  const elbow = new THREE.Vector3(1.08 * side, -0.24, 0.02);
+  const wrist = new THREE.Vector3(1.16 * side, -0.88, 0.1);
+  arm.add(
+    joint(shoulder, 0.13, mat, radial),
+    segment(shoulder, elbow, 0.125, 0.1, mat, radial),
+    joint(elbow, 0.1, mat, radial),
+    segment(elbow, wrist, 0.1, 0.075, mat, radial),
+    joint(wrist, 0.082, mat, radial),
+  );
+  return arm;
+}
+
 export function createProceduralMannequin(quality: 'high' | 'low'): THREE.Group {
   const high = quality === 'high';
   const g = new THREE.Group();
@@ -77,6 +113,11 @@ export function createProceduralMannequin(quality: 'high' | 'low'): THREE.Group 
     }
     g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 80, 0.0035, 4), seam));
   }
+
+  // Simple arms, so it is clear where the arms are and how the vest sits (armholes, chest line).
+  // NOT flagged measurable: the tape rings are raycast on the torso only and pass under the arms.
+  const limb = new THREE.MeshStandardMaterial({ color: 0xb3ada4, roughness: 0.9, metalness: 0 });
+  for (const side of [-1, 1]) g.add(createArm(side, limb, high));
 
   // Bottom plate + neck cap
   g.add(capAt(0, dark, 0.03, 48));

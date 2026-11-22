@@ -153,7 +153,10 @@ export class MeasurementViewer3dComponent {
   private placeLabel(p: LabelPosition): void {
     const el = this.label()?.nativeElement;
     if (!el) return;
-    el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
+    // keep the whole label inside the viewer (narrow phones: the ring's side anchor is near the edge)
+    const room = (el.parentElement?.clientWidth ?? Infinity) - el.offsetWidth - 14 - 8; // 14 = CSS margin-left
+    const x = Math.max(0, Math.min(p.x, room));
+    el.style.transform = `translate3d(${x}px, ${p.y}px, 0)`;
     if (p.visible !== this.labelVisible()) this.labelVisible.set(p.visible);
   }
 }

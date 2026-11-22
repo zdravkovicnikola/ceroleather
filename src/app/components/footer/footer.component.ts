@@ -84,7 +84,6 @@ import { LogoComponent } from '../../shared/components/logo.component';
 })
 export class FooterComponent {
   readonly site = SITE_CONFIG;
-  /** CeroLeather sells vests only — the jackets category is not advertised in the footer. */
-  readonly categories = CATEGORIES.filter((c) => c.id !== 'jakne');
+  readonly categories = CATEGORIES;
   readonly year = new Date().getFullYear();
 }

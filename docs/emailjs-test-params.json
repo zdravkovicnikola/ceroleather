@@ -14,17 +14,17 @@
   "address_full": "Kneza Miloša 10, 11000 Beograd",
   "product_name": "Kosmaj",
   "product_slug": "prsluk-kosmaj",
-  "product_category": "Kožni prsluci",
+  "product_category": "Muški prsluci",
   "product_url": "https://ceroleather.rs/katalog/prsluk-kosmaj",
   "vest_length_cm": "62 cm",
+  "chest_cm": "104 cm",
   "waist_cm": "92,5 cm",
-  "abdomen_cm": "98 cm",
   "height_cm": "182 cm (okvirno)",
-  "measurements_summary": "Dužina prsluka: 62 cm\nObim struka: 92,5 cm\nObim stomaka: 98 cm\nVisina osobe: 182 cm (okvirno)",
+  "measurements_summary": "Dužina prsluka: 62 cm\nObim grudi: 104 cm\nObim struka: 92,5 cm\nVisina osobe: 182 cm (okvirno)",
   "customization": "Dodatni unutrašnji džep sa leve strane.\nKopče u crnoj boji umesto srebrnih.",
   "message": "Vozim Harley Sportster, prsluk bih nosio preko kožne jakne. Hvala!",
   "designImageUrl": "https://res.cloudinary.com/demo/image/upload/sample.jpg",
   "advance_acknowledged": "Da — kupac razume da je avans obavezan",
   "privacy_consent": "Da — saglasnost data",
-  "order_summary": "ZAHTEV ZA PORUDŽBINU — CeroLeather\nPoslato: 11. 11. 2026. 18:42:07\nStatus: čeka potvrdu i dogovor o avansu (nije plaćeno)\nVrsta zahteva: Model iz kataloga\n\nKUPAC\nIme i prezime: Marko Petrović\nTelefon: +381 64 123 4567\nEmail: marko.petrovic@gmail.com\nAdresa: Kneza Miloša 10, 11000 Beograd\n\nMODEL\nModel: Kosmaj\nKategorija: Kožni prsluci\n\nMERE\nDužina prsluka: 62 cm\nObim struka: 92,5 cm\nObim stomaka: 98 cm\nVisina osobe: 182 cm (okvirno)\n\nŽELJE\nDodatni zahtevi za prilagođavanje: Dodatni unutrašnji džep sa leve strane.\nKopče u crnoj boji umesto srebrnih.\nPoruka: Vozim Harley Sportster, prsluk bih nosio preko kožne jakne. Hvala!\nReferentna fotografija: https://res.cloudinary.com/demo/image/upload/sample.jpg\n\nKupac je potvrdio da razume da je avans obavezan: Da\nSaglasnost za obradu podataka: Da"
+  "order_summary": "ZAHTEV ZA PORUDŽBINU — CeroLeather\nPoslato: 11. 11. 2026. 18:42:07\nStatus: čeka potvrdu i dogovor o avansu (nije plaćeno)\nVrsta zahteva: Model iz kataloga\n\nKUPAC\nIme i prezime: Marko Petrović\nTelefon: +381 64 123 4567\nEmail: marko.petrovic@gmail.com\nAdresa: Kneza Miloša 10, 11000 Beograd\n\nMODEL\nModel: Kosmaj\nKategorija: Muški prsluci\n\nMERE\nDužina prsluka: 62 cm\nObim grudi: 104 cm\nObim struka: 92,5 cm\nVisina osobe: 182 cm (okvirno)\n\nŽELJE\nDodatni zahtevi za prilagođavanje: Dodatni unutrašnji džep sa leve strane.\nKopče u crnoj boji umesto srebrnih.\nPoruka: Vozim Harley Sportster, prsluk bih nosio preko kožne jakne. Hvala!\nReferentna fotografija: https://res.cloudinary.com/demo/image/upload/sample.jpg\n\nKupac je potvrdio da razume da je avans obavezan: Da\nSaglasnost za obradu podataka: Da"
 }

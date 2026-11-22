@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { SITE_CONFIG } from '../../core/config/site.config';
+import { FacebookIconComponent } from '../../shared/components/facebook-icon.component';
 import { InstagramIconComponent } from '../../shared/components/instagram-icon.component';
 import { LogoComponent } from '../../shared/components/logo.component';
 
@@ -20,7 +21,7 @@ interface NavItem {
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, LogoComponent, InstagramIconComponent],
+  imports: [RouterLink, RouterLinkActive, LogoComponent, InstagramIconComponent, FacebookIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
@@ -33,7 +34,7 @@ export class HeaderComponent {
   ];
 
   readonly instagramUrl = SITE_CONFIG.instagramUrl;
-  readonly instagramHandle = SITE_CONFIG.instagramHandle;
+  readonly facebookUrl = SITE_CONFIG.facebookUrl;
 
   readonly scrolled = signal(false);
   readonly hidden = signal(false);

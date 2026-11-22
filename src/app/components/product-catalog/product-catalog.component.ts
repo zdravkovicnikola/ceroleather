@@ -48,15 +48,11 @@ export class ProductCatalogComponent {
       CATEGORIES.map((c) => [c.id, PRODUCTS.filter((p) => p.category === c.id).length]),
     ),
   );
-  /** Show the "jacket made to measure" card when there are no jacket models yet */
-  readonly showJacketRequest = computed(
-    () => (this.category() === null || this.category() === 'jakne') && this.counts()['jakne'] === 0,
-  );
 
   // ── horizontal carousel (native scroll + scroll-snap; arrows only move the track) ─────────
   private readonly track = viewChild<ElementRef<HTMLElement>>('track');
-  /** number of cards in the track (products + optional jacket card) */
-  readonly itemCount = computed(() => this.products().length + (this.showJacketRequest() ? 1 : 0));
+  /** number of cards in the track */
+  readonly itemCount = computed(() => this.products().length);
   /** index of the first (at least half) visible card */
   readonly first = signal(0);
   /** how many cards fit side by side at the current width */

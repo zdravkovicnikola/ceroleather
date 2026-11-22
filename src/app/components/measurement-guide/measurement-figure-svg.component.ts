@@ -26,6 +26,9 @@ import { MeasurementDefinition } from '../../models/measurement.model';
       <!-- stand -->
       <rect x="146" y="336" width="8" height="46" fill="#9ea1a6" />
       <ellipse cx="150" cy="386" rx="52" ry="7" fill="#1c1c1c" />
+      <!-- arms (behind the torso): shoulder → elbow → wrist, hanging slightly away from the body -->
+      <path class="fig__arm" d="M66 104 L46 206 L38 300" />
+      <path class="fig__arm" d="M234 104 L254 206 L262 300" />
       <!-- neck -->
       <path d="M131 62 L131 30 Q150 22 169 30 L169 62 Z" fill="url(#torsoFill)" />
       <ellipse cx="150" cy="28" rx="19" ry="5" fill="#b9bcc1" />
@@ -99,6 +102,13 @@ import { MeasurementDefinition } from '../../models/measurement.model';
     .fig {
       width: 100%;
       height: 100%;
+    }
+    .fig__arm {
+      fill: none;
+      stroke: #a9a49c;
+      stroke-width: 24;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
     .fig__m .fig__tape {
       fill: none;

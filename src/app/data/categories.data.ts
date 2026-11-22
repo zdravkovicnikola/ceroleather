@@ -1,15 +1,15 @@
 import { ProductCategory, ProductCategoryId } from '../models/product.model';
 
+/** Catalog filters (in this order, after "Svi modeli"). */
 export const CATEGORIES: ProductCategory[] = [
   {
-    id: 'prsluci',
-    label: 'Kožni prsluci',
+    id: 'muski',
+    label: 'Muški prsluci',
     intro: 'Klasični bajkerski prsluci, ručno krojeni i šiveni po meri.',
   },
   {
-    id: 'jakne',
-    label: 'Kožne jakne',
-    intro: 'Kožne jakne izrađene po vašim merama i vašoj ideji.',
+    id: 'zenski',
+    label: 'Ženski prsluci',
   },
   {
     id: 'custom',

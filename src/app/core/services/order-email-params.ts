@@ -38,8 +38,8 @@ export const ORDER_EMAIL_PARAMS = [
   'product_url',
   // measurements (names come from MEASUREMENTS[].emailParam)
   'vest_length_cm',
+  'chest_cm',
   'waist_cm',
-  'abdomen_cm',
   'height_cm',
   'measurements_summary',
   // wishes
@@ -119,7 +119,7 @@ export function toTemplateParams(r: OrderRequest, now = new Date()): OrderEmailP
 
   const measurementParams = Object.fromEntries(
     MEASUREMENTS.map((m) => [m.emailParam, measurementText(m.id, r)]),
-  ) as Record<'vest_length_cm' | 'waist_cm' | 'abdomen_cm' | 'height_cm', string>;
+  ) as Record<'vest_length_cm' | 'chest_cm' | 'waist_cm' | 'height_cm', string>;
 
   return {
     subject: product

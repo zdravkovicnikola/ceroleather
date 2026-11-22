@@ -140,7 +140,7 @@ export class OrderFormComponent {
   readonly mode = input<OrderMode>('custom');
   /** Catalog flow: pre-selected product slug (?proizvod= or the product page) */
   readonly presetSlug = input<string | null | undefined>(null);
-  /** Custom flow: optional category hint (?kategorija=jakne from the jacket request card) */
+  /** Custom flow: optional category hint (?kategorija=<category id>) */
   readonly presetCategory = input<string | null | undefined>(null);
   /** Hide the product picker when the form sits on a product page */
   readonly compact = input(false);

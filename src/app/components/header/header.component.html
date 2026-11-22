@@ -55,26 +55,40 @@
           >{{ item.label }}
         </a>
       }
-      <!-- Same target as the desktop "Zatraži model" button (custom-design request) -->
-      <a
-        class="btn btn--primary menu__cta"
-        routerLink="/porudzbina"
-        [queryParams]="{ zahtev: 'custom' }"
+      <!-- One row: compact "Zatraži model" (same target as the desktop CTA) + Instagram + Facebook -->
+      <div
+        class="menu__actions"
         [style.transition-delay]="menuOpen() ? 0.1 + nav.length * 0.06 + 's' : '0s'"
-        [attr.tabindex]="menuOpen() ? 0 : -1"
-        (click)="closeMenu()"
-        >Zatraži model <span class="btn__arrow"></span
-      ></a>
-      <a
-        class="menu__social"
-        [href]="instagramUrl"
-        target="_blank"
-        rel="noopener noreferrer"
-        [attr.tabindex]="menuOpen() ? 0 : -1"
-        aria-label="CeroLeather na Instagramu (otvara se u novom prozoru)"
       >
-        <app-instagram-icon /> {{ instagramHandle }}
-      </a>
+        <a
+          class="btn btn--primary menu__cta"
+          routerLink="/porudzbina"
+          [queryParams]="{ zahtev: 'custom' }"
+          [attr.tabindex]="menuOpen() ? 0 : -1"
+          (click)="closeMenu()"
+          >Zatraži model <span class="btn__arrow"></span
+        ></a>
+        <a
+          class="menu__social"
+          [href]="instagramUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          [attr.tabindex]="menuOpen() ? 0 : -1"
+          aria-label="CeroLeather na Instagramu (otvara se u novom prozoru)"
+        >
+          <app-instagram-icon />
+        </a>
+        <a
+          class="menu__social"
+          [href]="facebookUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          [attr.tabindex]="menuOpen() ? 0 : -1"
+          aria-label="CeroLeather na Facebooku (otvara se u novom prozoru)"
+        >
+          <app-facebook-icon />
+        </a>
+      </div>
     </nav>
   </div>
 </header>

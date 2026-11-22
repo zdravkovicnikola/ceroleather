@@ -19,11 +19,18 @@ function img(file: string, kind: ProductImageKind, alt: string, caption?: string
   return { src: `${BASE}${file}.webp`, srcSm: `${BASE}${file}-sm.webp`, kind, alt, caption };
 }
 
+/*
+ * CATEGORY ASSIGNMENT — TEMPORARY (client decision, Nov 2026)
+ * The project data does not state whether the black vests are men's or women's models.
+ * Until the client classifies them, every regular vest is listed under 'muski'; Cherry and Blush
+ * (described as women's models) are under 'zenski'; Lace Side stays 'custom'.
+ * To reclassify a product, change only its `category` — nothing else depends on it.
+ */
 export const PRODUCTS: Product[] = [
   {
     slug: 'prsluk-strap',
     name: 'Strap',
-    category: 'prsluci',
+    category: 'muski',
     featured: true,
     shortDescription: 'Crni kožni prsluk sa podesivim bočnim trakama i prošivenim ramenim panelom.',
     description: [
@@ -69,7 +76,7 @@ export const PRODUCTS: Product[] = [
   {
     slug: 'prsluk-buckle',
     name: 'Buckle',
-    category: 'prsluci',
+    category: 'muski',
     featured: true,
     shortDescription: 'Kožni prsluk sa kopčama na ramenima i bočnim kaiševima sa kopčama.',
     description: [
@@ -103,7 +110,7 @@ export const PRODUCTS: Product[] = [
   {
     slug: 'prsluk-classic-zip',
     name: 'Classic Zip',
-    category: 'prsluci',
+    category: 'muski',
     featured: true,
     shortDescription: 'Čist, minimalistički prsluk sa okruglim izrezom i centralnim rajsferšlusom.',
     description: [
@@ -136,7 +143,7 @@ export const PRODUCTS: Product[] = [
   {
     slug: 'prsluk-rider',
     name: 'Rider',
-    category: 'prsluci',
+    category: 'muski',
     shortDescription: 'Prsluk sa kragnom na drikere, kosim rajsferšlusom i kosim džepovima.',
     description: [
       'Prsluk inspirisan klasičnom motociklističkom jaknom: kragna sa metalnim drikerima i rajsferšlus pomeren u stranu.',
@@ -191,7 +198,7 @@ export const PRODUCTS: Product[] = [
   {
     slug: 'prsluk-kosmaj',
     name: 'Kosmaj',
-    category: 'prsluci',
+    category: 'muski',
     shortDescription:
       'Crni kožni prsluk sa prošivenim ramenima, bočnim trakama sa kopčama i postavom na kocke.',
     description: [
@@ -231,7 +238,7 @@ export const PRODUCTS: Product[] = [
   {
     slug: 'prsluk-protect',
     name: 'Protect',
-    category: 'prsluci',
+    category: 'muski',
     shortDescription:
       'Kožni prsluk sa horizontalno prošivenim grudnim panelom i podesivim bočnim trakama.',
     description: [
@@ -270,7 +277,7 @@ export const PRODUCTS: Product[] = [
   {
     slug: 'prsluk-swat',
     name: 'SWAT',
-    category: 'prsluci',
+    category: 'muski',
     shortDescription:
       'Taktički kožni prsluk sa brzim kopčama na ramenima i maskirnim (kamuflažnim) panelima.',
     description: [
@@ -304,7 +311,7 @@ export const PRODUCTS: Product[] = [
   {
     slug: 'jakna-cherry',
     name: 'Cherry',
-    category: 'jakne',
+    category: 'zenski',
     shortDescription: 'Ženska kožna jakna u boji višnje, sjajne teksture, sa džepovima na preklop.',
     description: [
       'Ženski model kraćeg kroja od sjajne kože sa reljefnom teksturom, u tamnoj boji višnje.',
@@ -350,7 +357,7 @@ export const PRODUCTS: Product[] = [
     // Source folder: "Second woman model" — display name chosen from the dusty-pink colour.
     slug: 'jakna-blush',
     name: 'Blush',
-    category: 'jakne',
+    category: 'zenski',
     shortDescription:
       'Ženska moto jakna u pastelno roze tonu, sa metalik panelima i kopčama na rukavima.',
     description: [

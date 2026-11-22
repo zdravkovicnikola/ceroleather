@@ -24,8 +24,8 @@ import { ProductCategoryId } from '../../models/product.model';
 
 /** Singular product type for titles ("Buckle — kožni prsluk po meri") */
 const SINGULAR: Record<ProductCategoryId, string> = {
-  prsluci: 'kožni prsluk',
-  jakne: 'kožna jakna',
+  muski: 'kožni prsluk',
+  zenski: 'ženski model',
   custom: 'custom model',
 };
 

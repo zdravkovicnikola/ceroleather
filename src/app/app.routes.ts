@@ -59,7 +59,7 @@ export const routes: Routes = [
     data: seo({
       title: 'Porudžbina po meri — mere i zahtev | CeroLeather',
       description:
-        'Izmerite se uz naš vodič (dužina prsluka, obim struka i stomaka) i pošaljite zahtev za kožni prsluk ili jaknu po meri. Porudžbina se potvrđuje nakon dogovora i avansa.',
+        'Izmerite se uz naš vodič (dužina prsluka, obim grudi i obim struka) i pošaljite zahtev za kožni prsluk ili jaknu po meri. Porudžbina se potvrđuje nakon dogovora i avansa.',
       path: '/porudzbina',
     }),
   },

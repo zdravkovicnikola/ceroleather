@@ -1,10 +1,11 @@
-export type ProductCategoryId = 'prsluci' | 'jakne' | 'custom';
+/** Catalog filters. Reclassify a product by changing its `category` in products.data.ts. */
+export type ProductCategoryId = 'muski' | 'zenski' | 'custom';
 
 export interface ProductCategory {
   id: ProductCategoryId;
   label: string;
-  /** Short editorial line under the category title */
-  intro: string;
+  /** Optional short editorial line shown under the filters when the category is active */
+  intro?: string;
 }
 
 export type ProductImageKind = 'front' | 'back' | 'side' | 'open' | 'detail';
