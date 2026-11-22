@@ -44,7 +44,7 @@ export interface HeroSceneOptions {
   quality: 'high' | 'low';
   pixelRatio: number;
   reducedMotion: boolean;
-  /** load the lighter GLB copy (2048² textures) — phones / low-tier GPUs */
+  /** load the lighter GLB copy (simplified geometry) — phones / low-tier GPUs */
   preferMobileModel?: boolean;
 }
 
@@ -61,6 +61,11 @@ export class HeroScene {
   private redLight!: THREE.PointLight;
   private dust?: THREE.Points;
   private shadow?: THREE.Mesh;
+  /** shadow height below the pivot at scale 1: just under the vest's lowest point */
+  private readonly shadowOffsetY = -THREE_ASSETS.heroVest.targetHeight / 2 - 0.18;
+  private model?: THREE.Object3D;
+  /** sampled vertices (+ per-axis extremes) in tilt space — for the projected silhouette */
+  private outline?: Float32Array;
   private pmrem?: THREE.PMREMGenerator;
   private envTex?: THREE.Texture;
   private frame = 0;
@@ -98,7 +103,7 @@ export class HeroScene {
    *   pivot  ← GSAP scroll state: rotY / rotX / position / scale (+ subtle pointer parallax)
    *   └ tilt ← idle "breathing" bob
    *     └ model-wrapper ← centring + uniform scale to targetHeight (model-loader)
-   *       └ model-orientation ← fixed −90° Y: the file's front faces +X, the scene expects +Z
+   *       └ model-orientation ← orientation fix from config (rotationY; 0 for the current model)
    *         └ gltf.scene (untouched)
    */
   async init(onProgress?: (fraction: number) => void): Promise<'glb' | 'procedural'> {
@@ -117,11 +122,13 @@ export class HeroScene {
       { preferMobile: this.opts.preferMobileModel, onProgress },
     );
     this.modelUrl = url ?? '';
+    this.model = object;
+    this.outline = sampleOutline(object);
     this.tilt.add(object);
     this.pivot.add(this.tilt);
     this.scene.add(this.pivot);
     // Upload the (large) textures now, before the canvas fades in, so the first scroll frames
-    // don't stutter while 4K maps are pushed to the GPU.
+    // don't stutter while large maps are pushed to the GPU.
     object.traverse((o) => {
       const mat = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
       if (!mat?.isMeshStandardMaterial) return;
@@ -139,7 +146,7 @@ export class HeroScene {
       }),
     );
     shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = -THREE_ASSETS.heroVest.targetHeight / 2 - 0.18;
+    shadow.position.y = this.shadowOffsetY;
     this.shadow = shadow;
     this.scene.add(shadow);
 
@@ -223,6 +230,46 @@ export class HeroScene {
     return this.camera.aspect < 1;
   }
 
+  /** portrait: look lower so the vest sits in the upper half, above the typography */
+  private get cameraLift(): number {
+    return this.camera.aspect < 1 ? -0.55 : 0;
+  }
+
+  /**
+   * Viewport rectangle (CSS px) the vest covers for the current `state`, without pointer
+   * parallax and idle bob: its projected silhouette (sampled vertices + extremes).
+   * Used to compose the first frame around the real text layout.
+   */
+  modelScreenRect(): { left: number; top: number; right: number; bottom: number } | null {
+    const el = this.canvas.parentElement ?? this.canvas;
+    const pts = this.outline;
+    if (!this.model || !pts || !el.clientWidth || !el.clientHeight) return null;
+    const s = this.state;
+    this.pivot.rotation.set(s.rotX, s.rotY, 0);
+    this.pivot.position.set(s.objX, s.objY, 0);
+    this.pivot.scale.setScalar(s.scale);
+    this.tilt.position.set(0, 0, 0);
+    this.tilt.rotation.set(0, 0, 0);
+    this.camera.position.set(0, s.camY + this.cameraLift, s.camZ * this.aspectDistance);
+    this.camera.lookAt(0, s.lookY + this.cameraLift, 0);
+    this.camera.updateMatrixWorld();
+    this.pivot.updateMatrixWorld(true);
+
+    const origin = el.getBoundingClientRect();
+    const r = { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity };
+    const v = new THREE.Vector3();
+    for (let i = 0; i < pts.length; i += 3) {
+      v.set(pts[i], pts[i + 1], pts[i + 2]).applyMatrix4(this.tilt.matrixWorld).project(this.camera);
+      const x = origin.left + ((v.x + 1) / 2) * el.clientWidth;
+      const y = origin.top + ((1 - v.y) / 2) * el.clientHeight;
+      r.left = Math.min(r.left, x);
+      r.right = Math.max(r.right, x);
+      r.top = Math.min(r.top, y);
+      r.bottom = Math.max(r.bottom, y);
+    }
+    return r;
+  }
+
   start(): void {
     if (this.running) return;
     this.running = true;
@@ -254,8 +301,7 @@ export class HeroScene {
     this.pivot.position.set(s.objX, s.objY, 0);
     this.pivot.scale.setScalar(s.scale);
 
-    // portrait: look lower so the vest sits in the upper half, above the typography
-    const lift = this.camera.aspect < 1 ? -0.55 : 0;
+    const lift = this.cameraLift;
     this.camera.position.set(0, s.camY + lift, s.camZ * this.aspectDistance);
     this.camera.lookAt(0, s.lookY + lift, 0);
 
@@ -265,7 +311,11 @@ export class HeroScene {
     this.renderer.toneMappingExposure = s.exposure;
 
     if (this.shadow) {
-      this.shadow.position.x = s.objX;
+      // The contact shadow follows the vest (position AND scale). It used to stay at a fixed
+      // height, so when the vest was moved down (portrait start, objY ≈ −1.6) the plane cut
+      // straight through it — the dark horizontal band across the leather.
+      this.shadow.position.set(s.objX, s.objY + this.shadowOffsetY * s.scale, 0);
+      this.shadow.scale.setScalar(s.scale);
       (this.shadow.material as THREE.MeshBasicMaterial).opacity = 0.9 * Math.min(1, s.scale);
     }
     if (this.dust) {
@@ -286,4 +336,33 @@ export class HeroScene {
     this.renderer.dispose();
     this.renderer.forceContextLoss();
   }
+}
+
+/**
+ * ~20k vertices of the (not yet parented) model in its root space, plus the extreme vertex on
+ * each axis, so strap tips / hem are never missed. One pass over the geometry at load time.
+ */
+function sampleOutline(root: THREE.Object3D, target = 20000): Float32Array {
+  root.updateMatrixWorld(true);
+  const meshes: THREE.Mesh[] = [];
+  root.traverse((o) => (o as THREE.Mesh).isMesh && meshes.push(o as THREE.Mesh));
+  const total = meshes.reduce((n, m) => n + m.geometry.getAttribute('position').count, 0);
+  const step = Math.max(1, Math.floor(total / target));
+  const out: number[] = [];
+  const v = new THREE.Vector3();
+  const lo = [0, 1, 2].map(() => new THREE.Vector3(Infinity, Infinity, Infinity));
+  const hi = [0, 1, 2].map(() => new THREE.Vector3(-Infinity, -Infinity, -Infinity));
+  for (const m of meshes) {
+    const pos = m.geometry.getAttribute('position');
+    for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i).applyMatrix4(m.matrixWorld);
+      for (let a = 0; a < 3; a++) {
+        if (v.getComponent(a) < lo[a].getComponent(a)) lo[a].copy(v);
+        if (v.getComponent(a) > hi[a].getComponent(a)) hi[a].copy(v);
+      }
+      if (i % step === 0) out.push(v.x, v.y, v.z);
+    }
+  }
+  for (const p of [...lo, ...hi]) if (Number.isFinite(p.x)) out.push(p.x, p.y, p.z);
+  return new Float32Array(out);
 }

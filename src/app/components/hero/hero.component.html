@@ -40,7 +40,7 @@
 
     <div class="hero__chapters">
       @for (c of chapters; track c.index) {
-        <article class="hero__chapter" [class.hero__chapter--right]="c.side === 'right'">
+        <article class="hero__chapter" [class.hero__chapter--right]="c.side === 'right'" [attr.data-scene]="c.index">
           <p class="hero__chapter-index"><span>{{ c.index }}</span> / {{ c.label }}</p>
           <h2 class="display display--lg">{{ c.title }}</h2>
           <p class="hero__chapter-text">{{ c.text }}</p>

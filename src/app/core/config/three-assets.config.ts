@@ -43,23 +43,29 @@ export interface ModelAssetConfig {
 
 export const THREE_ASSETS = {
   /**
-   * Homepage hero — the real CeroLeather vest (Desktop/CeroLeather slike/prsluk-3dmodel.glb).
-   * Served as optimized copies (*.webp.glb): textures WebP via EXT_texture_webp — base colour
-   * lossy q95, roughness/metalness + normal map lossless — and 16-bit indices. Same geometry,
-   * UVs, materials and resolution; render diff vs. the original ≤ 5/255 (not visible).
-   *   desktop 4096²: 15.3 MB → 5.4 MB · mobile 2048²: 5.5 MB → 3.4 MB
-   * The original PNG-textured files stay next to them — to revert, drop ".webp" from both URLs.
-   * The file's front (zip) faces +X, so it is turned -90° around Y on a parent group.
+   * Homepage hero — the new CeroLeather vest (Desktop/CeroLeather slike/NOVI DIZAJN/3d model v1.glb,
+   * 59 MB: 1.78M triangles, 3 × 2048² JPEG textures). Served as Draco-compressed copies
+   * (KHR_draco_mesh_compression, decoder self-hosted in assets/draco/) with WebP textures:
+   *   desktop (v4): simplified to 60 % (1.07M triangles), textures WebP q92 → 4.64 MB
+   *   mobile  (v4): simplified to 15 % (267k triangles),  textures WebP q85 → 1.82 MB
+   * Draco default decode speed on purpose: the max-compression setting saves ~27 % more geometry
+   * bytes but roughly doubles decode time, so total load time gets worse.
+   * Previous build (backup): prsluk-3dmodel-v3*.glb — full geometry / 20 %, 6.70 MB / 2.47 MB.
+   * Materials are used as authored: the roughness map already averages ≈ 0.49 (semi-matte
+   * leather), so the old model's roughness-factor fix is not applied.
+   * The file's front (zip) faces +Z, so no orientation fix is needed.
+   * Backups (same settings as below): prsluk-3dmodel-v2*.glb (from "3d model.glb", same shape,
+   * earlier textures). Original model: prsluk-3dmodel.webp.glb / prsluk-3dmodel-mobile.webp.glb
+   * with rotationY: -Math.PI / 2, material: { roughnessFactor: 4.6, envMapIntensity: 0.5 }, no Draco.
    */
   heroVest: {
-    glbUrl: 'assets/models/prsluk-3dmodel.webp.glb',
-    glbUrlMobile: 'assets/models/prsluk-3dmodel-mobile.webp.glb',
-    rotationY: -Math.PI / 2,
+    glbUrl: 'assets/models/prsluk-3dmodel-v4.glb',
+    glbUrlMobile: 'assets/models/prsluk-3dmodel-v4-mobile.glb',
+    rotationY: 0,
     fallback: 'none',
     targetHeight: 2.0,
-    // The file's roughness map averages 0.11 × factor 0.5 ≈ 0.05 (mirror-like, reads as latex).
-    // Factor 4.6 → mean ≈ 0.5: semi-matte black leather, highlights stay on seams and folds.
-    material: { roughnessFactor: 4.6, envMapIntensity: 0.5 },
+    material: { envMapIntensity: 0.5 },
+    dracoDecoderPath: 'assets/draco/',
   } satisfies ModelAssetConfig as ModelAssetConfig,
 
   mannequin: {

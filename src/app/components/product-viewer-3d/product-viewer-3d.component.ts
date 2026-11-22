@@ -147,7 +147,7 @@ export class ProductViewer3dComponent {
         quality: this.device.quality === 'high' ? 'high' : 'low',
         pixelRatio: this.device.pixelRatio,
         reducedMotion: this.device.reducedMotion(),
-        // phones / low tier: same mesh, 2048² textures (5.5 MB instead of 16 MB)
+        // phones / low tier: lighter copy (simplified mesh, 2.5 MB instead of 6.8 MB)
         preferMobileModel: this.device.quality !== 'high' || window.innerWidth < 900,
       });
       try {

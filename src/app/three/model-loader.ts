@@ -56,16 +56,23 @@ async function loadGlb(
 ): Promise<THREE.Object3D> {
   const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
   const loader = new GLTFLoader();
+  let draco: { dispose(): unknown } | undefined;
   if (config.dracoDecoderPath) {
     const { DRACOLoader } = await import('three/examples/jsm/loaders/DRACOLoader.js');
-    const draco = new DRACOLoader();
-    draco.setDecoderPath(config.dracoDecoderPath);
-    loader.setDRACOLoader(draco);
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath(config.dracoDecoderPath);
+    loader.setDRACOLoader(dracoLoader);
+    draco = dracoLoader;
   }
-  const gltf = await loader.loadAsync(url, (e) => {
-    if (e.lengthComputable && e.total) onProgress?.(e.loaded / e.total);
-  });
-  return gltf.scene;
+  try {
+    const gltf = await loader.loadAsync(url, (e) => {
+      if (e.lengthComputable && e.total) onProgress?.(e.loaded / e.total);
+    });
+    return gltf.scene;
+  } finally {
+    // decoding is done — terminate the Draco worker threads
+    draco?.dispose();
+  }
 }
 
 /** Orientation fix on a parent group — never on the model's own nodes. */

@@ -203,20 +203,38 @@ crvenom tkanom etiketom), „Leather“ nepromenjeno u fontu Anton. Bez slike �
 
 | | |
 |---|---|
-| Izvor | `Desktop/CeroLeather slike/prsluk-3dmodel.glb` (original se ne menja) |
-| Desktop | `public/assets/models/prsluk-3dmodel.glb` — identična kopija (16 MB, teksture 4096²) |
-| Telefon / slabiji uređaji | `public/assets/models/prsluk-3dmodel-mobile.glb` — ista geometrija i materijal, teksture 2048² (5,5 MB) |
-| Model | 1 mesh, ~50k temena / 65k trouglova, PBR materijal (boja, roughness/metalness, normal mapa ugrađene), bez animacija |
+| Izvor | `Desktop/CeroLeather slike/NOVI DIZAJN/3d model v1.glb` (59 MB, original se ne menja) |
+| Model | 1 mesh, ~976k temena / 1,78M trouglova, PBR materijal (boja, roughness/metalness, normal mapa 2048², JPEG), bez animacija |
+| Desktop | `public/assets/models/prsluk-3dmodel-v4.glb` — geometrija 60 % (1,07M trouglova), Draco + teksture WebP q92 (4,64 MB) |
+| Telefon / slabiji uređaji | `public/assets/models/prsluk-3dmodel-v4-mobile.glb` — geometrija 15 % (267k trouglova), Draco + WebP q85 (1,82 MB) |
+| Draco dekoder | `public/assets/draco/` — kopija iz `three/examples/jsm/libs/draco/` (bez CDN-a) |
 
-- Prednja strana (rajsferšlus) u fajlu gleda ka **+X**, pa se ispravlja rotacijom −90° oko Y na **roditeljskoj grupi**
-  (`rotationY` u configu). Sam model se ne menja.
-- Roughness mapa u fajlu je skoro nula (izgledalo bi kao lateks), pa se menja samo **faktor** (`roughnessFactor: 4.6`).
-  Teksture ostaju iste.
+- Prednja strana (rajsferšlus) gleda ka **+Z**, pa je `rotationY: 0`. Materijal se koristi kako je napravljen
+  (roughness mapa ≈ 0,49 — polumat koža); menja se samo `envMapIntensity: 0.5`.
+- Kako su napravljene kopije (glTF-Transform CLI, nije zavisnost projekta):
+  ```
+  # desktop
+  gltf-transform webp "3d model v1.glb" t.glb --quality 92
+  gltf-transform simplify t.glb s.glb --ratio 0.6 --error 0.0002
+  gltf-transform draco s.glb prsluk-3dmodel-v4.glb --method edgebreaker --quantize-position 14 --quantize-normal 10 --quantize-texcoord 12
+  # telefon
+  gltf-transform webp "3d model v1.glb" tm.glb --quality 85
+  gltf-transform simplify tm.glb sm.glb --ratio 0.15 --error 0.0004
+  gltf-transform draco sm.glb prsluk-3dmodel-v4-mobile.glb (iste Draco opcije)
+  ```
+  Draco `--decode-speed 0` daje ~27 % manju geometriju, ali dekodiranje traje skoro duplo duže — ukupno sporije, pa se ne koristi.
+- **Rezerve:** `prsluk-3dmodel-v3*.glb` (ista verzija modela, cela geometrija / 20 %, 6,70 / 2,47 MB) i
+  `prsluk-3dmodel-v2*.glb` (`3d model.glb`). Povratak: u configu promenite samo `v4` → `v3` (ili `v2`).
+- **Početni kadar** (`initialComposition` u `hero.component.ts`): veličina i položaj se računaju iz stvarnog teksta
+  (naslov, opis, dugmad) — prsluk staje desno od teksta (desktop, do +25 %) ili ispod dugmadi (uski ekrani), bez
+  preklapanja. Prvi scroll korak vraća `scale` / `objX` / `objY` na stare vrednosti, pa je ostatak animacije isti.
+- Senka ispod prsluka prati njegov položaj i veličinu (ranije je stajala fiksno i presecala prsluk na telefonu).
+- **Rezerva — prethodni model** ostaje u `public/assets/models/` (`prsluk-3dmodel*.glb`). Povratak: u configu vratite
+  `glbUrl`/`glbUrlMobile` na `prsluk-3dmodel.webp.glb` / `prsluk-3dmodel-mobile.webp.glb`, `rotationY: -Math.PI / 2`,
+  `material: { roughnessFactor: 4.6, envMapIntensity: 0.5 }` i uklonite `dracoDecoderPath`.
 - Hijerarhija: `pivot` (GSAP scroll: rotacija, pozicija, skala) → `tilt` (blago „disanje“) → `model-wrapper`
-  (centriranje i skala) → `model-orientation` (−90°) → GLB. Svaki nivo ima jednu ulogu, pa se rotacije ne sudaraju.
+  (centriranje i skala) → `model-orientation` (`rotationY`) → GLB. Svaki nivo ima jednu ulogu, pa se rotacije ne sudaraju.
 - Ako se GLB ne učita, hero prikazuje fotografiju (nema više proceduralnog prsluka na početnoj).
-- Nova verzija modela: zamenite oba fajla. Mobilnu kopiju možete napraviti bilo kojim glTF alatom (npr. `gltf-transform
-  resize --width 2048 --height 2048`). Ako je orijentacija drugačija, podesite `rotationY`.
 
 ## Performanse i pristupačnost
 
