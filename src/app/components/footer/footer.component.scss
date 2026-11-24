@@ -13,18 +13,30 @@
   white-space: nowrap;
 }
 .footer__marquee-track {
+  --space: clamp(24px, 3vw, 40px);
   display: inline-flex;
   align-items: center;
-  gap: 40px;
   font-family: var(--font-display);
   font-size: clamp(2rem, 5vw, 4rem);
   text-transform: uppercase;
+  word-spacing: 0.1em;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(245, 245, 245, 0.28);
+  /* outline text: a bit more contrast than before (0.28) so it reads on the dark footer */
+  -webkit-text-stroke: 1px rgba(245, 245, 245, 0.4);
   animation: marquee 40s linear infinite;
+  will-change: transform;
+  /*
+   * Spacing as a right margin on EVERY item (not `gap`): the track is then exactly two identical
+   * halves, so translateX(-50%) lands precisely on the start of the 3rd group — a seamless loop.
+   * (With `gap`, -50% fell half a gap short and the strip jumped ~20px at every loop restart.)
+   */
+  > * {
+    flex: none;
+    margin-right: var(--space);
+  }
   .dot {
-    width: 12px;
-    height: 12px;
+    width: clamp(8px, 0.9vw, 12px);
+    height: clamp(8px, 0.9vw, 12px);
     background: var(--red);
     transform: rotate(45deg);
   }

@@ -17,6 +17,7 @@
   }
 }
 .mg__title {
+  word-spacing: 0.1em; /* same air between words as the .display headings */
   margin: 0;
   font-family: var(--font-display);
   font-weight: 400;

@@ -125,7 +125,9 @@
   width: min(520px, 42vw);
   transform: translateY(-50%);
   h2 {
-    margin: 0 0 20px;
+    margin: 0 0 24px;
+    /* multi-line headings beside the 3D vest: a little more air than the global 1.0 */
+    line-height: 1.06;
   }
 }
 .hero__chapter--right {
@@ -263,7 +265,9 @@
     transform: none;
     text-align: left;
     h2 {
-      font-size: clamp(1.95rem, 9.7vw, 3rem);
+      /* was clamp(1.95rem, 9.7vw, 3rem) — almost as large as the hero h1 on phones */
+      font-size: clamp(1.8rem, 8.4vw, 2.6rem);
+      margin-bottom: 16px;
     }
   }
   .hero__chapter--right .hero__chapter-text {

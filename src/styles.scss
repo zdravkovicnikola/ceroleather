@@ -125,15 +125,21 @@ button {
   font-family: var(--font-display);
   font-weight: 400;
   text-transform: uppercase;
-  line-height: 0.92;
+  /* 1.0 (was 0.92): room between lines for Serbian diacritics on capitals (Č Ć Š Ž) */
+  line-height: 1;
   letter-spacing: 0.005em;
+  /* Anton's space is very narrow — a little more air between words (not between letters);
+     in em, so it scales with every heading size */
+  word-spacing: 0.1em;
   margin: 0;
 }
+/* page titles — was clamp(2.8rem, 9.2vw, 9.7rem): 132px at 1440, too dominant */
 .display--xl {
-  font-size: clamp(2.8rem, 9.2vw, 9.7rem);
+  font-size: clamp(2.6rem, 7.4vw, 7.8rem);
 }
+/* section headings — was clamp(2.3rem, 6.2vw, 6.2rem): 89px at 1440 */
 .display--lg {
-  font-size: clamp(2.3rem, 6.2vw, 6.2rem);
+  font-size: clamp(2.1rem, 4.9vw, 5rem);
 }
 .display--md {
   font-size: clamp(1.75rem, 3.9vw, 3.7rem);

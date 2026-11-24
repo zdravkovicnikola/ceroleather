@@ -1,15 +1,18 @@
+/* Catalog showcase — sits on the leather stage of catalog.page.ts (no cards, no frames). */
+
 .catalog__filters {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
-  padding-bottom: 28px;
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 40px;
+  margin-bottom: clamp(40px, 6vw, 84px);
 }
 .filter {
   position: relative;
   padding: 12px 20px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
+  background: rgba(8, 8, 8, 0.35);
+  backdrop-filter: blur(2px);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.18em;
@@ -26,37 +29,52 @@
   }
   &:hover {
     color: var(--text);
-    border-color: var(--line-strong);
+    border-color: rgba(245, 245, 245, 0.4);
   }
+  /* selected filter: solid CeroLeather red, white text */
   &.is-active {
-    background: var(--text);
-    color: var(--bg);
-    border-color: var(--text);
+    background: var(--red);
+    color: #fff;
+    border-color: var(--red);
+    sup {
+      color: #fff;
+    }
+  }
+  &.is-active:hover {
+    background: var(--red-deep);
+    border-color: var(--red-deep);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
   }
 }
 
 .catalog__intro {
-  margin: 0 0 56px;
+  margin: calc(-1 * clamp(16px, 3vw, 44px)) auto clamp(40px, 5vw, 64px);
+  text-align: center;
 }
 
-/* ---- Horizontal carousel ------------------------------------------------------------------
-   Native horizontal scrolling with scroll-snap: swipe on touch screens, trackpad / Shift+wheel on
-   desktop, arrows below. Vertical page scrolling is untouched (the browser decides per gesture).
-   Only the track scrolls sideways, never the page. */
-.catalog__track {
-  --per-view: 3;
-  --gap: clamp(20px, 2.5vw, 36px);
+/* ---- Showcase slider: exactly 4 visible on desktop, 3 on tablet, ~1.6 on phones ----
+   Native horizontal scrolling + scroll-snap; only the track moves sideways, never the page. */
+.slider {
+  position: relative;
+}
+.showcase {
+  --per-view: 4;
+  --gap: clamp(20px, 2.6vw, 48px);
   display: flex;
   gap: var(--gap);
+  margin: 0;
+  padding: 8px 0 12px; /* room for the hover lift / focus ring */
+  list-style: none;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: 0;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  /* room for the card hover lift / focus ring so overflow doesn't clip them */
-  padding-block: 6px 10px;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -65,116 +83,249 @@
     outline-offset: 6px;
   }
 }
-.catalog__item {
+.showcase__item {
   flex: 0 0 calc((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view));
   min-width: 0;
   scroll-snap-align: start;
 }
 
-.catalog__controls {
-  display: flex;
-  align-items: center;
-  gap: clamp(16px, 3vw, 32px);
-  margin-top: clamp(28px, 3vw, 44px);
-  &.is-static {
-    display: none;
-  }
-}
-.catalog__count {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  color: var(--text-2);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-.catalog__count-now {
-  color: var(--text);
-}
-.catalog__count-total {
-  color: var(--text-3);
-}
-.catalog__progress {
-  position: relative;
-  flex: 1;
-  height: 1px;
-  background: var(--line-strong);
-  overflow: hidden;
-  span {
-    position: absolute;
-    inset: 0;
-    background: var(--red);
-    transform-origin: left center;
-    transition: transform 0.25s linear;
-  }
-}
-.catalog__arrows {
-  display: flex;
-  gap: 10px;
-}
-/* same look as the product-gallery arrows */
-.catalog__arrow {
-  width: 52px;
-  height: 52px;
+/* arrows: thin round outlines at image height, outside the track on desktop */
+.slider__arrow {
+  position: absolute;
+  top: calc(8px + (100% - 8px - 12px - 70px) / 2);
+  z-index: 2;
   display: grid;
   place-items: center;
-  background: rgba(11, 11, 11, 0.6);
+  width: 48px;
+  height: 48px;
   border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: rgba(8, 8, 8, 0.45);
+  backdrop-filter: blur(3px);
   color: var(--text);
   cursor: pointer;
+  transform: translateY(-50%);
   transition:
+    opacity 0.4s,
     border-color 0.3s,
-    background 0.3s,
-    opacity 0.3s;
+    background 0.3s;
   span {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-top: 1.5px solid currentColor;
     border-right: 1.5px solid currentColor;
   }
-  &--prev span {
-    transform: translateX(2px) rotate(-135deg);
+  &--prev {
+    left: calc(-1 * clamp(8px, 3.4vw, 60px));
+    span {
+      transform: translateX(2px) rotate(-135deg);
+    }
   }
-  &--next span {
-    transform: translateX(-2px) rotate(45deg);
+  &--next {
+    right: calc(-1 * clamp(8px, 3.4vw, 60px));
+    span {
+      transform: translateX(-2px) rotate(45deg);
+    }
   }
   &:hover:not(:disabled) {
-    border-color: var(--red);
     background: var(--red);
+    border-color: var(--red);
   }
   &:focus-visible {
     outline: 2px solid var(--red);
     outline-offset: 3px;
   }
   &:disabled {
-    opacity: 0.3;
-    cursor: default;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .showcase {
+    scroll-behavior: auto;
+  }
+}
+
+.model {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+
+/* Same 4:5 frame for every model (the cut-outs share the same 4:5 canvas), never cropped */
+.model__media {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  margin-bottom: 14px;
+}
+.model__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /*
+   * drop-shadow follows the transparent silhouette (never a rectangle):
+   *  --glow   red brand glow, invisible at rest, shown on hover / keyboard focus
+   *  --shadow soft contact shadow, the cut-out "lies" on the leather
+   * Same number of filter functions in every state → the glow fades in and out smoothly.
+   */
+  --glow: drop-shadow(0 0 0 rgba(227, 33, 38, 0)) drop-shadow(0 0 0 rgba(227, 33, 38, 0));
+  --shadow: drop-shadow(0 22px 26px rgba(0, 0, 0, 0.6)) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.45));
+  filter: var(--glow) var(--shadow);
+  transform-origin: 50% 70%;
+  transition:
+    transform 0.8s var(--ease),
+    filter 0.8s var(--ease);
+}
+/* Not a cut-out (photo with its own background): fade its edges into the leather instead */
+.model__media--photo .model__img {
+  filter: none;
+  -webkit-mask-image: radial-gradient(ellipse 58% 62% at 50% 48%, #000 46%, transparent 100%);
+  mask-image: radial-gradient(ellipse 58% 62% at 50% 48%, #000 46%, transparent 100%);
+}
+
+.model__name {
+  word-spacing: 0.1em; /* same air between words as the .display headings */
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(1.1rem, 1.45vw, 1.45rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 100%;
+    height: 1px;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s var(--ease);
+  }
+}
+.model__price {
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: clamp(0.78rem, 0.9vw, 0.9rem);
+  letter-spacing: 0.08em;
+  color: var(--silver);
+  transition: color 0.4s;
+}
+
+/* red silhouette glow: hover (mouse) and keyboard focus share the same effect */
+@mixin model-active {
+  .model__img {
+    --glow: drop-shadow(0 0 1.5px rgba(227, 33, 38, 0.8)) drop-shadow(0 0 16px rgba(227, 33, 38, 0.36));
+  }
+  .model__media--photo .model__img {
+    filter: none;
+  }
+  .model__name::after {
+    transform: scaleX(1);
+  }
+  .model__price {
+    color: var(--text);
+  }
+}
+@media (hover: hover) {
+  .model:hover {
+    @include model-active;
+    .model__img {
+      transform: translateY(-8px) scale(1.025);
+      --shadow: drop-shadow(0 34px 32px rgba(0, 0, 0, 0.7)) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.5));
+    }
+  }
+}
+.model:focus-visible {
+  @include model-active;
+}
+@media (prefers-reduced-motion: reduce) {
+  .model__img,
+  .model__name::after {
+    transition: none;
   }
 }
 
 .catalog__empty {
+  margin: 0;
+  padding: 60px 0;
+  text-align: center;
   color: var(--text-2);
 }
 
-@media (max-width: 1000px) {
-  .catalog__track {
-    --per-view: 2;
+/* tablet: 3 visible; arrows move just inside the edges */
+@media (max-width: 1100px) {
+  .showcase {
+    --per-view: 3;
+  }
+  .slider__arrow--prev {
+    left: 4px;
+  }
+  .slider__arrow--next {
+    right: 4px;
   }
 }
-/* phones: one card plus a peek of the next, so the swipe is obvious */
-@media (max-width: 600px) {
-  .catalog__track {
-    --per-view: 1.18;
-    --gap: 14px;
+/* phones: exactly ONE model at a time, centred; one swipe = one model; no arrows */
+@media (max-width: 760px) {
+  .showcase {
+    --per-view: 1;
+    /* gap wider than the side margin, so the neighbours stay completely out of view */
+    --gap: calc(var(--gutter) * 2);
+    /* the track spans the full screen width; each model snaps between the side margins */
+    margin-inline: calc(-1 * var(--gutter));
+    padding-inline: var(--gutter);
+    scroll-padding-inline: var(--gutter);
   }
-  .catalog__arrow {
-    width: 44px;
-    height: 44px;
+  .showcase__item {
+    /* never skip several models on a fast swipe */
+    scroll-snap-stop: always;
   }
-}
-
-/* equal card heights in the row: the card's own `height: 100%` would block flex stretching */
-.catalog__track > .catalog__item {
-  height: auto;
+  .model {
+    align-items: center;
+    text-align: center;
+  }
+  /* large, but the whole vest + name + price fit on short phones too */
+  .model__media {
+    width: min(100%, 56svh * 0.8);
+    margin-inline: auto;
+  }
+  .model__name::after {
+    transform-origin: center;
+  }
+  .slider__arrow {
+    display: none;
+  }
+  .catalog__filters {
+    justify-content: flex-start;
+    gap: 6px;
+  }
+  .filter {
+    padding: 10px 14px;
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+  }
+  .model__media {
+    margin-bottom: 10px;
+  }
+  .model__img {
+    --shadow: drop-shadow(0 14px 16px rgba(0, 0, 0, 0.6)) drop-shadow(0 3px 4px rgba(0, 0, 0, 0.45));
+  }
+  .model__name {
+    font-size: clamp(1.3rem, 6.4vw, 1.7rem);
+  }
+  .model__price {
+    font-size: 0.88rem;
+    letter-spacing: 0.06em;
+  }
 }

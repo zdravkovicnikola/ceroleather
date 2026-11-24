@@ -128,6 +128,7 @@
   flex-direction: column;
 }
 .menu__link {
+  word-spacing: 0.1em; /* same air between words as the .display headings */
   display: flex;
   align-items: baseline;
   gap: 18px;
