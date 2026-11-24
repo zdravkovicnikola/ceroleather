@@ -155,7 +155,7 @@ Podešavanje (`src/environments/environment*.ts` → `cloudinary`):
 
 | Vrednost | Trenutno | Napomena |
 |---|---|---|
-| `cloudName` | `hzbtilhe` | iz URL-a `https://api.cloudinary.com/v1_1/hzbtilhe/image/upload` |
+| `cloudName` | `irge9ucn` | iz URL-a `https://api.cloudinary.com/v1_1/irge9ucn/image/upload` (klijentov nalog) |
 | `uploadPreset` | `ceroleather_custom_requests` | mora biti **Unsigned** preset |
 
 U Cloudinary dashboardu: **Settings → Upload → Upload presets → `ceroleather_custom_requests`**:

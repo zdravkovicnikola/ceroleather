@@ -26,7 +26,7 @@ export const environment = {
    * on the upload preset in the Cloudinary dashboard (Settings → Upload → Upload presets).
    */
   cloudinary: {
-    cloudName: 'hzbtilhe',
+    cloudName: 'irge9ucn',
     uploadPreset: 'ceroleather_custom_requests', // must be an UNSIGNED preset
   },
 };
