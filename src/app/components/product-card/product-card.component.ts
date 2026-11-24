@@ -49,11 +49,13 @@ import { Product } from '../../models/product.model';
         <h3 class="card__name">
           <a [routerLink]="['/katalog', p.slug]">{{ p.name }}</a>
         </h3>
-        <p class="card__desc">{{ p.shortDescription }}</p>
         @if (showPrice() && p.price) {
           <p class="card__price">
             {{ priceLabel() }}
           </p>
+        }
+        @if (p.shortDescription) {
+          <p class="card__desc">{{ p.shortDescription }}</p>
         }
         <div class="card__actions">
           <a class="btn btn--sm" [routerLink]="['/katalog', p.slug]">Detalji</a>
@@ -85,11 +87,13 @@ export class ProductCardComponent {
   readonly showPrice = () => SITE_CONFIG.showPrices;
   readonly category = computed(() => categoryLabel(this.product().category));
   readonly secondImage = computed(() => this.product().images[1] ?? null);
+  /** Full amounts with a (non-breaking) space as thousands separator: "7 500 RSD", "13 000–14 000 RSD" */
   readonly priceLabel = computed(() => {
     const pr = this.product().price;
     if (!pr) return '';
-    const amount = new Intl.NumberFormat('sr-Latn-RS').format(pr.amount);
-    return [pr.prefix, amount, pr.currency ?? this.currency].filter(Boolean).join(' ');
+    const fmt = (n: number) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    const amount = pr.amountMax ? `${fmt(pr.amount)}–${fmt(pr.amountMax)}` : fmt(pr.amount);
+    return [pr.prefix, amount, pr.currency ?? this.currency].filter(Boolean).join(' ');
   });
   readonly indexLabel = computed(() => String(this.index() + 1).padStart(2, '0'));
 }

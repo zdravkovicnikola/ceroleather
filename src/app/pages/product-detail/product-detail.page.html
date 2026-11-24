@@ -18,7 +18,16 @@
         <header class="pd__head">
           <p class="eyebrow">{{ category() }}</p>
           <h1 class="display display--xl pd__name">{{ p.name }}</h1>
-          <p class="lead">{{ p.shortDescription }}</p>
+          @if (p.shortDescription) {
+            <p class="lead">{{ p.shortDescription }}</p>
+          }
+          @if (showPrices && p.price) {
+            <p class="pd__price">{{ priceLabel() }}</p>
+          }
+          <aside class="pd__price-note" aria-labelledby="pd-price-note-title">
+            <p id="pd-price-note-title" class="pd__price-note-title">{{ priceNote.title }}</p>
+            <p class="pd__price-note-text">{{ priceNote.text }}</p>
+          </aside>
         </header>
 
         @if (p.spin360; as spin) {
@@ -69,10 +78,16 @@
 
         @if (p.features.length) {
           <div class="pd__features">
-            <h2 class="pd__subtitle">Detalji modela</h2>
+            <h2 class="pd__subtitle">{{ p.featuresTitle ?? 'Detalji modela' }}</h2>
             <ul>
               @for (f of p.features; track f) {
-                <li>{{ f }}</li>
+                @let part = featureParts(f);
+                <li>
+                  @if (part.label) {
+                    <strong>{{ part.label }}</strong>
+                  }
+                  {{ part.text }}
+                </li>
               }
             </ul>
           </div>

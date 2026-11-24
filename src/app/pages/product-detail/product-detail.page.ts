@@ -20,12 +20,18 @@ import { ScrollService } from '../../core/services/scroll.service';
 import { categoryLabel } from '../../data/categories.data';
 import { PRODUCTS, findProduct } from '../../data/products.data';
 import { RevealDirective } from '../../shared/directives/reveal.directive';
-import { ProductCategoryId } from '../../models/product.model';
+import { ProductCategoryId, formatPrice } from '../../models/product.model';
 
-/** Singular product type for titles ("Buckle — kožni prsluk po meri") */
+/** Shared pricing note, shown under the price on every product page */
+export const PRICE_NOTE = {
+  title: 'Napomena o cenama',
+  text: 'Navedene cene važe za mere do 120/120 cm u obimu. Za veće mere dolazi do korekcije cene. Konačna cena određuje se nakon dostavljanja mera i dogovora sa radionicom.',
+} as const;
+
+/** Singular product type for titles ("Shadow — kožni prsluk po meri") */
 const SINGULAR: Record<ProductCategoryId, string> = {
   muski: 'kožni prsluk',
-  zenski: 'ženski model',
+  zenski: 'ženski kožni prsluk',
   custom: 'custom model',
 };
 
@@ -58,6 +64,17 @@ export class ProductDetailPage {
   });
   readonly others = computed(() => PRODUCTS.filter((p) => p.slug !== this.slug()).slice(0, 3));
   readonly showPrices = SITE_CONFIG.showPrices;
+  readonly priceNote = PRICE_NOTE;
+  readonly priceLabel = computed(() => {
+    const pr = this.product()?.price;
+    return pr ? formatPrice(pr, SITE_CONFIG.currency) : '';
+  });
+
+  /** "Teleća koža: čvrsta …" → label shown emphasised, rest as text (no colon → text only) */
+  featureParts(f: string): { label: string; text: string } {
+    const i = f.indexOf(': ');
+    return i > 0 ? { label: f.slice(0, i + 1), text: f.slice(i + 2) } : { label: '', text: f };
+  }
   /** 360° viewer first when the product has a frame sequence; resets when the product changes */
   readonly mediaView = linkedSignal<'360' | 'photos'>(() =>
     this.product()?.spin360 ? '360' : 'photos',
@@ -83,10 +100,9 @@ export class ProductDetailPage {
       seo.update({
         title: `${p.name} — ${kind} po meri | CeroLeather`,
         description:
-          `${p.shortDescription} Ručna izrada po vašim merama — pošaljite zahtev za porudžbinu.`.slice(
-            0,
-            300,
-          ),
+          `${p.shortDescription} Ručna izrada po vašim merama — pošaljite zahtev za porudžbinu.`
+            .trim()
+            .slice(0, 300),
         path,
         type: 'product',
         image: p.images[0].src,
@@ -97,7 +113,7 @@ export class ProductDetailPage {
             '@context': 'https://schema.org',
             '@type': 'Product',
             name: `${p.name} — ${kind}`,
-            description: [p.shortDescription, ...p.description].join(' '),
+            description: [p.shortDescription, ...p.description].join(' ').trim() || undefined,
             image: p.images.map((img) => seo.absolute(img.src)),
             url: seo.absolute(path),
             category: cat,

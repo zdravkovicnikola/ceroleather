@@ -70,7 +70,7 @@ Interaktivni prikaz je **niz fotografija/frejmova** snimljenih ukrug (nije 3D mo
 strelicama na tastaturi i dugmićima; meki prelaz između frejmova, inercija, učitavanje tek kada se prikaz približi
 ekranu, manji frejmovi na telefonima, fotografija kao rezerva ako frejmovi ne mogu da se učitaju.
 
-Trenutno: model **Buckle**, 72 frejma izvučena iz `public/videos/prsluk-360.mp4` (4 s, 1080×1080, 30 fps),
+Frejmovi postoje za model **Shadow** (ranije „Buckle“; 360° prikaz trenutno nije uključen ni za jedan model), 72 frejma izvučena iz `public/videos/prsluk-360.mp4` (4 s, 1080×1080, 30 fps),
 isečena tako da vodeni žig i QR kod ne ulaze u kadar → `public/assets/images/360/prsluk-buckle/00..71.webp` (720px)
 i `00-sm..71-sm.webp` (420px). Ukupno ≈ 610 KB (desktop) / ≈ 270 KB (telefon).
 
@@ -187,7 +187,7 @@ crvenom tkanom etiketom), „Leather“ nepromenjeno u fontu Anton. Bez slike �
 | Primalac zahteva | EmailJS template → To Email | Trenutno test adresa `nzdravkovic2001@gmail.com` |
 | Domen | `environment.ts` → `siteUrl` | Za canonical, sitemap, OG slike i link u emailu: `https://ceroleather.rs` |
 | Politika privatnosti | — | Ne postoji — potreban pravni tekst |
-| Nazivi modela | `products.data.ts` | Radni nazivi (Strap, Buckle, Classic Zip, Rider, Lace Side) |
+| Opisi novih modela | `products.data.ts` | Dalmacija – V izraz i Nordkapp još nemaju opis; galerije i opisi svih modela u sledećoj fazi |
 
 ## 3D modeli (GLB/GLTF)
 

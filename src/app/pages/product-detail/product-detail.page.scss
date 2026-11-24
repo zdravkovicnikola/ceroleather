@@ -36,6 +36,40 @@
 }
 .pd__name {
   margin-bottom: 20px;
+  /* product names are often two lines — smaller than the generic page title */
+  font-size: clamp(2.5rem, 5.6vw, 5.6rem);
+}
+
+/* price + shared pricing note (all product pages) */
+.pd__price {
+  margin: 24px 0 16px;
+  font-family: var(--font-mono);
+  font-size: clamp(1.1rem, 1.7vw, 1.4rem);
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+.pd__price-note {
+  max-width: 38em;
+  margin-top: 16px;
+  padding: 16px 20px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--red);
+}
+.pd__price-note-title {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.pd__price-note-text {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 0.92rem;
+  font-weight: 300;
+  line-height: 1.6;
 }
 
 .pd__media-tabs {
@@ -104,6 +138,11 @@
     position: relative;
     padding: 14px 0 14px 28px;
     border-bottom: 1px solid var(--line);
+    color: var(--text-2);
+    strong {
+      font-weight: 500;
+      color: var(--text);
+    }
     &::before {
       content: '';
       position: absolute;

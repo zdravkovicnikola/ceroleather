@@ -19,38 +19,52 @@ function img(file: string, kind: ProductImageKind, alt: string, caption?: string
   return { src: `${BASE}${file}.webp`, srcSm: `${BASE}${file}-sm.webp`, kind, alt, caption };
 }
 
+/**
+ * Main (first) catalog image: the client's cut-outs, assets/images/products/main/.
+ * `cutout: false` for a main image that is not transparent (currently none — all nine are cut-outs).
+ */
+function main(file: string, name: string, cutout = true): ProductImage {
+  return { ...img(`main/${file}`, 'front', `Kožni prsluk ${name} — prednja strana`), cutout };
+}
+
 /*
- * CATEGORY ASSIGNMENT — TEMPORARY (client decision, Nov 2026)
- * The project data does not state whether the black vests are men's or women's models.
- * Until the client classifies them, every regular vest is listed under 'muski'; Cherry and Blush
- * (described as women's models) are under 'zenski'; Lace Side stays 'custom'.
+ * CATALOG — client list, Nov 2026 (order = display order).
+ * Renamed products keep their original slugs so existing links keep working:
+ *   prsluk-strap = Harly Model, prsluk-rider = Rokerica, prsluk-lace = Sinovi Anarhije,
+ *   prsluk-classic-zip = Euro Cut, prsluk-protect = Protect – Limited Edition, prsluk-buckle = Shadow.
+ * Removed from the catalog: Cherry, Blush, SWAT (their images stay in assets/images/products/).
+ * Descriptions: the client's texts (Nov 2026). The first sentence is `shortDescription` (card +
+ * product-page lead), the rest is `description`; `featuresTitle` + `features` = "Zašto se … izdvaja".
+ * Galleries are unchanged (next phase).
  * To reclassify a product, change only its `category` — nothing else depends on it.
  */
 export const PRODUCTS: Product[] = [
+  // 1. HARLY MODEL
   {
     slug: 'prsluk-strap',
-    name: 'Strap',
+    name: 'Harly Model',
     category: 'muski',
+    price: { amount: 7500 },
     featured: true,
-    shortDescription: 'Crni kožni prsluk sa podesivim bočnim trakama i prošivenim ramenim panelom.',
+    shortDescription:
+      'Harly je muški moto-prsluk izrađen od kvalitetne teleće kože.',
     description: [
-      'Prsluk od crne zrnaste kože sa prošivenim, rebrastim panelom na ramenima i kosim panelima napred koji prate liniju tela.',
-      'Sa strane su elastični umeci i po četiri kožne trake sa kopčama, pa se širina prsluka može podesiti na telu. Napred je vertikalni džep sa rajsferšlusom, a unutra, na postavi, još jedan džep sa rajsferšlusom.',
+      'Bočni kaiševi za dodatno proširenje omogućavaju prilagođavanje širine, pa ga možeš nositi preko majice ili moto-jakne.',
     ],
+    featuresTitle: 'Zašto se Harly izdvaja',
     features: [
-      'Podesive bočne kožne trake sa metalnim kopčama',
-      'Prošiven, rebrast panel na ramenima',
-      'Spoljni vertikalni džep sa rajsferšlusom',
-      'Unutrašnji džep sa rajsferšlusom',
-      'Postava i centralni rajsferšlus',
-      'Ivice opšivene kožom',
+      'Kvalitetna teleća koža: čvrsta i pouzdana, namenjena dugotrajnoj upotrebi.',
+      'Bočni kaiševi za proširenje: omogućavaju prilagođavanje širine i udobno nošenje preko moto-jakne.',
+      'Klasičan moto-dizajn: upečatljiv izgled koji nikada ne izlazi iz mode.',
+      'Crna postava: sa praktičnim unutrašnjim džepom.',
     ],
     images: [
-      img('strap-vest-side', 'side', 'Crni kožni prsluk Strap — bočna strana sa podesivim trakama'),
+      main('harly', 'Harly Model'),
+      img('strap-vest-side', 'side', 'Crni kožni prsluk Harly Model — bočna strana sa podesivim trakama'),
       img(
         'strap-vest-front-open',
         'open',
-        'Prsluk Strap — otvoren, vidi se postava i unutrašnji džep',
+        'Prsluk Harly Model — otvoren, vidi se postava i unutrašnji džep',
       ),
       img(
         'strap-vest-detail-straps',
@@ -73,151 +87,31 @@ export const PRODUCTS: Product[] = [
       img('strap-vest-detail-grain', 'detail', 'Tekstura zrnaste kože izbliza', 'Tekstura kože'),
     ],
   },
-  {
-    slug: 'prsluk-buckle',
-    name: 'Buckle',
-    category: 'muski',
-    featured: true,
-    shortDescription: 'Kožni prsluk sa kopčama na ramenima i bočnim kaiševima sa kopčama.',
-    description: [
-      'Prsluk sa okruglim izrezom oko vrata, centralnim rajsferšlusom i po dve kožne trake sa metalnim kopčama na svakom ramenu.',
-      'Sa strane, na leđima, po tri kaiša sa kopčama omogućavaju podešavanje širine. Napred su dva kosa džepa sa rajsferšlusom.',
-    ],
-    features: [
-      'Kožne trake sa kopčama na ramenima',
-      'Po tri bočna kaiša sa kopčama',
-      'Dva kosa džepa sa rajsferšlusom',
-      'Centralni rajsferšlus i okrugli izrez',
-    ],
-    images: [
-      img('buckle-vest-front', 'front', 'Kožni prsluk Buckle — prednja strana'),
-      img('buckle-vest-back', 'back', 'Kožni prsluk Buckle — zadnja strana sa bočnim kaiševima'),
-      img(
-        'buckle-vest-detail-shoulders',
-        'detail',
-        'Kožne trake sa metalnim kopčama na ramenima prsluka Buckle',
-        'Kopče na ramenima',
-      ),
-      img(
-        'buckle-vest-detail-side-buckles',
-        'detail',
-        'Bočni kaiševi sa kopčama na leđima prsluka Buckle',
-        'Bočni kaiševi',
-      ),
-    ],
-    note: 'Photos are cropped phone screenshots of a listing — replace with original high-res photos.',
-  },
-  {
-    slug: 'prsluk-classic-zip',
-    name: 'Classic Zip',
-    category: 'muski',
-    featured: true,
-    shortDescription: 'Čist, minimalistički prsluk sa okruglim izrezom i centralnim rajsferšlusom.',
-    description: [
-      'Jednostavan kroj bez suvišnih detalja: okrugli izrez, centralni rajsferšlus i poprečni šav na grudima.',
-      'Na leđima poprečni šav i dva vertikalna panela daju prsluku oblik. Sve ivice su opšivene kožom.',
-    ],
-    features: [
-      'Okrugli izrez oko vrata',
-      'Centralni rajsferšlus',
-      'Panelni kroj na leđima',
-      'Ivice opšivene kožom',
-    ],
-    images: [
-      img('zip-vest-front', 'front', 'Kožni prsluk Classic Zip — prednja strana'),
-      img('zip-vest-back', 'back', 'Kožni prsluk Classic Zip — zadnja strana'),
-      img(
-        'zip-vest-detail-collar',
-        'detail',
-        'Okrugli izrez i centralni rajsferšlus prsluka Classic Zip',
-        'Izrez i rajsferšlus',
-      ),
-      img(
-        'zip-vest-detail-back-seams',
-        'detail',
-        'Panelni kroj na leđima prsluka Classic Zip',
-        'Kroj leđa',
-      ),
-    ],
-  },
-  {
-    slug: 'prsluk-rider',
-    name: 'Rider',
-    category: 'muski',
-    shortDescription: 'Prsluk sa kragnom na drikere, kosim rajsferšlusom i kosim džepovima.',
-    description: [
-      'Prsluk inspirisan klasičnom motociklističkom jaknom: kragna sa metalnim drikerima i rajsferšlus pomeren u stranu.',
-      'Dva kosa džepa sa metalnim rajsferšlusima, struk sa kožnim pojasom i postava.',
-    ],
-    features: [
-      'Kragna sa metalnim drikerima',
-      'Asimetričan rajsferšlus',
-      'Dva kosa džepa sa rajsferšlusom',
-      'Kožni pojas u struku',
-      'Postava',
-    ],
-    images: [
-      img('rider-vest-front-open', 'open', 'Kožni prsluk Rider — otvoren, vidi se postava'),
-      img('rider-vest-detail-collar', 'detail', 'Kragna sa metalnim drikerima', 'Kragna'),
-      img('rider-vest-detail-tag', 'detail', 'CeroLeather etiketa', 'Etiketa'),
-      img('rider-vest-detail-pocket', 'detail', 'Kosi džep sa metalnim rajsferšlusom', 'Kosi džep'),
-    ],
-  },
-  {
-    slug: 'prsluk-lace',
-    name: 'Lace Side',
-    category: 'custom',
-    featured: true,
-    shortDescription: 'Unikatan prsluk sa bočnim vezivanjem kožnom pertlom i revers kragnom.',
-    description: [
-      'Custom model sa bočnim vezivanjem: kožna pertla kroz metalne ringle omogućava podešavanje širine sa strane.',
-      'Revers kragna, rajsferšlus u boji mesinga i džep sa preklopom daju prsluku klasičan, old-school karakter.',
-    ],
-    features: [
-      'Bočno vezivanje kožnom pertlom kroz metalne ringle',
-      'Revers kragna',
-      'Rajsferšlus u boji mesinga',
-      'Džep sa preklopom',
-    ],
-    images: [
-      img('lace-vest-front', 'front', 'Kožni prsluk Lace Side sa bočnim vezivanjem'),
-      img(
-        'lace-vest-detail-lacing',
-        'detail',
-        'Detalj bočnog vezivanja kožnom pertlom',
-        'Bočno vezivanje',
-      ),
-      img('lace-vest-detail-tag', 'detail', 'CeroLeather etiketa', 'Etiketa'),
-      img('lace-vest-detail-collar', 'detail', 'Revers kragna prsluka Lace Side', 'Revers kragna'),
-    ],
-  },
-
-  // ── Models from the workshop photo folders ("CeroLeather slike/<MODEL>/") ──────────────
-  // Images: public/assets/images/products/<folder>/<view>.webp (+ <view>-sm.webp).
-  // Descriptions list only what is visible in the photos — confirm/extend with the workshop.
+  // 2. KOSMAJ MODEL
   {
     slug: 'prsluk-kosmaj',
-    name: 'Kosmaj',
+    name: 'Kosmaj Model',
     category: 'muski',
+    price: { amount: 7500 },
     shortDescription:
-      'Crni kožni prsluk sa prošivenim ramenima, bočnim trakama sa kopčama i postavom na kocke.',
+      'Kosmaj je čvrst moto-prsluk od teleće kože, napravljen za duge kilometre i ljubitelje klasičnog moto-stila.',
     description: [
-      'Prsluk od crne zrnaste kože sa okruglim izrezom, centralnim rajsferšlusom i romboidno prošivenim panelima na ramenima.',
-      'Sa strane su po četiri kožne trake sa metalnim kopčama, a napred dva vertikalna džepa sa rajsferšlusom. Kada se otvori, vidi se crno-bela postava na kocke.',
+      'Zahvaljujući bočnim kaiševima za dodatno proširenje, lako se prilagođava i omogućava nošenje preko moto-jakne.',
     ],
+    featuresTitle: 'Zašto se Kosmaj izdvaja',
     features: [
-      'Romboidno prošiveni paneli na ramenima',
-      'Po četiri bočne kožne trake sa metalnim kopčama',
-      'Dva vertikalna džepa sa rajsferšlusom',
-      'Centralni rajsferšlus i okrugli izrez',
-      'Crno-bela postava na kocke',
+      'Teleća koža: čvrsta, pouzdana i izdržljiva.',
+      'Prilagodljivost: bočni kaiševi omogućavaju proširenje i prilagođavanje širine.',
+      'Klasičan moto-dizajn: upečatljiv izgled pogodan za različite stilove.',
+      'Crna postava: sa unutrašnjim džepom.',
     ],
     images: [
-      img('kosmaj/front', 'front', 'Crni kožni prsluk Kosmaj — prednja strana, zakopčan'),
+      main('kosmaj', 'Kosmaj Model'),
+      img('kosmaj/front', 'front', 'Crni kožni prsluk Kosmaj Model — prednja strana, zakopčan'),
       img(
         'kosmaj/open',
         'open',
-        'Prsluk Kosmaj — otkopčan, vidi se crno-bela postava na kocke',
+        'Prsluk Kosmaj Model — otkopčan, vidi se crno-bela postava na kocke',
         'Postava na kocke',
       ),
       img(
@@ -235,25 +129,153 @@ export const PRODUCTS: Product[] = [
       ),
     ],
   },
+  // 3. DALMACIJA – V IZRAZ
   {
-    slug: 'prsluk-protect',
-    name: 'Protect',
+    slug: 'prsluk-dalmacija',
+    name: 'Dalmacija – V izraz',
     category: 'muski',
+    price: { amount: 7500 },
     shortDescription:
-      'Kožni prsluk sa horizontalno prošivenim grudnim panelom i podesivim bočnim trakama.',
+      'Dalmacija je moto-prsluk sa V-izrezom koji spaja klasičan kroj i moderan izgled.',
     description: [
-      'Prsluk od crne kože sa horizontalno prošivenim (rebrastim) panelom preko grudi i ramena i prošivenim panelima napred.',
-      'Centralni rajsferšlus, dva vertikalna džepa sa rajsferšlusom i po četiri kožne trake sa strane za podešavanje širine. Leđa su čista, sa vertikalnim šavom.',
+      'Izrađen je od teleće kože i namenjen dugim vožnjama. Bočni kaiševi za dodatno proširenje omogućavaju prilagođavanje širine i nošenje preko moto-jakne.',
     ],
+    featuresTitle: 'Zašto se Dalmacija izdvaja',
     features: [
-      'Horizontalno prošiven panel na grudima i ramenima',
-      'Po četiri bočne kožne trake',
-      'Dva vertikalna džepa sa rajsferšlusom',
-      'Centralni rajsferšlus i okrugli izrez',
+      'Teleća koža: čvrsta i pouzdana, namenjena dugotrajnoj upotrebi.',
+      'V-izrez: klasičan kroj koji prsluku daje prepoznatljiv izgled.',
+      'Bočni kaiševi za proširenje: omogućavaju prilagođavanje širine i nošenje preko moto-jakne.',
+      'Crna postava: sa unutrašnjim džepom.',
+    ],
+    images: [main('dalmacija', 'Dalmacija – V izraz')],
+  },
+  // 4. ROKERICA
+  {
+    slug: 'prsluk-rider',
+    name: 'Rokerica',
+    category: 'zenski',
+    price: { amount: 9000 },
+    shortDescription:
+      'Rokerica je ženski kožni moto-prsluk sa kragnom na drikere, koso postavljenim rajsferšlusom i kosim prednjim džepovima.',
+    description: [
+      'Spoj upečatljivog kroja i klasičnog moto-stila.',
+    ],
+    features: [],
+    images: [
+      main('rokerica', 'Rokerica'),
+      img('rider-vest-front-open', 'open', 'Kožni prsluk Rokerica — otvoren, vidi se postava'),
+      img('rider-vest-detail-collar', 'detail', 'Kragna sa metalnim drikerima', 'Kragna'),
+      img('rider-vest-detail-tag', 'detail', 'CeroLeather etiketa', 'Etiketa'),
+      img('rider-vest-detail-pocket', 'detail', 'Kosi džep sa metalnim rajsferšlusom', 'Kosi džep'),
+    ],
+  },
+  // 5. SINOVI ANARHIJE
+  {
+    slug: 'prsluk-lace',
+    name: 'Sinovi Anarhije',
+    category: 'muski',
+    price: { amount: 13000, amountMax: 14000 },
+    featured: true,
+    shortDescription:
+      'Sinovi Anarhije je prepoznatljiv moto-prsluk od teleće kože, stvoren za ljubitelje autentičnog moto-stila.',
+    description: [
+      'Bočni rajsferšlusi omogućavaju dodatno proširenje i prilagođavanje širine za nošenje preko moto-jakne. Posebno praktičan detalj predstavlja unutrašnji džep kojem možeš pristupiti čak i kada je prsluk zakopčan.',
+    ],
+    featuresTitle: 'Zašto se Sinovi Anarhije izdvaja',
+    features: [
+      'Praktičan unutrašnji džep: omogućava pristup stvarima čak i kada je prsluk zakopčan.',
+      'Bočni rajsferšlusi za proširenje: omogućavaju jednostavno prilagođavanje širine.',
+      'Prepoznatljiv moto-izgled: kragna, džepovi i površina pogodna za postavljanje prišivača.',
+      'Premium teleća koža: kvalitetan materijal za dugotrajnu upotrebu.',
+      'Crna postava: sa unutrašnjim džepom.',
     ],
     images: [
-      img('protect/front', 'front', 'Kožni prsluk Protect — prednja strana sa prošivenim panelom'),
-      img('protect/back', 'back', 'Kožni prsluk Protect — zadnja strana sa bočnim trakama'),
+      main('sinovi-anarhije', 'Sinovi Anarhije'),
+      img('lace-vest-front', 'front', 'Kožni prsluk Sinovi Anarhije sa bočnim vezivanjem'),
+      img(
+        'lace-vest-detail-lacing',
+        'detail',
+        'Detalj bočnog vezivanja kožnom pertlom',
+        'Bočno vezivanje',
+      ),
+      img('lace-vest-detail-tag', 'detail', 'CeroLeather etiketa', 'Etiketa'),
+      img('lace-vest-detail-collar', 'detail', 'Revers kragna prsluka Sinovi Anarhije', 'Revers kragna'),
+    ],
+  },
+  // 6. NORDKAPP
+  {
+    slug: 'prsluk-nordkapp',
+    name: 'Nordkapp',
+    category: 'muski',
+    price: { amount: 13000, amountMax: 14000 },
+    shortDescription:
+      'Nordkapp je moto-prsluk od teleće kože, osmišljen za duge vožnje i ljubitelje upečatljivog dizajna.',
+    description: [
+      'Kombinuje proštepane kožne detalje, praktičan raspored džepova i bočne kaiševe koji omogućavaju prilagođavanje širine prsluka.',
+    ],
+    featuresTitle: 'Zašto se Nordkapp izdvaja',
+    features: [
+      'Upečatljiv dizajn i štep: proštepani delovi kože daju prsluku poseban vizuelni identitet.',
+      'Praktičan raspored džepova: prednji džepovi na grudima i donjem delu, sa rajsferšlusima za sigurno odlaganje stvari.',
+      'Bočni kaiševi za sužavanje: omogućavaju prilagođavanje prsluka, naročito kada se nosi preko majice.',
+      'Premium teleća koža: kvalitetan i izdržljiv materijal.',
+      'Crna postava: sa unutrašnjim džepom.',
+    ],
+    images: [main('nordkapp', 'Nordkapp')],
+  },
+  // 7. EURO CUT
+  {
+    slug: 'prsluk-classic-zip',
+    name: 'Euro Cut',
+    category: 'muski',
+    price: { amount: 10000 },
+    featured: true,
+    shortDescription:
+      'Euro Cut je kraći kožni moto-prsluk inspirisan prepoznatljivim evropskim stilom.',
+    description: [
+      'Odlikuju ga minimalistički izgled, okrugli izrez i jednostavne linije bez suvišnih detalja. Izrađen je od teleće kože, dok bočni rajsferšlusi omogućavaju dodatno proširenje i prilagođavanje širine za nošenje preko moto-jakne.',
+    ],
+    featuresTitle: 'Zašto se Euro Cut izdvaja',
+    features: [
+      'Evropski kroj: kraći model sa okruglim izrezom i minimalističkim izgledom.',
+      'Bočni rajsferšlusi za proširenje: omogućavaju brzo i jednostavno prilagođavanje širine.',
+      'Premium teleća koža: kvalitetan materijal namenjen dugotrajnoj upotrebi.',
+      'Crna postava: sa unutrašnjim džepom.',
+    ],
+    images: [
+      main('euro-cut', 'Euro Cut'),
+      img('zip-vest-front', 'front', 'Kožni prsluk Euro Cut — prednja strana'),
+      img('zip-vest-back', 'back', 'Kožni prsluk Euro Cut — zadnja strana'),
+      img(
+        'zip-vest-detail-collar',
+        'detail',
+        'Okrugli izrez i centralni rajsferšlus prsluka Euro Cut',
+        'Izrez i rajsferšlus',
+      ),
+      img(
+        'zip-vest-detail-back-seams',
+        'detail',
+        'Panelni kroj na leđima prsluka Euro Cut',
+        'Kroj leđa',
+      ),
+    ],
+  },
+  // 8. PROTECT – LIMITED EDITION
+  {
+    slug: 'prsluk-protect',
+    name: 'Protect – Limited Edition',
+    category: 'muski',
+    price: { amount: 9500 },
+    shortDescription:
+      'Protect – Limited Edition je kožni moto-prsluk sa EVO penom, namenjen vozačima koji žele dodatne karakteristike u prepoznatljivom moto-dizajnu.',
+    description: [
+      'Bočni kaiševi omogućavaju dodatno proširenje i prilagođavanje širine, kao i nošenje preko moto-jakne.',
+    ],
+    features: [],
+    images: [
+      main('protect', 'Protect – Limited Edition'),
+      img('protect/front', 'front', 'Kožni prsluk Protect – Limited Edition — prednja strana sa prošivenim panelom'),
+      img('protect/back', 'back', 'Kožni prsluk Protect – Limited Edition — zadnja strana sa bočnim trakama'),
       img(
         'protect/detail-chest',
         'detail',
@@ -274,129 +296,44 @@ export const PRODUCTS: Product[] = [
       ),
     ],
   },
+  // 9. SHADOW
   {
-    slug: 'prsluk-swat',
-    name: 'SWAT',
+    slug: 'prsluk-buckle',
+    name: 'Shadow',
     category: 'muski',
+    price: { amount: 8500 },
+    featured: true,
     shortDescription:
-      'Taktički kožni prsluk sa brzim kopčama na ramenima i maskirnim (kamuflažnim) panelima.',
+      'Shadow je moto-prsluk od teleće kože sa upečatljivim kaiševima i metalnim šnalama na ramenima.',
     description: [
-      'Prsluk taktičkog izgleda od crne kože, sa podesivim trakama i brzim kopčama na ramenima.',
-      'Napred su paneli od maskirnog materijala u tamnim tonovima i džep sa preklopom, a sa strane trake sa kopčama. Leđa su od crne kože sa poprečnim šavom.',
+      'Njegov prepoznatljiv dizajn spaja klasične moto-detalje i praktičnost za duge vožnje. Bočni kaiševi omogućavaju prilagođavanje širine i nošenje preko moto-jakne.',
     ],
+    featuresTitle: 'Zašto se Shadow izdvaja',
     features: [
-      'Brze kopče na ramenim trakama',
-      'Paneli od tamnog maskirnog materijala',
-      'Džep sa preklopom napred',
-      'Bočne trake sa kopčama',
+      'Teleća koža: čvrsta, pouzdana i izdržljiva.',
+      'Kaiševi sa metalnim šnalama: upečatljiv detalj koji definiše izgled ovog modela.',
+      'Bočni kaiševi za proširenje: omogućavaju prilagođavanje širine i nošenje preko moto-jakne.',
+      'Crna postava: sa unutrašnjim džepom.',
     ],
     images: [
-      img('swat/front', 'front', 'Kožni prsluk SWAT — prednja strana sa maskirnim panelima'),
+      main('shadow', 'Shadow'),
+      img('buckle-vest-front', 'front', 'Kožni prsluk Shadow — prednja strana'),
+      img('buckle-vest-back', 'back', 'Kožni prsluk Shadow — zadnja strana sa bočnim kaiševima'),
       img(
-        'swat/front-top',
+        'buckle-vest-detail-shoulders',
         'detail',
-        'Prsluk SWAT odozgo — brze kopče na ramenima',
+        'Kožne trake sa metalnim kopčama na ramenima prsluka Shadow',
         'Kopče na ramenima',
       ),
-      img('swat/back', 'back', 'Kožni prsluk SWAT — zadnja strana'),
-      img('swat/detail-buckle', 'detail', 'Brza kopča na ramenoj traci', 'Brza kopča'),
       img(
-        'swat/detail-flap-pocket',
+        'buckle-vest-detail-side-buckles',
         'detail',
-        'Džep sa preklopom od maskirnog materijala',
-        'Džep sa preklopom',
+        'Bočni kaiševi sa kopčama na leđima prsluka Shadow',
+        'Bočni kaiševi',
       ),
     ],
+    note: 'Photos are cropped phone screenshots of a listing — replace with original high-res photos.',
   },
-  {
-    slug: 'jakna-cherry',
-    name: 'Cherry',
-    category: 'zenski',
-    shortDescription: 'Ženska kožna jakna u boji višnje, sjajne teksture, sa džepovima na preklop.',
-    description: [
-      'Ženski model kraćeg kroja od sjajne kože sa reljefnom teksturom, u tamnoj boji višnje.',
-      'Kragna, kopčanje na dugmad, džepovi sa preklopom na grudima i dva donja džepa. Na leđima su dekorativne aplikacije.',
-    ],
-    features: [
-      'Sjajna koža sa reljefnom teksturom, boja višnje',
-      'Kragna i kopčanje na dugmad',
-      'Džepovi sa preklopom na grudima',
-      'Dekorativne aplikacije na leđima',
-    ],
-    images: [
-      img('cherry/front', 'front', 'Ženska kožna jakna Cherry — prednja strana'),
-      img(
-        'cherry/front-detail',
-        'detail',
-        'Jakna Cherry — džepovi sa preklopom izbliza',
-        'Džepovi na preklop',
-      ),
-      img('cherry/three-quarter', 'side', 'Jakna Cherry — pogled sa strane, napred'),
-      img('cherry/side', 'side', 'Jakna Cherry — bočna strana'),
-      img(
-        'cherry/back',
-        'back',
-        'Jakna Cherry — leđa sa dekorativnim aplikacijama',
-        'Aplikacije na leđima',
-      ),
-      img(
-        'cherry/detail-pocket',
-        'detail',
-        'Džep sa preklopom i reljefna tekstura sjajne kože',
-        'Tekstura i džep',
-      ),
-      img(
-        'cherry/detail-patches',
-        'detail',
-        'Dekorativne aplikacije na leđima izbliza',
-        'Aplikacije izbliza',
-      ),
-    ],
-  },
-  {
-    // Source folder: "Second woman model" — display name chosen from the dusty-pink colour.
-    slug: 'jakna-blush',
-    name: 'Blush',
-    category: 'zenski',
-    shortDescription:
-      'Ženska moto jakna u pastelno roze tonu, sa metalik panelima i kopčama na rukavima.',
-    description: [
-      'Ženski model kraćeg, moto kroja sa kosim rajsferšlusom i širokom kragnom.',
-      'Prednji i zadnji paneli su od sjajne, metalik kože sa sitnom teksturom, a rukavi i bočni delovi u mat, pastelno roze tonu. Na rukavima su po tri trake sa metalnim kopčama i rajsferšlus, a napred džepovi sa rajsferšlusom.',
-    ],
-    features: [
-      'Kosi (moto) rajsferšlus i široka kragna',
-      'Metalik paneli sa sitnom teksturom',
-      'Tri trake sa metalnim kopčama na svakom rukavu',
-      'Rajsferšlus na rukavima',
-      'Džepovi sa rajsferšlusom',
-    ],
-    images: [
-      img('blush/front', 'front', 'Ženska kožna moto jakna Blush — prednja strana'),
-      img('blush/back', 'back', 'Jakna Blush — zadnja strana sa metalik panelom'),
-      img(
-        'blush/detail-sleeve',
-        'detail',
-        'Jakna Blush — rukav sa tri trake i metalnim kopčama',
-        'Kopče na rukavu',
-      ),
-      img('blush/detail-lapel', 'detail', 'Široka kragna i kosi rajsferšlus', 'Kragna'),
-      img(
-        'blush/detail-texture',
-        'detail',
-        'Metalik koža sa sitnom teksturom i šavom na leđima',
-        'Tekstura kože',
-      ),
-      img(
-        'blush/detail-cuff',
-        'detail',
-        'Tri trake sa metalnim kopčama i ringlama na rukavu',
-        'Kopče izbliza',
-      ),
-      img('blush/detail-pocket', 'detail', 'Džep sa rajsferšlusom', 'Džep'),
-    ],
-  },
-  // Add new models here — one object per product folder.
 ];
 
 export function findProduct(slug: string | null | undefined): Product | undefined {

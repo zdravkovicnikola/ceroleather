@@ -19,13 +19,24 @@ export interface ProductImage {
   kind: ProductImageKind;
   /** Optional caption shown in the gallery */
   caption?: string;
+  /** true = cut-out on a transparent background (shown directly on the catalog's leather) */
+  cutout?: boolean;
 }
 
 export interface ProductPrice {
   amount: number;
+  /** Upper bound for a price range, e.g. 13000 → "13 000–14 000 RSD" */
+  amountMax?: number;
   currency?: string;
   /** e.g. 'od' → "od 25.000 RSD" */
   prefix?: string;
+}
+
+/** Full amount, non-breaking space as thousands separator: "7 500 RSD", "13 000–14 000 RSD" */
+export function formatPrice(pr: ProductPrice, defaultCurrency: string): string {
+  const fmt = (n: number) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  const amount = pr.amountMax ? `${fmt(pr.amount)}–${fmt(pr.amountMax)}` : fmt(pr.amount);
+  return [pr.prefix, amount, pr.currency ?? defaultCurrency].filter(Boolean).join(' ');
 }
 
 /**
@@ -55,6 +66,8 @@ export interface Product {
   description: string[];
   /** Only features that are actually visible / confirmed by the workshop */
   features: string[];
+  /** Heading above `features` on the product page (default "Detalji modela") */
+  featuresTitle?: string;
   images: ProductImage[];
   /** Optional interactive 360° frame sequence */
   spin360?: ProductSpin360;

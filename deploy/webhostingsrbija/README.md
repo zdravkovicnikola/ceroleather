@@ -46,7 +46,7 @@ direktno kucanjem adrese** (ne klikom po sajtu):
 | `/katalog` | katalog, bez preusmeravanja na `/katalog/` |
 | `/katalog/prsluk-kosmaj` | stranica modela; posle **F5** i dalje ista stranica |
 | `/porudzbina?zahtev=custom` | forma bez sekcije „Model“, sa fotografijom |
-| `/porudzbina?zahtev=katalog&proizvod=prsluk-swat` | forma sa izabranim modelom SWAT |
+| `/porudzbina?zahtev=katalog&proizvod=prsluk-buckle` | forma sa izabranim modelom Shadow |
 | `/o-nama` | O nama |
 | `/nepostojeca-strana` | CeroLeather strana „Stranica nije pronađena“ (ne serverska 404) |
 | `/assets/models/prsluk-3dmodel.glb` | preuzima se fajl (F12 → Network: tip `model/gltf-binary`) |

@@ -14,6 +14,6 @@ export const SITE_CONFIG = {
   facebookUrl: 'https://www.facebook.com/profile.php?id=61584107372552',
 
   /** Prices are optional. Set to true and fill `price` on products to show them. */
-  showPrices: false,
+  showPrices: true,
   currency: 'RSD',
 } as const;
