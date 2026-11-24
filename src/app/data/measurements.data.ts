@@ -26,17 +26,19 @@ export const MEASUREMENTS: MeasurementDefinition[] = [
     min: 35,
     max: 100,
     summary:
-      'Dužina od najviše tačke ramena, tik uz vrat, preko grudi do mesta gde želite da prsluk završi.',
+      'Dužina po sredini leđa, od osnove vrata do mesta gde želite da prsluk završi.',
     instructions: [
       'Stanite uspravno, opuštenih ramena, u majici koju biste nosili ispod prsluka.',
-      'Početak trake postavite na najvišu tačku ramena, tik uz vrat.',
-      'Spustite traku pravo naniže, preko grudi, bez zatezanja.',
+      'Početak trake postavite na sredinu leđa, na osnovu vrata — na izbočeni pršljen pri dnu vrata.',
+      'Spustite traku pravo naniže, po sredini leđa, bez zatezanja.',
       'Završite na visini na kojoj želite da prsluk završi — na primer u visini kaiša.',
     ],
-    tip: 'Zamolite nekoga da vas izmeri. Kada merite sami, rame se podigne i mera nije tačna.',
-    tapePlacement: 'Traka ide vertikalno: od ramena uz vrat, preko grudi, do željenog donjeg ruba.',
-    guide3d: { kind: 'vertical', angle: 0.42, fromRatio: 0.875, toRatio: 0.12 },
-    camera: { azimuth: 0.85, elevation: 0.12, distance: 1.12, targetRatio: 0.5 },
+    tip: 'Zamolite nekoga da vas izmeri — mera na leđima ne može se tačno uzeti sami.',
+    tapePlacement: 'Traka ide vertikalno po sredini leđa: od osnove vrata do željenog donjeg ruba.',
+    // measured on the BACK: centre back (angle π), from the base of the neck down to the hem;
+    // the camera looks at the back from behind the wearer's left shoulder
+    guide3d: { kind: 'vertical', angle: Math.PI, fromRatio: 0.875, toRatio: 0.12 },
+    camera: { azimuth: 2.35, elevation: 0.12, distance: 1.12, targetRatio: 0.5 },
     svg: { kind: 'vertical', x1: 131, y1: 66, x2: 119, y2: 318 },
   },
   {
@@ -57,9 +59,10 @@ export const MEASUREMENTS: MeasurementDefinition[] = [
     tip: 'Merite preko majice koju biste nosili ispod prsluka. Traka treba da naleže, ali ne da steže.',
     tapePlacement: 'Traka ide vodoravno oko grudi, ispod pazuha, preko najširog dela.',
     formHint: 'Najširi deo grudi, ispod pazuha.',
-    guide3d: { kind: 'ring', heightRatio: 0.66 },
+    // around the widest part of the chest, just below the armpits (client correction, Nov 2026)
+    guide3d: { kind: 'ring', heightRatio: 0.58 },
     camera: { azimuth: -0.35, elevation: 0.14, distance: 1, targetRatio: 0.6 },
-    svg: { kind: 'ring', cx: 150, cy: 142, rx: 91, ry: 13 },
+    svg: { kind: 'ring', cx: 150, cy: 167, rx: 91, ry: 13 },
   },
   {
     id: 'waist',
@@ -79,9 +82,10 @@ export const MEASUREMENTS: MeasurementDefinition[] = [
     tip: 'Traka treba da naleže na telo, ali da ga ne steže. Merite preko tanke majice.',
     tapePlacement: 'Traka ide vodoravno oko tela, na najužem delu trupa (iznad pupka).',
     formHint: 'Najuži deo trupa, iznad pupka.',
-    guide3d: { kind: 'ring', heightRatio: 0.33 },
-    camera: { azimuth: 0.4, elevation: 0.16, distance: 1, targetRatio: 0.38 },
-    svg: { kind: 'ring', cx: 150, cy: 246, rx: 74, ry: 11 },
+    // lower position (client correction, Nov 2026) — clearly separated from the chest tape
+    guide3d: { kind: 'ring', heightRatio: 0.19 },
+    camera: { azimuth: 0.4, elevation: 0.16, distance: 1, targetRatio: 0.3 },
+    svg: { kind: 'ring', cx: 150, cy: 290, rx: 80, ry: 11 },
   },
   {
     id: 'height',

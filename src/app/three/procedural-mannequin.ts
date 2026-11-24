@@ -73,15 +73,18 @@ function createArm(side: number, mat: THREE.Material, high: boolean): THREE.Grou
   const radial = high ? 24 : 14;
   const arm = new THREE.Group();
   arm.name = side > 0 ? 'arm-left' : 'arm-right';
+  // Shoulder unchanged. Elbow / wrist sit 0.05 further out (≈4° more relaxed) so the fuller arms
+  // keep clear of the torso at the chest-tape height (gap ≈0.027 instead of ≈0.007).
   const shoulder = new THREE.Vector3(0.88 * side, 0.4, -0.02);
-  const elbow = new THREE.Vector3(1.08 * side, -0.24, 0.02);
-  const wrist = new THREE.Vector3(1.16 * side, -0.88, 0.1);
+  const elbow = new THREE.Vector3(1.13 * side, -0.24, 0.02);
+  const wrist = new THREE.Vector3(1.21 * side, -0.88, 0.1);
+  // fuller, natural arms (~60 % more radius than the first, thin version)
   arm.add(
-    joint(shoulder, 0.13, mat, radial),
-    segment(shoulder, elbow, 0.125, 0.1, mat, radial),
-    joint(elbow, 0.1, mat, radial),
-    segment(elbow, wrist, 0.1, 0.075, mat, radial),
-    joint(wrist, 0.082, mat, radial),
+    joint(shoulder, 0.205, mat, radial),
+    segment(shoulder, elbow, 0.2, 0.16, mat, radial),
+    joint(elbow, 0.16, mat, radial),
+    segment(elbow, wrist, 0.16, 0.12, mat, radial),
+    joint(wrist, 0.125, mat, radial),
   );
   return arm;
 }

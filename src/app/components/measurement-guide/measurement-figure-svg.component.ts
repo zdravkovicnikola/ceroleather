@@ -106,7 +106,7 @@ import { MeasurementDefinition } from '../../models/measurement.model';
     .fig__arm {
       fill: none;
       stroke: #a9a49c;
-      stroke-width: 24;
+      stroke-width: 36;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
